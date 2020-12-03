@@ -4,7 +4,7 @@ package de.fhe.ai.model;
  * A class that represents regular tram for passenger transport
  */
 public class Tram {
-    private int Capacity;
+    private int capacity;
     private int weight;
     private int maxSpeed;
     private String tramType;
@@ -12,34 +12,28 @@ public class Tram {
     private int progress;
 
     /**
+     * Initializes a new Tram
+     * 
      * @param passengerCapacity the maximum capacity of passengers of the tram
      * @param weight            the total weight of the tram excluding passengers
      * @param maxSpeed          the maximum speed the tram will be able to move at
      * @param tramType          the type identifier of the tram
      */
     public Tram(int passengerCapacity, int weight, int maxSpeed, String tramType) {
-        this.Capacity = passengerCapacity;
+        this.capacity = passengerCapacity;
         this.weight = weight;
         this.maxSpeed = maxSpeed;
         this.tramType = tramType;
     }
 
-    /**
-     * Moves the given tram to a specific station
-     * 
-     * @param station the target station to move to
-     */
-    public void moveToStation(/* Station station */) {
-        // ...
-    }
-
+    // #region Getters & Setters
     /**
      * Returns the passenger capacity of the given tram
      * 
      * @return the amount of passengers the tram can carry
      */
     public int getCapacity() {
-        return this.Capacity;
+        return this.capacity;
     }
 
     /**
@@ -48,7 +42,7 @@ public class Tram {
      * @param passengerCapacity the amount of passengers the tram can carry
      */
     public void setCapacity(int passengerCapacity) {
-        this.Capacity = passengerCapacity;
+        this.capacity = passengerCapacity;
     }
 
     /**
@@ -139,5 +133,15 @@ public class Tram {
      */
     public void setProgress(int progress) {
         this.progress = progress;
+    }
+    // #endregion
+
+    /**
+     * Moves the given tram to a specific station
+     * 
+     * @param station the target station to move to
+     */
+    public void moveToStation(/* Station station */) {
+        // ...
     }
 }

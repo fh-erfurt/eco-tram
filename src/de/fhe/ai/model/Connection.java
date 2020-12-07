@@ -8,36 +8,35 @@ public class Connection {
     private String[] tramTypes;
     private int maximumWeight;
 
-    // private Station station1;
-    // private Station station2;
+    private Station station1;
+    private Station station2;
 
     /**
      * Initializes the connection class instance and sets the default parameters
      * @param length length of the connection in meters
      * @param tramTypes array of allowed tram types
      * @param maximumWeight maximum weight in kilograms
+     * @param station1 first station
+     * @param station2 second station
      */
-    public Connection(int length, String[] tramTypes, int maximumWeight/* Station station1, Station station2 */) {
+    public Connection(int length, String[] tramTypes, int maximumWeight, Station station1, Station station2) {
         this.length = length;
         this.tramTypes = tramTypes;
         this.maximumWeight = maximumWeight;
-        /*
+
         this.station1 = station1;
         this.station2 = station2;
-         */
     }
 
-    /*
+    /**
      * Checks whether the given tram is qualified for the connection by checking for the tram type and weight
      * @param tram tram to check
      * @return boolean if the tram is qualified for the connection
+     */
     public boolean isTramQualified(Tram tram) {
         if(!isTramTypeListed(tram.getTramType())) return false;
-        if(tram.getWeight() > this.maximumWeight) return false;
-
-        return true;
+        return tram.getWeight() <= this.maximumWeight;
     }
-     */
 
     /**
      * Returns the length of the given connection
@@ -96,24 +95,35 @@ public class Connection {
         this.maximumWeight = maximumWeight;
     }
 
-    /*
+    /**
+     * Returns the first station
+     * @return station object
+     */
     public Station getStation1() {
         return this.station1;
     }
 
+    /**
+     * Updates the first station
+     * @param station first station
+     */
     public void setStation1(Station station) {
         this.station1 = station;
     }
 
+    /**
+     * Returns the second station
+     * @return station object
+     */
     public Station getStation2() {
         return this.station2;
     }
 
+    /**
+     * Updates the second station
+     * @param station second station
+     */
     public void setStation2(Station station) {
         this.station2 = station;
     }
-    */
-
-
-
 }

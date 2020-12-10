@@ -1,147 +1,148 @@
 package de.fhe.ai.model;
 
+import java.util.ArrayDeque;
+
 /**
- * A class that represents regular tram for passenger transport
+ * A base class for all tram types
  */
-public class Tram {
-    private int capacity;
+public abstract class Tram /* extends ModleBase */ {
     private int weight;
-    private int maxSpeed;
+    private int speed;
     private String tramType;
-    private Connection currentConnection;
-    private int progress;
+    private ArrayDeque<ArrayDeque<ITraversable>> paths = new ArrayDeque<>();
+    private ArrayDeque<ITraversable> currentPath = new ArrayDeque<>();
+    private ITraversable position;
+    private ITraversable destination;
 
     /**
-     * Initializes a new Tram
-     * 
-     * @param passengerCapacity the maximum capacity of passengers of the tram
-     * @param weight            the total weight of the tram excluding passengers
-     * @param maxSpeed          the maximum speed the tram will be able to move at
-     * @param tramType          the type identifier of the tram
+     * @param weight   the total weight of the tram excluding passengers
+     * @param speed    the speed the tram will move at
+     * @param tramType the type identifier of the tram
      */
-    public Tram(int passengerCapacity, int weight, int maxSpeed, String tramType) {
-        this.capacity = passengerCapacity;
+    protected Tram(int id, int weight, int speed, String tramType) {
+        // super(id);
         this.weight = weight;
-        this.maxSpeed = maxSpeed;
+        this.speed = speed;
         this.tramType = tramType;
     }
 
     // #region Getters & Setters
-    /**
-     * Returns the passenger capacity of the given tram
-     * 
-     * @return the amount of passengers the tram can carry
-     */
-    public int getCapacity() {
-        return this.capacity;
-    }
-
-    /**
-     * Updates the passenger capacity of the given tram
-     * 
-     * @param passengerCapacity the amount of passengers the tram can carry
-     */
-    public void setCapacity(int passengerCapacity) {
-        this.capacity = passengerCapacity;
-    }
-
-    /**
-     * Returns the weight of the given tram
-     * 
-     * @return the weight of the given tram in kilo grams
-     */
     public int getWeight() {
         return this.weight;
     }
 
-    /**
-     * Updates the weight of the given tram
-     * 
-     * @param weight the weight of the given tram in kilo grams
-     */
     public void setWeight(int weight) {
         this.weight = weight;
     }
 
-    /**
-     * Returns the maximum speed of the given tram
-     * 
-     * @return the max speed of the given tram in meters per second
-     */
-    public int getMaxSpeed() {
-        return this.maxSpeed;
+    public int getSpeed() {
+        return this.speed;
     }
 
-    /**
-     * Updates the max speed of the given tram
-     * 
-     * @param maxSpeed the max speed of the given tram in meters per second
-     */
-    public void setMaxSpeed(int maxSpeed) {
-        this.maxSpeed = maxSpeed;
+    public void setSpeed(int speed) {
+        this.speed = speed;
     }
 
-    /**
-     * Returns the tram type of the given tram
-     * 
-     * @return tram type of the given tram
-     */
     public String getTramType() {
         return this.tramType;
     }
 
-    /**
-     * Updates the tram type of the given tram
-     * 
-     * @param tramType tram type of the given tram
-     */
     public void setTramType(String tramType) {
         this.tramType = tramType;
     }
 
-    /**
-     * Returns the current connection of the given tram
-     * 
-     * @return the connection the tram is currently on
-     */
-    public Connection getCurrentConnection() {
-        return this.currentConnection;
+    public ArrayDeque<ArrayDeque<ITraversable>> getPaths() {
+        return this.paths;
     }
 
-    /**
-     * Updates the current connection of the given tram
-     * 
-     * @param currentConnection the connection the tram is currently on
-     */
-    public void setCurrentConnection(Connection currentConnection) {
-        this.currentConnection = currentConnection;
+    public void setPaths(ArrayDeque<ArrayDeque<ITraversable>> paths) {
+        this.paths = paths;
     }
 
-    /**
-     * Returns the progress of the given tram
-     * 
-     * @return progress of the tram in meters
-     */
-    public int getProgress() {
-        return this.progress;
+    public void addPath(ArrayDeque<ITraversable> path) {
+        this.paths.add(path);
     }
 
-    /**
-     * Updates the progress of the given tram
-     * 
-     * @param progress of the tram in meters
-     */
-    public void setProgress(int progress) {
-        this.progress = progress;
+    public ArrayDeque<ITraversable> getCurrentPath() {
+        return this.currentPath;
+    }
+
+    public void setCurrentPath(ArrayDeque<ITraversable> currentPath) {
+        this.currentPath = currentPath;
+    }
+
+    public ITraversable getPosition() {
+        return this.position;
+    }
+
+    public ITraversable getDestination() {
+        return this.destination;
     }
     // #endregion
 
     /**
-     * Moves the given tram to a specific station
+     * Checks whether the given tram is currently in use
      * 
-     * @param station the target station to move to
+     * @return true if it still has a destination to move to; otherwise false
      */
-    public void moveToStation(/* Station station */) {
+    public boolean isInUse() {
+        if (this.destination != null) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Checks whether the given tram is currently on a station
+     * 
+     * @return true if the given tram is currently on a station; otherwise false
+     */
+    public boolean isOnStation() {
+        if (this.position instanceof Station) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Checks whether the given tram is currently on a connection
+     * 
+     * @return true if the given tram is currently on a connection; otherwise false
+     */
+    public boolean isOnConnection() {
+        if (this.position instanceof Connection) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Advances the tram along it's path if possible
+     * 
+     * @return true if there are paths left to move to; otherwise false
+     */
+    public boolean moveForward() {
+        // position is the previously dequeued head of the this.currentPath
+        // destination is the queue tail of this.currentPath
+        // position
+        // path[0]
+        // path[1]
+        // path[2]
         // ...
+        // path[n] == destinaton
+        if (this.currentPath.poll() instanceof ITraversable polledTraversable) {
+            this.position = polledTraversable;
+            return true;
+        } else if (this.paths.poll() instanceof ArrayDeque<ITraversable>polledPath
+                && polledPath.poll() instanceof ITraversable polledTravesable) {
+            this.currentPath = polledPath;
+            this.position = polledTravesable;
+            this.destination = polledPath.getLast();
+            return true;
+        }
+
+        this.position = null;
+        this.destination = null;
+        return false;
     }
 }

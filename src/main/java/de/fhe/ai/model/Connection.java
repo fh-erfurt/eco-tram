@@ -1,41 +1,55 @@
 package de.fhe.ai.model;
 
+import de.fhe.ai.ModelBase;
+
 import java.util.Arrays;
 
-public class Connection {
+public class Connection/* extends ModelBase*/ implements ITraversable {
 
     private int length;
-    private String[] tramTypes;
     private int maximumWeight;
 
-    private Station station1;
-    private Station station2;
+    private Station sourceStation;
+    private Station destinationStation;
+
+    private int traversionTime;
+    private int trafficFactor;
 
     /**
      * Initializes the connection class instance and sets the default parameters
      * @param length length of the connection in meters
-     * @param tramTypes array of allowed tram types
      * @param maximumWeight maximum weight in kilograms
-     * @param station1 first station
-     * @param station2 second station
+     * @param sourceStation source station
+     * @param destinationStation destination station
+     * @param traversionTime traversion time
+     * @param trafficFactor traffic factor
      */
-    public Connection(int length, String[] tramTypes, int maximumWeight, Station station1, Station station2) {
+    public Connection(/*int id,*/int length, int maximumWeight, Station sourceStation, Station destinationStation, int traversionTime, int trafficFactor) {
+        /*super(id);*/
         this.length = length;
-        this.tramTypes = tramTypes;
         this.maximumWeight = maximumWeight;
 
-        this.station1 = station1;
-        this.station2 = station2;
+        this.sourceStation = sourceStation;
+        this.destinationStation = destinationStation;
+
+        this.traversionTime = traversionTime;
+        this.trafficFactor = trafficFactor;
     }
 
     /**
-     * Checks whether the given tram is qualified for the connection by checking for the tram type and weight
-     * @param tram tram to check
-     * @return boolean if the tram is qualified for the connection
+     * Initializes the connection class instance and sets the default parameters
+     * @param length length of the connection in meters
+     * @param maximumWeight maximum weight in kilograms
+     * @param sourceStation source station
+     * @param destinationStation destination station
      */
-    public boolean isTramQualified(Tram tram) {
-        if(!isTramTypeListed(tram.getTramType())) return false;
-        return tram.getWeight() <= this.maximumWeight;
+    public Connection(/*int id,*/int length, int maximumWeight, Station sourceStation, Station destinationStation) {
+        /*super(id);*/
+        this.length = length;
+        this.maximumWeight = maximumWeight;
+
+        this.sourceStation = sourceStation;
+        this.destinationStation = destinationStation;
     }
 
     /**
@@ -55,31 +69,6 @@ public class Connection {
     }
 
     /**
-     * Returns array of the types of tram of the given connection
-     * @return array of types of tram
-     */
-    public String[] getTramTypes() {
-        return this.tramTypes;
-    }
-
-    /**
-     * Updates the array of types of tram of the given connection
-     * @param tramTypes array of types of tram
-     */
-    public void setTramTypes(String[] tramTypes) {
-        this.tramTypes = tramTypes;
-    }
-
-    /**
-     * Checks whether the given tram type of listed or not
-     * @param tramType given tram type
-     * @return boolean if the tram type is listed or not
-     */
-    public boolean isTramTypeListed(String tramType) {
-        return Arrays.stream(this.tramTypes).anyMatch(type -> type.equalsIgnoreCase(tramType));
-    }
-
-    /**
      * Returns the maximum weight of the given connection
      * @return maximum weight in kilograms
      */
@@ -96,34 +85,54 @@ public class Connection {
     }
 
     /**
-     * Returns the first station
+     * Returns the source station
      * @return station object
      */
-    public Station getStation1() {
-        return this.station1;
+    public Station getSourceStation() {
+        return this.sourceStation;
     }
 
     /**
-     * Updates the first station
-     * @param station first station
+     * Updates the source station
+     * @param station source station
      */
-    public void setStation1(Station station) {
-        this.station1 = station;
+    public void setSourceStation(Station station) {
+        this.sourceStation = station;
     }
 
     /**
      * Returns the second station
      * @return station object
      */
-    public Station getStation2() {
-        return this.station2;
+    public Station getDestinationStation() {
+        return this.destinationStation;
     }
 
     /**
-     * Updates the second station
-     * @param station second station
+     * Updates the destination station
+     * @param station destination station
      */
-    public void setStation2(Station station) {
-        this.station2 = station;
+    public void setDestinationStation(Station station) {
+        this.destinationStation = station;
+    }
+
+    @Override
+    public int getTraversionTime(int tramSpeed) {
+        return this.traversionTime;
+    }
+
+    @Override
+    public boolean isTramAllowed(Tram tram) {
+        return tram.getWeight() <= this.maximumWeight;
+    }
+
+    @Override
+    public int getTrafficFactor() {
+        return this.trafficFactor;
+    }
+
+    @Override
+    public void setTrafficFactor(int trafficFactor) {
+        this.trafficFactor = trafficFactor;
     }
 }

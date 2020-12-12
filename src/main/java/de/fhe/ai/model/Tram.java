@@ -1,6 +1,7 @@
 package de.fhe.ai.model;
 
 import java.util.ArrayDeque;
+import java.util.Queue;
 
 /**
  * A base class for all tram types
@@ -9,8 +10,8 @@ public abstract class Tram /* extends ModleBase */ {
     private int weight;
     private int speed;
     private String tramType;
-    private ArrayDeque<ArrayDeque<ITraversable>> paths = new ArrayDeque<>();
-    private ArrayDeque<ITraversable> currentPath = new ArrayDeque<>();
+    private Queue<Line> paths = new ArrayDeque<>();
+    private Queue<ITraversable> currentPath = new ArrayDeque<>();
     private ITraversable position;
     private ITraversable destination;
 
@@ -51,23 +52,23 @@ public abstract class Tram /* extends ModleBase */ {
         this.tramType = tramType;
     }
 
-    public ArrayDeque<ArrayDeque<ITraversable>> getPaths() {
+    public Queue<Line> getPaths() {
         return this.paths;
     }
 
-    public void setPaths(ArrayDeque<ArrayDeque<ITraversable>> paths) {
+    public void setPaths(ArrayDeque<Line> paths) {
         this.paths = paths;
     }
 
-    public void addPath(ArrayDeque<ITraversable> path) {
+    public void addPath(Line path) {
         this.paths.add(path);
     }
 
-    public ArrayDeque<ITraversable> getCurrentPath() {
+    public Queue<ITraversable> getCurrentPath() {
         return this.currentPath;
     }
 
-    public void setCurrentPath(ArrayDeque<ITraversable> currentPath) {
+    public void setCurrentPath(Queue<ITraversable> currentPath) {
         this.currentPath = currentPath;
     }
 
@@ -86,10 +87,7 @@ public abstract class Tram /* extends ModleBase */ {
      * @return true if it still has a destination to move to; otherwise false
      */
     public boolean isInUse() {
-        if (this.destination != null) {
-            return true;
-        }
-        return false;
+        return this.destination != null;
     }
 
     /**
@@ -98,10 +96,7 @@ public abstract class Tram /* extends ModleBase */ {
      * @return true if the given tram is currently on a station; otherwise false
      */
     public boolean isOnStation() {
-        if (this.position instanceof Station) {
-            return true;
-        }
-        return false;
+        return this.position instanceof Station;
     }
 
     /**
@@ -110,41 +105,45 @@ public abstract class Tram /* extends ModleBase */ {
      * @return true if the given tram is currently on a connection; otherwise false
      */
     public boolean isOnConnection() {
-        if (this.position instanceof Connection) {
-            return true;
-        }
-        return false;
+        return this.position instanceof Connection;
     }
 
     /**
      * Advances the tram along it's path if possible
      * 
-     * @return true if there are paths left to move to; otherwise false
+     * @return true if there were paths left to move to; otherwise false
      */
-    /*
+
     public boolean moveForward() {
-        // position is the previously dequeued head of the this.currentPath
-        // destination is the queue tail of this.currentPath
-        // position
-        // path[0]
-        // path[1]
-        // path[2]
-        // ...
-        // path[n] == destinaton
-        if (this.currentPath.poll() instanceof ITraversable polledTraversable) {
+        // if path still has traversable in it, move normally
+        // otherwise it's empty
+        ITraversable polledTraversable = this.currentPath.poll();
+        if (polledTraversable != null) {
             this.position = polledTraversable;
-            return true;
-        } else if (this.paths.poll() instanceof ArrayDeque<ITraversable>polledPath
-                && polledPath.poll() instanceof ITraversable polledTravesable) {
-            this.currentPath = polledPath;
-            this.position = polledTravesable;
-            this.destination = polledPath.getLast();
+            this.destination = currentPath.peek();
             return true;
         }
 
-        this.position = null;
+        // if path is empty pull next path
+        // otherwise the tram is finished
+        Line polledLine = this.paths.poll();
+        if (polledLine != null) {
+            for (ITraversable iTraversable : polledLine.getRoute()) {
+                this.currentPath.add(iTraversable);
+            }
+
+            // skip A to A movement on Line return
+            if (this.currentPath.peek() == this.position) {
+                this.currentPath.poll();
+            }
+
+            // if currentPath has elements again it should default to the first if
+            this.moveForward();
+        }
+
+        // no next path in paths
+        // position is kept, no destination given until a path is added again
         this.destination = null;
         return false;
     }
-    */
 }

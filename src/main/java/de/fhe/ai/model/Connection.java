@@ -1,9 +1,5 @@
 package de.fhe.ai.model;
 
-import de.fhe.ai.ModelBase;
-
-import java.util.Arrays;
-
 public class Connection/* extends ModelBase*/ implements ITraversable {
 
     private int length;
@@ -13,7 +9,7 @@ public class Connection/* extends ModelBase*/ implements ITraversable {
     private Station destinationStation;
 
     private int traversionTime;
-    private int trafficFactor;
+    private float trafficFactor;
 
     /**
      * Initializes the connection class instance and sets the default parameters
@@ -127,12 +123,12 @@ public class Connection/* extends ModelBase*/ implements ITraversable {
     }
 
     @Override
-    public int getTrafficFactor() {
+    public float getTrafficFactor() {
         return this.trafficFactor;
     }
 
     @Override
-    public void setTrafficFactor(int trafficFactor) {
+    public void setTrafficFactor(float trafficFactor) {
         this.trafficFactor = trafficFactor;
     }
 }

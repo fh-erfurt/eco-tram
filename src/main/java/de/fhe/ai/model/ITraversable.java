@@ -6,7 +6,7 @@ public interface ITraversable {
 
     boolean isTramAllowed(Tram tram);
 
-    int getTrafficFactor();
+    float getTrafficFactor();
 
-    void setTrafficFactor(int trafficFactor);
+    void setTrafficFactor(float trafficFactor);
 }

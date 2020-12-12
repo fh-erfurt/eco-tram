@@ -1,5 +1,7 @@
 package de.fhe.ai.model;
 
+import java.util.ArrayList;
+
 public class Line
 {
 

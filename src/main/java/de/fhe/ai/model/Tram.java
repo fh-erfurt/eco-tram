@@ -121,6 +121,7 @@ public abstract class Tram /* extends ModleBase */ {
      * 
      * @return true if there are paths left to move to; otherwise false
      */
+    /*
     public boolean moveForward() {
         // position is the previously dequeued head of the this.currentPath
         // destination is the queue tail of this.currentPath
@@ -145,4 +146,5 @@ public abstract class Tram /* extends ModleBase */ {
         this.destination = null;
         return false;
     }
+    */
 }

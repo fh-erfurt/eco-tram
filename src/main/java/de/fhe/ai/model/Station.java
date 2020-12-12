@@ -1,43 +1,49 @@
 package de.fhe.ai.model;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class Station {
-    private String name;
-    private int capacity;
-    private List<Track> tracks;
-    private List<Connection> connections;
+public class Station /*extends ModelBase*/ implements ITraversable {
 
+    private final String name;
+    private List<Connection> adjecentConnections;
+    private long waitingTime;
+    private final int maxPassengers;
+    private int actualPassengers;
 
-    public Station() {
-        this.tracks = new ArrayList<>();
-        this.connections = new ArrayList<>();
+    public Station(String name, int maxPassengers) {
+        this.name = name;
+        this.maxPassengers = maxPassengers;
     }
 
     public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
 
-    public int getCapacity() { return capacity; }
-    public void setCapacity(String capacity) { this.capacity = capacity; }
-
-    public List<Track> getTracks() { return tracks; }
-    public void addTrack(Track track) {
-        this.tracks.add(track);
+    public List<Connection> getAdjecentConnections() {
+        return adjecentConnections;
     }
-    public void addTracks(List<Track> tracks) {
-        for (Track track : tracks) {
-            addTrack(track);
-        }
+    public void setAdjecentConnections(List<Connection> adjecentConnections) { this.adjecentConnections = adjecentConnections; }
+
+    public long getWaitingTime() {
+        return waitingTime;
+    }
+    public void setWaitingTime(long waitingTime) {
+        this.waitingTime = waitingTime;
     }
 
-    public List<Connection> getConnections() { return connections; }
-    public void addConnection(Connection connection) {
-        this.connections.add(connection);
-    }
-    public void addConnections(List<Connection> connections) {
-        for (Connection connection : connections) {
-            addConnection(connection);
-        }
-    }
+    public int getMaxPassengers() { return maxPassengers; }
+
+    public int getActualPassengers() { return actualPassengers; }
+    public void setActualPassengers(int actualPassengers) { this.actualPassengers = actualPassengers; }
+
+
+    @Override
+    public int getTraversionTime(int tramSpeed) { /*TODO*/ return 0; }
+
+    @Override
+    public float getTrafficFactor() {/*TODO*/ return 0; }
+
+    @Override
+    public void setTrafficFactor(float trafficFactor) { /*TODO*/ }
+
+    @Override
+    public boolean isTramAllowed(Tram tram) { /*TODO*/ return false; }
 }

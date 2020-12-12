@@ -6,11 +6,12 @@ import de.fhe.ai.model.Tram;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class TrafficManager {
 
-    private List<Line> lines = new ArrayList<Line>();
-    private List<Tram> trams = new ArrayList<Tram>();
+    private final List<Line> lines = new ArrayList<Line>();
+    private final List<Tram> trams = new ArrayList<Tram>();
 
 
     public void addLine(Line line) {
@@ -39,18 +40,16 @@ public class TrafficManager {
         return tram.getPaths().isEmpty();
     }
 
-/*
     public List<Tram> getTramsInLine(Line line) {
-        return trams.stream().filter(tram -> tram.getPaths().contains(line));
+        return trams.stream().filter(tram -> tram.getPaths().contains(line))
+                .collect(Collectors.toList());
     }
-*/
-/*
+
     public void assignTram(Tram tram, Line[] lines) {
         for(Line line : lines) {
             tram.addPath(line);
         }
     }
- */
 
     public void unassignTram(Tram tram) {
         tram.getPaths().clear();

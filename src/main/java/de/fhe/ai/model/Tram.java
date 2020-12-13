@@ -16,6 +16,7 @@ public abstract class Tram /* extends ModleBase */ {
     private ITraversable destination;
 
     /**
+     * @param id       the internal id of the tram
      * @param weight   the total weight of the tram excluding passengers
      * @param speed    the speed the tram will move at
      * @param tramType the type identifier of the tram
@@ -32,32 +33,16 @@ public abstract class Tram /* extends ModleBase */ {
         return this.weight;
     }
 
-    public void setWeight(int weight) {
-        this.weight = weight;
-    }
-
     public int getSpeed() {
         return this.speed;
-    }
-
-    public void setSpeed(int speed) {
-        this.speed = speed;
     }
 
     public String getTramType() {
         return this.tramType;
     }
 
-    public void setTramType(String tramType) {
-        this.tramType = tramType;
-    }
-
     public Queue<Line> getPaths() {
         return this.paths;
-    }
-
-    public void setPaths(ArrayDeque<Line> paths) {
-        this.paths = paths;
     }
 
     public void addPath(Line path) {
@@ -66,10 +51,6 @@ public abstract class Tram /* extends ModleBase */ {
 
     public Queue<ITraversable> getCurrentPath() {
         return this.currentPath;
-    }
-
-    public void setCurrentPath(Queue<ITraversable> currentPath) {
-        this.currentPath = currentPath;
     }
 
     public ITraversable getPosition() {
@@ -113,7 +94,6 @@ public abstract class Tram /* extends ModleBase */ {
      * 
      * @return true if there were paths left to move to; otherwise false
      */
-
     public boolean moveForward() {
         // if path still has traversable in it, move normally
         // otherwise it's empty

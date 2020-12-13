@@ -35,7 +35,7 @@ public class Line
     }*/
 
     /**
-     * 
+
      * gibt Endstation zurück 
      * @return Station 
      */

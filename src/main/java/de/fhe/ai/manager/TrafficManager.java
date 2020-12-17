@@ -12,7 +12,18 @@ public class TrafficManager {
 
     private final List<Line> lines = new ArrayList<Line>();
     private final List<Tram> trams = new ArrayList<Tram>();
+    private static TrafficManager INSTANCE;
 
+    public static TrafficManager getInstance()
+    {
+        if (INSTANCE == null)
+            INSTANCE = new TrafficManager();
+        return INSTANCE;
+    }
+
+    private TrafficManager() {
+
+    }
 
     public void addLine(Line line) {
         if(!this.lines.contains(line))
@@ -41,8 +52,11 @@ public class TrafficManager {
     }
 
     public List<Tram> getTramsInLine(Line line) {
-        return trams.stream().filter(tram -> tram.getPaths().contains(line))
-                .collect(Collectors.toList());
+        return trams.stream().filter(
+                tram -> tram
+                        .getPaths()
+                        .contains(line))
+                        .collect(Collectors.toList());
     }
 
     public void assignTram(Tram tram, Line[] lines) {

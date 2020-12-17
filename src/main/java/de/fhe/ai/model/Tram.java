@@ -3,10 +3,12 @@ package de.fhe.ai.model;
 import java.util.ArrayDeque;
 import java.util.Queue;
 
+import de.fhe.ai.manager.EventManager;
+
 /**
  * A base class for all tram types
  */
-public abstract class Tram /* extends ModleBase */ {
+public abstract class Tram extends ModelBase {
     private int weight;
     private int speed;
     private String tramType;
@@ -16,13 +18,15 @@ public abstract class Tram /* extends ModleBase */ {
     private ITraversable destination;
 
     /**
-     * @param id       the internal id of the tram
-     * @param weight   the total weight of the tram excluding passengers
-     * @param speed    the speed the tram will move at
-     * @param tramType the type identifier of the tram
+     * @param id           the internal id of the tram
+     * @param eventManager the eventManager used to communicate with the
+     *                     TrafficManager
+     * @param weight       the total weight of the tram excluding passengers
+     * @param speed        the speed the tram will move at
+     * @param tramType     the type identifier of the tram
      */
-    protected Tram(int id, int weight, int speed, String tramType) {
-        // super(id);
+    protected Tram(int id, EventManager eventManager, int weight, int speed, String tramType) {
+        super(id, eventManager);
         this.weight = weight;
         this.speed = speed;
         this.tramType = tramType;
@@ -118,12 +122,17 @@ public abstract class Tram /* extends ModleBase */ {
             }
 
             // if currentPath has elements again it should default to the first if
-            this.moveForward();
+            return this.moveForward();
         }
 
         // no next path in paths
         // position is kept, no destination given until a path is added again
         this.destination = null;
         return false;
+    }
+
+    @Override
+    public String toString() {
+        return getString(this);
     }
 }

@@ -1,5 +1,7 @@
 package de.fhe.ai.model;
 
+import de.fhe.ai.manager.EventManager;
+
 /**
  * A cass that represents tram for pasenger transport
  */
@@ -17,8 +19,8 @@ public class PassengerTram extends Tram {
      * @param speed         the speed the tram will move at
      * @param tramType      the type identifier of the tram
      */
-    public PassengerTram(int id, int maxPassengers, int weight, int speed, String tramType) {
-        super(id, weight, speed, tramType);
+    public PassengerTram(int id, EventManager eventManager, int maxPassengers, int weight, int speed, String tramType) {
+        super(id, eventManager, weight, speed, tramType);
         this.maxPassengers = maxPassengers;
     }
 
@@ -39,4 +41,9 @@ public class PassengerTram extends Tram {
         this.passengers = passengers;
     }
     // #endregion
+
+    @Override
+    public String toString() {
+        return getString(this);
+    }
 }

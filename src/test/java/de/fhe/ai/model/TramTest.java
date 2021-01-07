@@ -23,14 +23,9 @@ public class TramTest {
 
         tram.addLine(line);
 
-        var expectedTrue = tram.moveForward();
-        Assert.assertEquals("The moveForwad should have returned true", true, expectedTrue);
-
-        var expectedTrue2 = tram.moveForward();
-        Assert.assertEquals("The moveForwad should have returned true", true, expectedTrue2);
-
-        var expectedFalse = tram.moveForward();
-        Assert.assertEquals("The moveForwad should have returned false", false, expectedFalse);
+        Assert.assertTrue("The moveForwad should have returned true", tram.moveForward());
+        Assert.assertTrue("The moveForwad should have returned true", tram.moveForward());
+        Assert.assertFalse("The moveForwad should have returned false", tram.moveForward());
     }
 
     @Test
@@ -49,20 +44,16 @@ public class TramTest {
 
         tram.addLine(line);
 
-        var expectedStation1 = tram.getCurrentPosition();
-        Assert.assertEquals("The Position should have returned Station1", station1, expectedStation1);
+        Assert.assertEquals("The Position should have returned Station1", station1, tram.getCurrentPosition());
 
         tram.moveForward();
-        var expectedConnection12 = tram.getCurrentPosition();
-        Assert.assertEquals("The Position should have returned Connection12", connection12, expectedConnection12);
+        Assert.assertEquals("The Position should have returned Connection12", connection12, tram.getCurrentPosition());
 
         tram.moveForward();
-        var expectedStation2 = tram.getCurrentPosition();
-        Assert.assertEquals("The Position should have returned Station2", station2, expectedStation2);
+        Assert.assertEquals("The Position should have returned Station2", station2, tram.getCurrentPosition());
 
         tram.moveForward();
-        var expectedDestination = tram.getNextPosition();
-        Assert.assertEquals("The Destination should have returned null", null, expectedDestination);
+        Assert.assertEquals("The Destination should have returned null", null, tram.getNextPosition());
     }
 
     @Test
@@ -102,23 +93,18 @@ public class TramTest {
         tram.addLine(line1);
         tram.addLine(line2);
 
-        ITraversable expectedStation1 = tram.getCurrentPosition();
-        Assert.assertEquals("The Position should have returned Station1", station1, expectedStation1);
+        Assert.assertEquals("The Position should have returned Station1", station1, tram.getCurrentPosition());
 
         tram.moveForward();
         tram.moveForward();
-        ITraversable expectedStation2 = tram.getCurrentPosition();
-        Assert.assertEquals("The Position should have returned Station2", station2, expectedStation2);
+        Assert.assertEquals("The Position should have returned Station2", station2, tram.getCurrentPosition());
 
-        ITraversable expectedNextPosition = tram.getNextPosition();
-        Assert.assertEquals("The NextPosition should have returned Connection21", connection21, expectedNextPosition);
+        Assert.assertEquals("The NextPosition should have returned Connection21", connection21, tram.getNextPosition());
 
         tram.moveForward();
-        ITraversable expectedConnection21 = tram.getCurrentPosition();
-        Assert.assertEquals("The Position should have returned Connection21", connection21, expectedConnection21);
+        Assert.assertEquals("The Position should have returned Connection21", connection21, tram.getCurrentPosition());
 
         tram.moveForward();
-        ITraversable expectedStation1Again = tram.getCurrentPosition();
-        Assert.assertEquals("The Position should have returned Station1 again", station1, expectedStation1Again);
+        Assert.assertEquals("The Position should have returned Station1 again", station1, tram.getCurrentPosition());
     }
 }

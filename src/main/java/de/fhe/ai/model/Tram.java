@@ -81,15 +81,6 @@ public abstract class Tram extends ModelBase {
     }
 
     /**
-     * @deprecated Use {@link #getCurrentPosition()} for clarity instead
-     * @return
-     */
-    @Deprecated
-    public ITraversable getPosition() {
-        return this.getCurrentPosition();
-    }
-
-    /**
      * Returns the next postiion if possible
      * 
      * @return the next position or {@code null} if none exists
@@ -122,15 +113,6 @@ public abstract class Tram extends ModelBase {
         }
 
         return null;
-    }
-
-    /**
-     * @deprecated Use {@link #addLine(Line line)} for clarity instead
-     * @return
-     */
-    @Deprecated
-    public void addPath(Line path) {
-        this.addLine(path);
     }
 
     /**

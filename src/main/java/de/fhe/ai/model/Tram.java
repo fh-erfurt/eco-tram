@@ -22,13 +22,24 @@ public abstract class Tram extends ModelBase {
     /**
      * @param id           the internal id of the tram
      * @param eventManager the eventManager used to communicate with the
-     *                     TrafficManager
-     * @param weight       the total weight of the tram excluding passengers
-     * @param speed        the speed the tram will move at
-     * @param tramType     the type identifier of the tram
+     *                     TrafficManager, must be non-null
+     * @param weight       the total weight of the tram excluding passengers, must
+     *                     be a positive integer
+     * @param speed        the speed the tram will move at, must be a positive
+     *                     integer
+     * @param tramType     the type identifier of the tram, must be non-null
+     * @throws IllegalArgumentException if invalid parameters are passed
      */
     protected Tram(int id, EventManager eventManager, int weight, int speed, String tramType) {
         super(id, eventManager);
+        if (weight < 0) {
+            throw new IllegalArgumentException("Cannot declare weight to be negative.");
+        } else if (speed < 0) {
+            throw new IllegalArgumentException("Cannot declare speed to be negative.");
+        } else if (tramType == null) {
+            throw new IllegalArgumentException("TramType cannot be null.");
+        }
+
         this.weight = weight;
         this.speed = speed;
         this.tramType = tramType;
@@ -189,7 +200,7 @@ public abstract class Tram extends ModelBase {
 
         // try to get new path
         this.currentLine = this.queuedLines.poll();
-        if (currentLine != null) {
+        if (this.currentLine != null) {
             // skip A to A movement
             if (currentLine.getRoute().get(0) == prevPos) {
                 currentIndex = 1;

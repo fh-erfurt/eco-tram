@@ -1,15 +1,18 @@
 package de.fhe.ai.model;
 
+import de.fhe.ai.manager.EventManager;
+
 import java.util.ArrayList;
 
-public class Line
+public class Line extends ModelBase
 {
 
-    private ArrayList<ITraversable> route; //eingesetzte Bahn 
-    private String name; //Name der Linie 
+    private final ArrayList<ITraversable> route; //eingesetzte Bahn
+    private final String name; //Name der Linie
 
-    public Line(String name, ArrayList<ITraversable> route)
+    public Line(int id, EventManager eventManager, String name, ArrayList<ITraversable> route)
     {
+        super(id, eventManager);
         this.name = name; 
         this.route = route; 
 

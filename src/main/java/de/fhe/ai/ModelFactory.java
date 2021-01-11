@@ -2,6 +2,7 @@ package de.fhe.ai;
 
 
 
+import de.fhe.ai.manager.EventManager;
 import de.fhe.ai.model.*;
 
 import java.util.ArrayList;
@@ -21,31 +22,29 @@ public class ModelFactory {
     private ModelFactory() {}
 
     public Connection createConnection(/*int id,*/int length, int maximumWeight, Station sourceStation, Station destinationStation, int traversionTime, int trafficFactor) {
-        Connection connection = new Connection(length, maximumWeight, sourceStation, destinationStation, traversionTime, trafficFactor);
         // TODO Eventmanager einbinden
 
-        return connection;
+        return new Connection(length, maximumWeight, sourceStation, destinationStation, traversionTime, trafficFactor);
     }
 
-    public Line createLine(String name, ArrayList<ITraversable> route){
-        Line line = new Line(name, route);
-        //TODO Eventmanager einbinden
+    public Line createLine(int id, String name, ArrayList<ITraversable> route){
 
-        return line;
+        return new Line(id, EventManager.getInstance(), name, route);
     }
 
     //TODO passengerTram, Station
 
     public Station createStation(String name, int maxPassengers) {
-        Station station = new Station(name,maxPassengers);
 
-        return station;
+        return new Station(name,maxPassengers);
     }
 
     public PassengerTram createPassengerTram(int id, int maxPassengers, int weight, int speed, String tramType) {
-        PassengerTram passengerTram = new PassengerTram(id, maxPassengers,weight, speed, tramType);
+        if (maxPassengers < 0) {
+            throw new IllegalArgumentException("Cannot declare maxPassengers to be negative.");
+        }
 
-        return passengerTram;
+        return new PassengerTram(id, EventManager.getInstance(), maxPassengers,weight, speed, tramType);
     }
 
 }

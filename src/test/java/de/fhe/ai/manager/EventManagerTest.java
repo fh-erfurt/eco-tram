@@ -126,7 +126,7 @@ public class EventManagerTest {
     public void test_multiple_entities_and_listener() {
         Tram firstTramObject = new PassengerTram(0, null, 100, 1000, 100, "passenger");
         Tram secondTramObject = new PassengerTram(0, null, 100, 1000, 100, "passenger");
-        Line lineObject = new Line("Linie 6", new ArrayList<>());
+        Line lineObject = new Line(-1, EventManager.getInstance(),"Linie 6", new ArrayList<>());
 
         EventManager eventManager = EventManager.getInstance();
 

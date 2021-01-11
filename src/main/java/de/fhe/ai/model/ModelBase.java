@@ -1,6 +1,6 @@
 package de.fhe.ai.model;
 
-import de.fhe.ai.helper.Utils;
+import de.fhe.ai.Utils;
 import de.fhe.ai.manager.EventManager;
 
 /**

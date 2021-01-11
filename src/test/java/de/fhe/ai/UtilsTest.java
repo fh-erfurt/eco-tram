@@ -1,4 +1,4 @@
-package de.fhe.ai.helper;
+package de.fhe.ai;
 
 import org.junit.Assert;
 import org.junit.Test;

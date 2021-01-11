@@ -1,4 +1,4 @@
-package de.fhe.ai.helper;
+package de.fhe.ai;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;

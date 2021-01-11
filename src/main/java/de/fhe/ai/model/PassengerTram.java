@@ -3,11 +3,12 @@ package de.fhe.ai.model;
 import de.fhe.ai.manager.EventManager;
 
 /**
- * A cass that represents tram for pasenger transport
+ * A cass that represents tram for passenger transport
  */
 public class PassengerTram extends Tram {
 
-    private int maxPassengers;
+    // fields
+    private final int maxPassengers;
     private int passengers;
 
     /**
@@ -28,7 +29,7 @@ public class PassengerTram extends Tram {
     public PassengerTram(int id, EventManager eventManager, int maxPassengers, int weight, int speed, String tramType) {
         super(id, eventManager, weight, speed, tramType);
         if (maxPassengers < 0) {
-            throw new IllegalArgumentException("Cannot declare maxPassengers to be negative.");
+            throw new IllegalArgumentException("MaxPassengers of tram `" + this + "` cannot to be negative.");
         }
 
         this.maxPassengers = maxPassengers;
@@ -87,9 +88,4 @@ public class PassengerTram extends Tram {
         this.passengers -= passengers;
     }
     // #endregion
-
-    @Override
-    public String toString() {
-        return getString(this);
-    }
 }

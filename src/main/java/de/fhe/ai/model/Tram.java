@@ -6,13 +6,13 @@ import java.util.Queue;
 import de.fhe.ai.manager.EventManager;
 
 /**
- * A base class for all tram types
+ * Provides a base class for all tram types
  */
 public abstract class Tram extends ModelBase {
     // regular fields
-    private int weight;
+    private final int weight;
+    private final String tramType;
     private int speed;
-    private String tramType;
 
     // position state fields
     private Line currentLine;
@@ -20,6 +20,8 @@ public abstract class Tram extends ModelBase {
     private ArrayDeque<Line> queuedLines = new ArrayDeque<>();
 
     /**
+     * Initializes a new Tram
+     * 
      * @param id           the internal id of the tram
      * @param eventManager the eventManager used to communicate with the
      *                     TrafficManager, must be non-null
@@ -33,11 +35,11 @@ public abstract class Tram extends ModelBase {
     protected Tram(int id, EventManager eventManager, int weight, int speed, String tramType) {
         super(id, eventManager);
         if (weight < 0) {
-            throw new IllegalArgumentException("Cannot declare weight to be negative.");
+            throw new IllegalArgumentException("Weight of tram `" + this + "` cannot to be negative.");
         } else if (speed < 0) {
-            throw new IllegalArgumentException("Cannot declare speed to be negative.");
+            throw new IllegalArgumentException("Speed of tram `" + this + "` cannot to be negative.");
         } else if (tramType == null) {
-            throw new IllegalArgumentException("TramType cannot be null.");
+            throw new IllegalArgumentException("TramType of tram `" + this + "` cannot be null.");
         }
 
         this.weight = weight;
@@ -58,19 +60,23 @@ public abstract class Tram extends ModelBase {
         return this.tramType;
     }
 
-    public Line getCurrentLine() {
-        return this.currentLine;
-    }
-
     public Queue<Line> getPaths() {
         return this.queuedLines;
     }
 
     /**
+     * Returns the current line if possible
+     * 
+     * @return the current line or {@code null} if none exists
+     */
+    public Line getCurrentLine() {
+        return this.currentLine;
+    }
+
+    /**
      * Returns the current position if possible
      * 
-     * @return {@code true} if the tram has a line assigned to it; otherwise
-     *         {@code false}
+     * @return the current position or {@code null} if none exists
      */
     public ITraversable getCurrentPosition() {
         if (this.currentLine != null) {
@@ -93,7 +99,7 @@ public abstract class Tram extends ModelBase {
             }
 
             // nextPath exists and has nextPosition
-            var nextPath = this.queuedLines.peek();
+            Line nextPath = this.queuedLines.peek();
             if (nextPath != null) {
                 // prevent position == nextPosition
                 if (this.getCurrentPosition() == nextPath.getRoute().get(0)) {
@@ -107,6 +113,12 @@ public abstract class Tram extends ModelBase {
         return null;
     }
 
+    /**
+     * Returns the current destination (destination of the tram's last path) if
+     * possible
+     * 
+     * @return the current destination or {@code null} if none exists
+     */
     public Station getDestination() {
         if (this.queuedLines.peekLast() != null) {
             return this.queuedLines.peekLast().getDestination();
@@ -194,10 +206,5 @@ public abstract class Tram extends ModelBase {
         }
 
         return false;
-    }
-
-    @Override
-    public String toString() {
-        return getString(this);
     }
 }

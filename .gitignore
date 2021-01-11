@@ -27,9 +27,6 @@ hs_err_pid*
 # CMake
 cmake-build-*/
 
-# Mongo Explorer plugin
-.idea/**/mongoSettings.xml
-
 # File-based project format
 *.iws
 
@@ -48,6 +45,7 @@ fabric.properties
 # === non preset ===
 # ignore IDE specific files and folders
 .idea/
+.vscode/
 .settings/
 .project
 .classpath

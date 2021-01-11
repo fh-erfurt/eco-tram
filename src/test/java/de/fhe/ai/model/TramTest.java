@@ -2,6 +2,7 @@ package de.fhe.ai.model;
 
 import java.util.ArrayList;
 
+import de.fhe.ai.manager.EventManager;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -13,7 +14,7 @@ public class TramTest {
         Station station1 = new Station("testStation1", 0);
         Station station2 = new Station("testStation2", 0);
         Connection connection1 = new Connection(0, 0, station1, station2, 0, 0);
-        Line line = new Line("testLine", new ArrayList<>() {
+        Line line = new Line(-1, EventManager.getInstance(), "testLine", new ArrayList<>() {
             {
                 add(station1);
                 add(connection1);
@@ -34,7 +35,7 @@ public class TramTest {
         Station station1 = new Station("testStation1", 0);
         Station station2 = new Station("testStation2", 0);
         Connection connection12 = new Connection(0, 0, station1, station2, 0, 0);
-        Line line = new Line("testLine", new ArrayList<>() {
+        Line line = new Line(-1, EventManager.getInstance(), "testLine", new ArrayList<>() {
             {
                 add(station1);
                 add(connection12);
@@ -75,14 +76,14 @@ public class TramTest {
                 add(connection21);
             }
         });
-        Line line1 = new Line("testLineNormal", new ArrayList<>() {
+        Line line1 = new Line(-1, EventManager.getInstance(),"testLineNormal", new ArrayList<>() {
             {
                 add(station1);
                 add(connection12);
                 add(station2);
             }
         });
-        Line line2 = new Line("testLineReturn", new ArrayList<>() {
+        Line line2 = new Line(-1, EventManager.getInstance(), "testLineReturn", new ArrayList<>() {
             {
                 add(station2);
                 add(connection21);

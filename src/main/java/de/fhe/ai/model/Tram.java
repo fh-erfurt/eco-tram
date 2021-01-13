@@ -1,6 +1,7 @@
 package de.fhe.ai.model;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Queue;
 
 import de.fhe.ai.manager.EventManager;
@@ -122,6 +123,8 @@ public abstract class Tram extends ModelBase {
     public Station getDestination() {
         if (this.queuedLines.peekLast() != null) {
             return this.queuedLines.peekLast().getDestination();
+        } else if (this.currentLine != null) {
+            return this.currentLine.getDestination();
         }
 
         return null;
@@ -132,23 +135,67 @@ public abstract class Tram extends ModelBase {
      * 
      * @param line the line to add to the enquedLines
      * @exception IllegalStateException if the tram cannot move from it's current
-     *                                  destination to the start of the new line
+     *                                  destination/position to the start of the new
+     *                                  line
      */
     public void addLine(Line line) {
-        // enque if either no current destination null or path starts on/at destination
-        if (this.getDestination() == null
-                || this.getDestination().getAdjecentConnections().contains(line.getRoute().get(0))) {
+        if (this.canAddLine(line)) {
             if (this.currentLine == null) {
                 this.currentLine = line;
             } else {
                 this.queuedLines.add(line);
             }
+        } else if (this.getDestination() == null) {
+            throw new IllegalStateException("Cannot directly move from current position `" + this.getCurrentPosition()
+                    + "` to path start `" + line.getRoute().get(0) + "`.");
         } else {
             throw new IllegalStateException("Cannot directly move from current destination `" + this.getDestination()
                     + "` to path start `" + line.getRoute().get(0) + "`.");
         }
     }
     // #endregion
+
+    /**
+     * Checks whether or not a the tram can move from the current destination (or
+     * position if non is given) to the start fo the line
+     * 
+     * @param line the line to check validity for
+     * @return {@code true} if the tram can move to the start of the given line;
+     *         otherwise {@code false}
+     */
+    public boolean canAddLine(Line line) {
+        // can move to start since not yet deployed
+        if (this.getDestination() == null && this.getCurrentPosition() == null) {
+            return true;
+        }
+
+        var lineStartStation = line.getRoute().get(0);
+        var lineStartConnection = line.getRoute().get(1);
+
+        // can directly move from destination to start of line path
+        // either can move destination same as start
+        // or destination adjacent to startConnection
+        if (this.getDestination() != null && (this.getDestination() == lineStartStation
+                || this.getDestination().getAdjecentConnections().contains(lineStartConnection))) {
+            return true;
+        }
+
+        // destination must be null, therefore position cannot be null, no check needed
+        // instanceof Connection check not needed yet but might be later and increases
+        // readability
+
+        // either can move from position to startStation
+        // or position to startConnection
+        if (this.getCurrentPosition() == lineStartStation
+                || (this.getCurrentPosition() instanceof Station
+                        && ((Station) this.getCurrentPosition()).getAdjecentConnections().contains(lineStartConnection))
+                || (this.getCurrentPosition() instanceof Connection
+                        && ((Connection) this.getCurrentPosition()).getDestinationStation() == lineStartStation)) {
+            return true;
+        }
+
+        return false;
+    }
 
     /**
      * Checks whether the given tram is currently in use
@@ -187,7 +234,7 @@ public abstract class Tram extends ModelBase {
         ITraversable prevPos = this.getCurrentPosition();
 
         // preceed normally if path still has elements left
-        if (this.currentLine.getRoute().size() - 1 >= currentIndex + 1) {
+        if (this.currentLine.getRoute().size() - 1 >= this.currentIndex + 1) {
             currentIndex++;
             return true;
         }
@@ -197,14 +244,40 @@ public abstract class Tram extends ModelBase {
         if (this.currentLine != null) {
             // skip A to A movement
             if (currentLine.getRoute().get(0) == prevPos) {
-                currentIndex = 1;
+                this.currentIndex = 1;
             } else {
-                currentIndex = 0;
+                this.currentIndex = 0;
             }
 
             return true;
         }
 
         return false;
+    }
+
+    /**
+     * Clears all current paths and moves the given tram along the temporary line,
+     * the line path has to start on or next to the current position
+     * 
+     * @param returnPath the line to use as returnPath for the tram
+     * @exception IllegalStateException if the tram cannot move from it's current
+     *                                  destination/position to the start of the new
+     *                                  line
+     */
+    public void reassign(TemporaryLine returnPath) {
+        this.unassign();
+        this.addLine(returnPath);
+    }
+
+    /**
+     * Clears all current paths and stops the line at it's current position,
+     * preventing further movement without additon of a new line
+     */
+    public void unassign() {
+        this.queuedLines.clear();
+        // TODO: use factory method to get temporary line
+        // so far id is copied which means it is not uniqe
+        this.currentLine = new TemporaryLine(this.currentLine.getId(), this.currentLine.getEventManager(),
+                new ArrayList<>(this.currentLine.getRoute().subList(0, this.currentIndex)));
     }
 }

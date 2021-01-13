@@ -20,9 +20,15 @@ public abstract class ModelBase {
         return id;
     }
 
+    protected EventManager getEventManager() {
+        return this.eventManager;
+    }
+
     @Override
     public String toString() {
         // TODO: only return public fields in non-debug enviroments
+        // either add gloabl debug/testing variable and check on that
+        // or implement override in each child class
         return Utils.getVerboseModelRepresentation(this, 0);
     }
 }

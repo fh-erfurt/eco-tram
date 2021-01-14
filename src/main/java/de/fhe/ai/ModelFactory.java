@@ -31,8 +31,8 @@ public class ModelFactory {
         return new Line(id, EventManager.getInstance(), name, route);
     }
 
-    public Station createStation(int id, String name, List<Connection> adjacentConnections, long waitingTime, int maxPassengers, int actualPassengers) {
-        return new Station(id, EventManager.getInstance(), name, adjacentConnections, waitingTime, maxPassengers, actualPassengers);
+    public Station createStation(int id, String name, long waitingTime, int maxPassengers, int actualPassengers) {
+        return new Station(id, EventManager.getInstance(), name,  waitingTime, maxPassengers, actualPassengers);
     }
 
     //TODO passengerTram, Station(ITraversable)

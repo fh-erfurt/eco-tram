@@ -158,7 +158,7 @@ public abstract class Tram extends ModelBase {
      */
     public boolean canAddLine(Line line) {
         // can move to start since not yet deployed
-        if (getDestinationStation() == null && getCurrentPosition() == null)
+        if (this.getDestinationStation() == null && this.getCurrentPosition() == null)
             return true;
 
         var lineStartStation = line.getRoute().get(0);
@@ -168,7 +168,7 @@ public abstract class Tram extends ModelBase {
         // either can move destination same as start
         // or destination adjacent to startConnection
         if (this.getDestinationStation() != null && (this.getDestinationStation() == lineStartStation
-                || getDestinationStation().getAdjacntConnections().contains(lineStartConnection)))
+                || this.getDestinationStation().getAdjacentConnections().contains(lineStartConnection)))
             return true;
 
         // destination must be null, therefore position cannot be null, no check needed
@@ -177,9 +177,9 @@ public abstract class Tram extends ModelBase {
 
         // either can move from position to startStation
         // or position to startConnection
-        if (this.getCurrentPosition() == lineStartStation
+        if (getCurrentPosition() == lineStartStation
                 || (this.getCurrentPosition() instanceof Station
-                        && ((Station) this.getCurrentPosition()).getAdjacntConnections().contains(lineStartConnection))
+                        && ((Station) this.getCurrentPosition()).getAdjacentConnections().contains(lineStartConnection))
                 || (this.getCurrentPosition() instanceof Connection
                         && ((Connection) this.getCurrentPosition()).getDestinationStation() == lineStartStation)) {
             return true;

@@ -2,21 +2,22 @@ package de.fhe.ai.model;
 
 import de.fhe.ai.manager.EventManager;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class Station extends ModelBase implements ITraversable
 {
     private final String name;
-    private List<Connection> adjacentConnections;
+    private Set<Connection> adjacentConnections = new HashSet<>();
     private long waitingTime;
     private final int maxPassengers;
     private int actualPassengers;
 
-    public Station(int id, EventManager eventManager, String name, List<Connection> adjacentConnections, long waitingTime, int maxPassengers, int actualPassengers) {
+    public Station(int id, EventManager eventManager, String name, long waitingTime, int maxPassengers, int actualPassengers) {
         super(id, eventManager);
 
         this.name = name;
-        this.adjacentConnections = adjacentConnections;
         this.waitingTime = waitingTime;
         this.maxPassengers = maxPassengers;
         this.actualPassengers = actualPassengers;
@@ -24,8 +25,10 @@ public class Station extends ModelBase implements ITraversable
 
     public String getName() { return name; }
 
-    public List<Connection> getAdjacntConnections() { return adjacentConnections; }
-    public void setAdjacentConnections(List<Connection> adjacentConnections) { this.adjacentConnections = adjacentConnections; }
+    public Set<Connection> getAdjacentConnections() { return adjacentConnections; }
+    public void setAdjacentConnections(Set<Connection> adjacentConnections) { this.adjacentConnections = adjacentConnections; }
+    public void addAdjacentConnection(Connection adjacentConnection) { this.adjacentConnections.add(adjacentConnection); }
+    public void removeAdjacentConnection(Connection adjacentConnection) { this.adjacentConnections.remove(adjacentConnection); }
 
     public long getWaitingTime() { return waitingTime; }
     public void setWaitingTime(long waitingTime) { this.waitingTime = waitingTime; }

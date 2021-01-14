@@ -1,33 +1,34 @@
 package de.fhe.ai.model;
 
+import de.fhe.ai.manager.EventManager;
+
 import java.util.List;
 
-public class Station /*extends ModelBase*/ implements ITraversable {
-
+public class Station extends ModelBase implements ITraversable
+{
     private final String name;
-    private List<Connection> adjecentConnections;
+    private List<Connection> adjacentConnections;
     private long waitingTime;
     private final int maxPassengers;
     private int actualPassengers;
 
-    public Station(String name, int maxPassengers) {
+    public Station(int id, EventManager eventManager, String name, List<Connection> adjacentConnections, long waitingTime, int maxPassengers, int actualPassengers) {
+        super(id, eventManager);
+
         this.name = name;
+        this.adjacentConnections = adjacentConnections;
+        this.waitingTime = waitingTime;
         this.maxPassengers = maxPassengers;
+        this.actualPassengers = actualPassengers;
     }
 
     public String getName() { return name; }
 
-    public List<Connection> getAdjecentConnections() {
-        return adjecentConnections;
-    }
-    public void setAdjecentConnections(List<Connection> adjecentConnections) { this.adjecentConnections = adjecentConnections; }
+    public List<Connection> getAdjacntConnections() { return adjacentConnections; }
+    public void setAdjacentConnections(List<Connection> adjacentConnections) { this.adjacentConnections = adjacentConnections; }
 
-    public long getWaitingTime() {
-        return waitingTime;
-    }
-    public void setWaitingTime(long waitingTime) {
-        this.waitingTime = waitingTime;
-    }
+    public long getWaitingTime() { return waitingTime; }
+    public void setWaitingTime(long waitingTime) { this.waitingTime = waitingTime; }
 
     public int getMaxPassengers() { return maxPassengers; }
 

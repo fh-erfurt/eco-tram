@@ -5,19 +5,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class EventManager {
-
-    private static EventManager INSTANCE;
-
+public class EventManager
+{
+    private static EventManager INSTANCE; //Instance of SingletonPattern
     private final Map<Object,EventEntity> boundEventEntities = new HashMap<>();
 
+    //SingletonPattern
     public static EventManager getInstance() {
         if (INSTANCE == null)
             INSTANCE = new EventManager();
         return INSTANCE;
     }
 
-    private EventManager() {}
+    //Constructor
+    private EventManager() { }
+
 
     public EventEntity getEventEntity(Object object) {
         if(boundEventEntities.containsKey(object))
@@ -30,10 +32,8 @@ public class EventManager {
     }
 
     public void removeEventEntity(EventEntity eventEntity) {
-        boolean removed = boundEventEntities.entrySet()
-                .removeIf(entry -> entry.getValue().equals(eventEntity));
-
-        if(removed) eventEntity.removeAllListeners();
+        if(boundEventEntities.entrySet().removeIf(entry -> entry.getValue().equals(eventEntity)))
+            eventEntity.removeAllListeners();
     }
 
     public void removeEventEntityByObject(Object object) {
@@ -66,12 +66,12 @@ public class EventManager {
             String targetEvent = event == null ? "" : event;
 
             ArrayList<EventCallback> eventCallbacks = null;
-            if(callbacks.containsKey(targetEvent)) eventCallbacks = callbacks.get(targetEvent);
+            if(callbacks.containsKey(targetEvent))
+                eventCallbacks = callbacks.get(targetEvent);
             else {
                 eventCallbacks = new ArrayList<>();
                 callbacks.put(targetEvent, eventCallbacks);
             }
-
             eventCallbacks.add(eventCallback);
         }
 
@@ -119,12 +119,9 @@ public class EventManager {
         public void emit(String event) {
             this.emit(event,null);
         }
-
     }
 
     public interface EventCallback {
-
         void onEvent(Object entity, String event, Object data);
-
     }
 }

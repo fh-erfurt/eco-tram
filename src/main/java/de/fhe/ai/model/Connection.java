@@ -1,13 +1,13 @@
 package de.fhe.ai.model;
 
-public class Connection/* extends ModelBase*/ implements ITraversable {
+import de.fhe.ai.manager.EventManager;
 
+public class Connection extends ModelBase implements ITraversable
+{
     private int length;
     private int maximumWeight;
-
     private Station sourceStation;
     private Station destinationStation;
-
     private int traversionTime;
     private float trafficFactor;
 
@@ -20,14 +20,13 @@ public class Connection/* extends ModelBase*/ implements ITraversable {
      * @param traversionTime traversion time
      * @param trafficFactor traffic factor
      */
-    public Connection(/*int id,*/int length, int maximumWeight, Station sourceStation, Station destinationStation, int traversionTime, int trafficFactor) {
-        /*super(id);*/
+    public Connection(int id, EventManager eventManager, int length, int maximumWeight, Station sourceStation, Station destinationStation, int traversionTime, int trafficFactor) {
+        super(id, eventManager);
+
         this.length = length;
         this.maximumWeight = maximumWeight;
-
         this.sourceStation = sourceStation;
         this.destinationStation = destinationStation;
-
         this.traversionTime = traversionTime;
         this.trafficFactor = trafficFactor;
     }
@@ -39,11 +38,11 @@ public class Connection/* extends ModelBase*/ implements ITraversable {
      * @param sourceStation source station
      * @param destinationStation destination station
      */
-    public Connection(/*int id,*/int length, int maximumWeight, Station sourceStation, Station destinationStation) {
-        /*super(id);*/
+    public Connection(int id, EventManager eventManager, int length, int maximumWeight, Station sourceStation, Station destinationStation) {
+        super(id, eventManager);
+
         this.length = length;
         this.maximumWeight = maximumWeight;
-
         this.sourceStation = sourceStation;
         this.destinationStation = destinationStation;
     }
@@ -53,7 +52,7 @@ public class Connection/* extends ModelBase*/ implements ITraversable {
      * @return length of connection in meters
      */
     public int getLength() {
-        return this.length;
+        return length;
     }
 
     /**
@@ -69,7 +68,7 @@ public class Connection/* extends ModelBase*/ implements ITraversable {
      * @return maximum weight in kilograms
      */
     public int getMaximumWeight() {
-        return this.maximumWeight;
+        return maximumWeight;
     }
 
     /**
@@ -85,7 +84,7 @@ public class Connection/* extends ModelBase*/ implements ITraversable {
      * @return station object
      */
     public Station getSourceStation() {
-        return this.sourceStation;
+        return sourceStation;
     }
 
     /**
@@ -101,7 +100,7 @@ public class Connection/* extends ModelBase*/ implements ITraversable {
      * @return station object
      */
     public Station getDestinationStation() {
-        return this.destinationStation;
+        return destinationStation;
     }
 
     /**
@@ -114,17 +113,17 @@ public class Connection/* extends ModelBase*/ implements ITraversable {
 
     @Override
     public int getTraversionTime(int tramSpeed) {
-        return this.traversionTime;
+        return traversionTime;
     }
 
     @Override
     public boolean isTramAllowed(Tram tram) {
-        return tram.getWeight() <= this.maximumWeight;
+        return tram.getWeight() <= maximumWeight;
     }
 
     @Override
     public float getTrafficFactor() {
-        return this.trafficFactor;
+        return trafficFactor;
     }
 
     @Override

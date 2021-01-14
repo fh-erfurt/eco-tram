@@ -5,9 +5,8 @@ import de.fhe.ai.manager.EventManager;
 /**
  * A cass that represents tram for passenger transport
  */
-public class PassengerTram extends Tram {
-
-    // fields
+public class PassengerTram extends Tram
+{
     private final int maxPassengers;
     private int passengers;
 
@@ -28,20 +27,18 @@ public class PassengerTram extends Tram {
      */
     public PassengerTram(int id, EventManager eventManager, int maxPassengers, int weight, int speed, String tramType) {
         super(id, eventManager, weight, speed, tramType);
-        if (maxPassengers < 0) {
-            throw new IllegalArgumentException("MaxPassengers of tram `" + this + "` cannot to be negative.");
-        }
 
+        if (maxPassengers < 0)
+            throw new IllegalArgumentException("MaxPassengers of tram `" + this + "` cannot to be negative.");
         this.maxPassengers = maxPassengers;
     }
 
-    // #region Getters & Setters
     public int getMaxPassengers() {
-        return this.maxPassengers;
+        return maxPassengers;
     }
 
     public int getPassengers() {
-        return this.passengers;
+        return passengers;
     }
 
     /**
@@ -54,15 +51,10 @@ public class PassengerTram extends Tram {
      *                                  the maximum allowed number
      */
     public void addPassengers(int passengers) {
-        if (this.isOnConnection()) {
+        if (this.isOnConnection())
             throw new IllegalStateException("Cannot add passengers while on a connection.");
-        }
-
-        if (this.passengers + passengers > this.maxPassengers) {
-            throw new IllegalArgumentException("Cannot add more than " + (this.maxPassengers - this.passengers)
-                    + " passengers, tried to add " + passengers + " passengers.");
-        }
-
+        if (this.passengers + passengers > maxPassengers)
+            throw new IllegalArgumentException("Cannot add more than " + (maxPassengers - this.passengers) + " passengers, tried to add " + passengers + " passengers.");
         this.passengers += passengers;
     }
 
@@ -76,16 +68,10 @@ public class PassengerTram extends Tram {
      *                                  than there are in the tram
      */
     public void removePassengers(int passengers) {
-        if (this.isOnConnection()) {
+        if (this.isOnConnection())
             throw new IllegalStateException("Cannot remove passengers while on a connection.");
-        }
-
-        if (this.passengers - passengers < 0) {
-            throw new IllegalArgumentException("Cannot remove more than " + this.passengers
-                    + " passengers, tried to remove " + passengers + " passengers.");
-        }
-
+        if (this.passengers - passengers < 0)
+            throw new IllegalArgumentException("Cannot remove more than " + this.passengers + " passengers, tried to remove " + passengers + " passengers.");
         this.passengers -= passengers;
     }
-    // #endregion
 }

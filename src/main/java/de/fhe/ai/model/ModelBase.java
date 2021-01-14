@@ -6,8 +6,8 @@ import de.fhe.ai.manager.EventManager;
 /**
  * Provides a base class for all models
  */
-public abstract class ModelBase {
-
+public abstract class ModelBase
+{
     private final int id;
     protected final EventManager eventManager;
 
@@ -16,13 +16,9 @@ public abstract class ModelBase {
         this.eventManager = eventManager;
     }
 
-    public int getId() {
-        return id;
-    }
+    public int getId() { return id; }
 
-    protected EventManager getEventManager() {
-        return this.eventManager;
-    }
+    protected EventManager getEventManager() { return eventManager; }
 
     @Override
     public String toString() {

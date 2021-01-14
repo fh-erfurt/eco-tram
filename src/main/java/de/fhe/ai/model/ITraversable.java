@@ -1,7 +1,7 @@
 package de.fhe.ai.model;
 
-public interface ITraversable {
-
+public interface ITraversable
+{
     int getTraversionTime(int tramSpeed);
 
     boolean isTramAllowed(Tram tram);

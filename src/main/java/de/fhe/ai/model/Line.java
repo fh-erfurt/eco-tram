@@ -6,56 +6,45 @@ import java.util.ArrayList;
 
 public class Line extends ModelBase
 {
+    private final String name;
+    private final ArrayList<ITraversable> route;
 
-    private final ArrayList<ITraversable> route; //eingesetzte Bahn
-    private final String name; //Name der Linie
-
-    public Line(int id, EventManager eventManager, String name, ArrayList<ITraversable> route)
-    {
+    public Line(int id, EventManager eventManager, String name, ArrayList<ITraversable> route) {
         super(id, eventManager);
+
         this.name = name; 
         this.route = route; 
 
     }
-    
-    //getter (siehe Fahrplanbeispiel)
 
-    public String getName()
-    {
-        return this.name;
+
+    public String getName() {
+        return name;
     }
 
-    public ArrayList<ITraversable> getRoute()
-    {
-        return this.route; 
+    public ArrayList<ITraversable> getRoute() {
+        return route;
     }
-
-    /*Nur um zu sehen, wie setter aussehen würde 
-    
-    public void setName(String name)
-    {   
-        this.name = name; 
-    }*/
 
     /**
-
-     * gibt Endstation zurück 
-     * @return Station 
+     * Checks the stations in route and if the DestinationStation is inside
+     * @return Station
+     * otherwise
+     * @return null
      */
-    public Station getDestination()
+    public Station getDestinationStation()
     {
-        for(int i = this.route.size() - 1; i >= 0; i--)
+        for(int i = route.size() - 1; i >= 0; i--)
         {
-            ITraversable traversable = this.route.get(i);
+            ITraversable traversable = route.get(i);
             if(traversable instanceof Station)
                 return (Station) traversable;
         }
-
         return null; 
     }
 
     /**
-     * prüft ob Tram langfahren darf 
+     * Checks whether tram is allowed to pass
      * @param tram
      * @return boolean
      */
@@ -67,8 +56,6 @@ public class Line extends ModelBase
             if(!traversable.isTramAllowed(tram))
                 return false; 
         }
-
         return true; 
     }
-
 }

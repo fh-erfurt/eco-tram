@@ -9,8 +9,7 @@ import de.fhe.ai.manager.EventManager;
 /**
  * Provides a base class for all tram types
  */
-public abstract class Tram extends ModelBase
-{
+public abstract class Tram extends ModelBase {
     private final int weight;
     private final String tramType;
     private int speed;
@@ -25,10 +24,10 @@ public abstract class Tram extends ModelBase
      * @param id           the internal id of the tram
      * @param eventManager the eventManager used to communicate with the
      *                     TrafficManager, must be non-null
-     * @param weight       the total weight of the tram excluding passengers, must
-     *                     be a positive integer
-     * @param speed        the speed the tram will move at, must be a positive
-     *                     integer
+     * @param weight       the total weight of the tram excluding passengers in kg,
+     *                     must be a positive integer
+     * @param speed        the speed the tram will move at in km/h, must be a
+     *                     positive integer
      * @param tramType     the type identifier of the tram, must be non-null
      * @throws IllegalArgumentException if invalid parameters are passed
      */
@@ -47,18 +46,30 @@ public abstract class Tram extends ModelBase
         this.tramType = tramType;
     }
 
+    /**
+     * @return the given tram's weight in kg
+     */
     public int getWeight() {
         return weight;
     }
 
+    /**
+     * @return the given tram's speed in km/h
+     */
     public int getSpeed() {
         return speed;
     }
 
+    /**
+     * @return the given tram's type descriptor
+     */
     public String getTramType() {
         return tramType;
     }
 
+    /**
+     * @return the given tram's enqueued lines
+     */
     public Queue<Line> getPaths() {
         return queuedLines;
     }
@@ -77,14 +88,16 @@ public abstract class Tram extends ModelBase
      * 
      * @return the current position or {@code null} if none exists
      */
-    public ITraversable getCurrentPosition() { return currentLine != null ? currentLine.getRoute().get(currentIndex) : null; }
+    public Traversable getCurrentPosition() {
+        return currentLine != null ? currentLine.getRoute().get(currentIndex) : null;
+    }
 
     /**
      * Returns the next postiion if possible
      * 
      * @return the next position or {@code null} if none exists
      */
-    public ITraversable getNextPosition() {
+    public Traversable getNextPosition() {
         if (currentLine != null) {
             // path still has nextPosition
             if (currentLine.getRoute().size() - 1 >= currentIndex + 1)
@@ -93,7 +106,8 @@ public abstract class Tram extends ModelBase
             // nextPath exists and has nextPosition
             Line nextPath = queuedLines.peek();
             if (nextPath != null)
-                return getCurrentPosition() == nextPath.getRoute().get(0) ? nextPath.getRoute().get(1) : nextPath.getRoute().get(0); // prevent position == nextPosition
+                return getCurrentPosition() == nextPath.getRoute().get(0) ? nextPath.getRoute().get(1)
+                        : nextPath.getRoute().get(0); // prevent position == nextPosition
         }
         return null;
     }
@@ -126,13 +140,13 @@ public abstract class Tram extends ModelBase
                 currentLine = line;
             else
                 queuedLines.add(line);
-        }
-        else if (getDestinationStation() == null)
-            throw new IllegalStateException("Cannot directly move from current position `" + getCurrentPosition() + "` to path start `" + line.getRoute().get(0) + "`.");
+        } else if (getDestinationStation() == null)
+            throw new IllegalStateException("Cannot directly move from current position `" + getCurrentPosition()
+                    + "` to path start `" + line.getRoute().get(0) + "`.");
         else
-            throw new IllegalStateException("Cannot directly move from current destination `" + getDestinationStation() + "` to path start `" + line.getRoute().get(0) + "`.");
+            throw new IllegalStateException("Cannot directly move from current destination `" + getDestinationStation()
+                    + "` to path start `" + line.getRoute().get(0) + "`.");
     }
-
 
     /**
      * Checks whether or not a the tram can move from the current destination (or
@@ -153,9 +167,9 @@ public abstract class Tram extends ModelBase
         // can directly move from destination to start of line path
         // either can move destination same as start
         // or destination adjacent to startConnection
-        if (getDestinationStation() != null && (getDestinationStation() == lineStartStation || getDestinationStation().getAdjacntConnections().contains(lineStartConnection)))
+        if (this.getDestinationStation() != null && (this.getDestinationStation() == lineStartStation
+                || getDestinationStation().getAdjacntConnections().contains(lineStartConnection)))
             return true;
-
 
         // destination must be null, therefore position cannot be null, no check needed
         // instanceof Connection check not needed yet but might be later and increases
@@ -163,9 +177,11 @@ public abstract class Tram extends ModelBase
 
         // either can move from position to startStation
         // or position to startConnection
-        if (getCurrentPosition() == lineStartStation
-                || (getCurrentPosition() instanceof Station && ((Station) getCurrentPosition()).getAdjacntConnections().contains(lineStartConnection))
-                || (getCurrentPosition() instanceof Connection && ((Connection) getCurrentPosition()).getDestinationStation() == lineStartStation)) {
+        if (this.getCurrentPosition() == lineStartStation
+                || (this.getCurrentPosition() instanceof Station
+                        && ((Station) this.getCurrentPosition()).getAdjacntConnections().contains(lineStartConnection))
+                || (this.getCurrentPosition() instanceof Connection
+                        && ((Connection) this.getCurrentPosition()).getDestinationStation() == lineStartStation)) {
             return true;
         }
         return false;
@@ -186,7 +202,7 @@ public abstract class Tram extends ModelBase
      * @return true if the given tram is currently on a station; otherwise false
      */
     public boolean isOnStation() {
-        return getCurrentPosition() instanceof Station;
+        return this.getCurrentPosition() instanceof Station;
     }
 
     /**
@@ -195,7 +211,7 @@ public abstract class Tram extends ModelBase
      * @return true if the given tram is currently on a connection; otherwise false
      */
     public boolean isOnConnection() {
-        return getCurrentPosition() instanceof Connection;
+        return this.getCurrentPosition() instanceof Connection;
     }
 
     /**
@@ -205,7 +221,7 @@ public abstract class Tram extends ModelBase
      * @return {@code true} if it moved to an new position; otherwise {@code false}
      */
     public boolean moveForward() {
-        ITraversable prevPos = getCurrentPosition();
+        Traversable prevPos = getCurrentPosition();
 
         // preceed normally if path still has elements left
         if (currentLine.getRoute().size() - 1 >= currentIndex + 1) {
@@ -245,6 +261,7 @@ public abstract class Tram extends ModelBase
         queuedLines.clear();
         // TODO: use factory method to get temporary line
         // so far id is copied which means it is not uniqe
-        currentLine = new TemporaryLine(currentLine.getId(), currentLine.getEventManager(), new ArrayList<>(currentLine.getRoute().subList(0, currentIndex)));
+        currentLine = new TemporaryLine(currentLine.getId(), currentLine.getEventManager(),
+                new ArrayList<>(currentLine.getRoute().subList(0, currentIndex)));
     }
 }

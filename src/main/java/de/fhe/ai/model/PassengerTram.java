@@ -3,10 +3,9 @@ package de.fhe.ai.model;
 import de.fhe.ai.manager.EventManager;
 
 /**
- * A cass that represents tram for passenger transport
+ * A cass that represents {@link Tram} for passenger transport
  */
-public class PassengerTram extends Tram
-{
+public class PassengerTram extends Tram {
     private final int maxPassengers;
     private int passengers;
 
@@ -18,10 +17,10 @@ public class PassengerTram extends Tram
      *                      TrafficManager, must be non-null
      * @param maxPassengers the maximum capacity of passengers of the tram, must be
      *                      a positive integer
-     * @param weight        the total weight of the tram excluding passengers, must
-     *                      be a positive integer
-     * @param speed         the speed the tram will move at, must be a positive
-     *                      integer
+     * @param weight        the total weight of the tram excluding passengers in kg,
+     *                      must be a positive integer
+     * @param speed         the speed the tram will move at in km/h, must be a
+     *                      positive integer
      * @param tramType      the type identifier of the tram, must be non-null
      * @throws IllegalArgumentException if invalid parameters are passed
      */
@@ -42,7 +41,7 @@ public class PassengerTram extends Tram
     }
 
     /**
-     * Attempts to add the given number of passengers to the tram
+     * Attempts to add the given number of passengers to the given tram
      * 
      * @param passengers
      * @throws IllegalStateException    if it is attempted to add passengers while
@@ -54,12 +53,13 @@ public class PassengerTram extends Tram
         if (this.isOnConnection())
             throw new IllegalStateException("Cannot add passengers while on a connection.");
         if (this.passengers + passengers > maxPassengers)
-            throw new IllegalArgumentException("Cannot add more than " + (maxPassengers - this.passengers) + " passengers, tried to add " + passengers + " passengers.");
+            throw new IllegalArgumentException("Cannot add more than " + (maxPassengers - this.passengers)
+                    + " passengers, tried to add " + passengers + " passengers.");
         this.passengers += passengers;
     }
 
     /**
-     * Attempts to remove the given number of passengers from the tram
+     * Attempts to remove the given number of passengers from the given tram
      * 
      * @param passengers
      * @throws IllegalStateException    if it is attempted to remove passengers
@@ -71,7 +71,8 @@ public class PassengerTram extends Tram
         if (this.isOnConnection())
             throw new IllegalStateException("Cannot remove passengers while on a connection.");
         if (this.passengers - passengers < 0)
-            throw new IllegalArgumentException("Cannot remove more than " + this.passengers + " passengers, tried to remove " + passengers + " passengers.");
+            throw new IllegalArgumentException("Cannot remove more than " + this.passengers
+                    + " passengers, tried to remove " + passengers + " passengers.");
         this.passengers -= passengers;
     }
 }

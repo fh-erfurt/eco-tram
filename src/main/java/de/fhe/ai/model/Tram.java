@@ -153,7 +153,7 @@ public abstract class Tram extends ModelBase
         // can directly move from destination to start of line path
         // either can move destination same as start
         // or destination adjacent to startConnection
-        if (getDestinationStation() != null && (getDestinationStation() == lineStartStation || getDestinationStation().getAdjacntConnections().contains(lineStartConnection)))
+        if (getDestinationStation() != null && (getDestinationStation() == lineStartStation || getDestinationStation().getAdjacentConnections().contains(lineStartConnection)))
             return true;
 
 
@@ -164,7 +164,7 @@ public abstract class Tram extends ModelBase
         // either can move from position to startStation
         // or position to startConnection
         if (getCurrentPosition() == lineStartStation
-                || (getCurrentPosition() instanceof Station && ((Station) getCurrentPosition()).getAdjacntConnections().contains(lineStartConnection))
+                || (getCurrentPosition() instanceof Station && ((Station) getCurrentPosition()).getAdjacentConnections().contains(lineStartConnection))
                 || (getCurrentPosition() instanceof Connection && ((Connection) getCurrentPosition()).getDestinationStation() == lineStartStation)) {
             return true;
         }

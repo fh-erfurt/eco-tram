@@ -204,11 +204,11 @@ public abstract class Tram extends ModelBase {
         if (currentLine != null) {
             // skip A to A movement
             currentIndex = currentLine.getRoute().get(0) == prevPos ? 1 : 0;
-            this.getEventManager().getOrCreateEventEntity(TrafficManager.getInstance()).emit("TRAM_PATH_SWITCHED", this);
+            this.getEventManager().getOrCreateEventEntity(this).emit("TRAM_PATH_SWITCHED", this.currentLine);
             return true;
         }
 
-        this.getEventManager().getOrCreateEventEntity(TrafficManager.getInstance()).emit("TRAM_PATH_END_REACHED", this);
+        this.getEventManager().getOrCreateEventEntity(this).emit("TRAM_PATH_END_REACHED");
         return false;
     }
 

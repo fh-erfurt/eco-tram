@@ -21,7 +21,7 @@ public abstract class Traversable extends ModelBase {
      * 
      * @throws IllegalArgumentException if invalid arguments are passed
      */
-    public Traversable(int id, EventManager eventManager, float length, int maxWeight, int trafficFactor) {
+    public Traversable(int id, EventManager eventManager, float length, int maxWeight, float trafficFactor) {
         super(id, eventManager);
 
         if (length <= 0) {

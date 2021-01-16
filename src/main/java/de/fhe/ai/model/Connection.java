@@ -11,19 +11,19 @@ public class Connection extends Traversable {
     private final Station destinationStation;
 
     /**
-     * Initializes the connection class instance and sets the default parameters
+     * Initializes a new Connection
      * 
-     * @param id                 the internal id of the traversable
+     * @param id                 the internal id of the connection
      * @param eventManager       the eventManager used to communicate with the TrafficManager, must be non-null
      * @param sourceStation      the source station, must be non-null
      * @param destinationStation the destination station, must be non-null
-     * @param length             the length of the traversable in km, must be above 0
+     * @param length             the length of the connection in km, must be above 0
      * @param maxWeight          the maximum allowed weight of a traverser, must be above 0
      * @param trafficFactor      the traversion factor, must be between 0 and 1.0f
      * 
      * @throws IllegalArgumentException if invalid arguments are passed
      */
-    public Connection(int id, EventManager eventManager, Station sourceStation, Station destinationStation, float length, int maxWeight, int trafficFactor) {
+    public Connection(int id, EventManager eventManager, Station sourceStation, Station destinationStation, float length, int maxWeight, float trafficFactor) {
         super(id, eventManager, length, maxWeight, trafficFactor);
 
         if (sourceStation == null)

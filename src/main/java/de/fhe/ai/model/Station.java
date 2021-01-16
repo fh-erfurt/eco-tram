@@ -22,31 +22,27 @@ public class Station extends Traversable {
 
     /**
      * Initializes a new Station
-     * @param id               the internal id of the tram
+     * 
+     * @param id               the internal id of the station
      * @param eventManager     the eventManager used to communicate with the TrafficManager, must be non-null
      * @param name             the name of the station for public use, must be non-null and not empty
      * @param waitingTime      the waiting time of this conenction in ???
      * @param maxPassengers    the maximum amount of passengers that can be present on this station
-     * @param actualPassengers the actual amount of passengers that are present on this station, must be lower than or equal to maxPassengers
      * @param length           the length of this station in km
      * @param maxWeight        the maximum allowed weight of a traverser, must be above positive or 0
      * @param trafficFactor    the traversion factor, must be between 0 and 1.0f
      * 
      * @throws IllegalArgumentException if invalid arguments are passed
      */
-    public Station(int id, EventManager eventManager, String name, long waitingTime, int maxPassengers, int actualPassengers, float length, int maxWeight, int trafficFactor) {
+    public Station(int id, EventManager eventManager, String name, long waitingTime, int maxPassengers, float length, int maxWeight, float trafficFactor) {
         super(id, eventManager, length, maxWeight, trafficFactor);
 
         if (name == null || name == "")
             throw new IllegalArgumentException("Name of `" + this + "` cannot be null or empty.");
 
-        if (maxPassengers < actualPassengers)
-            throw new IllegalArgumentException("Passengers of `" + this + "` cannot be larger than max passengers.");
-
         this.name = name;
         this.waitingTime = waitingTime;
         this.maxPassengers = maxPassengers;
-        this.currentPassengers = actualPassengers;
     }
 
     //#region Getters & Setters

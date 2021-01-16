@@ -6,9 +6,9 @@ import de.fhe.ai.manager.EventManager;
  * A class that represents something that can be traversed by a {@link Tram}
  */
 public abstract class Traversable extends ModelBase {
-    private final int maxWeight;
+    private final int   maxWeight;
     private final float length;
-    private float trafficFactor;
+    private float       trafficFactor; // [0..1.0f] defines percentage of traverser speed that is actively usable
 
     /**
      * Initializes a new Traversable

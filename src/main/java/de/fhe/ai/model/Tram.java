@@ -11,12 +11,12 @@ import de.fhe.ai.manager.TrafficManager;
  * Provides a base class for all tram types
  */
 public abstract class Tram extends ModelBase {
-    private final int weight;
-    private final String tramType;
-    private int speed;
-    private Line currentLine;
-    private int currentIndex;
-    private ArrayDeque<Line> queuedLines = new ArrayDeque<>();
+    private final int        weight;
+    private final String     tramType;
+    private int              speed;
+    private Line             currentLine;
+    private int              currentIndex;                     // index of position in currentLine
+    private ArrayDeque<Line> queuedLines = new ArrayDeque<>(); // lines that follow after completion of currentLine
 
     /**
      * Initializes a new Tram
@@ -214,11 +214,11 @@ public abstract class Tram extends ModelBase {
         if (currentLine != null) {
             // skip A to A movement
             currentIndex = currentLine.getRoute().get(0) == prevPos ? 1 : 0;
-            this.eventManager.getEventEntity(TrafficManager.getInstance()).emit("TRAM_PATH_SWITCHED", this);
+            this.getEventManager().getEventEntity(TrafficManager.getInstance()).emit("TRAM_PATH_SWITCHED", this);
             return true;
         }
 
-        this.eventManager.getEventEntity(TrafficManager.getInstance()).emit("TRAM_PATH_END_REACHED", this);
+        this.getEventManager().getEventEntity(TrafficManager.getInstance()).emit("TRAM_PATH_END_REACHED", this);
         return false;
     }
 

@@ -5,22 +5,27 @@ import de.fhe.ai.manager.EventManager;
 import java.util.HashSet;
 import java.util.Set;
 
+// TODO: define waitingTime dimension and add factor to accomodate the conversion from said dimension to hours
+// to change:
+//     description of parameter in constructor
+//     conversion from waitingTime in getTraversionTime(), waitingTimecurrently assumed to be given in hours
+
 /**
  * A class that represents a Station for {@link Tram}s to stop at and exchange passengers
  */
 public class Station extends Traversable {
-    private final String name;
-    private long waitingTime;
-    private final int maxPassengers;
-    private int actualPassengers;
-    private Set<Connection> adjacentConnections = new HashSet<>();
+    private final String    name;
+    private final int       maxPassengers;
+    private int             currentPassengers;
+    private long            waitingTime;
+    private Set<Connection> adjacentConnections = new HashSet<>(); // set of connections that lead form this Station to another station (one-directional)
 
     /**
      * Initializes a new Station
      * @param id               the internal id of the tram
      * @param eventManager     the eventManager used to communicate with the TrafficManager, must be non-null
      * @param name             the name of the station for public use, must be non-null and not empty
-     * @param waitingTime      the waiting time of this conenction
+     * @param waitingTime      the waiting time of this conenction in ???
      * @param maxPassengers    the maximum amount of passengers that can be present on this station
      * @param actualPassengers the actual amount of passengers that are present on this station, must be lower than or equal to maxPassengers
      * @param length           the length of this station in km
@@ -41,7 +46,7 @@ public class Station extends Traversable {
         this.name = name;
         this.waitingTime = waitingTime;
         this.maxPassengers = maxPassengers;
-        this.actualPassengers = actualPassengers;
+        this.currentPassengers = actualPassengers;
     }
 
     //#region Getters & Setters
@@ -57,23 +62,23 @@ public class Station extends Traversable {
 
     public int getMaxPassengers() { return maxPassengers; }
 
-    public int getActualPassengers() { return actualPassengers; }
+    public int getCurrentPassengers() { return currentPassengers; }
 
     /**
      * Attemps to set the current amount of passengers to the given value
      * 
-     * @param actualPassengers the passengers to set the current station's amount to
+     * @param currentPassengers the passengers to set the current station's amount to
      * 
      * @exception IllegalArgumentException if the given amount of passengers exceeds the allowed maximum passengers
      */
-    public void setActualPassengers(int actualPassengers) {
-        if (this.maxPassengers < actualPassengers)
+    public void setCurrentPassengers(int currentPassengers) {
+        if (this.maxPassengers < currentPassengers)
             throw new IllegalArgumentException("Passengers of `" + this + "` cannot be larger than max passengers.");
 
-        this.actualPassengers = actualPassengers;
+        this.currentPassengers = currentPassengers;
     }
     //#endregion
 
     @Override
-    public float getTraversionTime(Tram tram) { return (this.getTrafficFactor() * (this.getLength() / tram.getSpeed()) + this.getWaitingTime()); }
+    public float getTraversionTime(Tram tram) { return (this.getTrafficFactor() * (this.getLength() / tram.getSpeed()) + /* factor 1 */ this.getWaitingTime()); }
 }

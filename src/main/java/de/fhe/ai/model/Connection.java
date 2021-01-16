@@ -6,9 +6,9 @@ import de.fhe.ai.manager.EventManager;
  * A class that represents a one-directional connecton between two {@link Station}s
  */
 public class Connection extends Traversable {
-    private int maximumWeight;
-    private Station sourceStation;
-    private Station destinationStation;
+    private int           maximumWeight;
+    private final Station sourceStation;
+    private final Station destinationStation;
 
     /**
      * Initializes the connection class instance and sets the default parameters
@@ -38,7 +38,6 @@ public class Connection extends Traversable {
 
     //#region Getters & Setters
     public int getMaximumWeight() { return maximumWeight; }
-
     public void setMaximumWeight(int maximumWeight) { this.maximumWeight = maximumWeight; }
 
     public Station getSourceStation() { return sourceStation; }

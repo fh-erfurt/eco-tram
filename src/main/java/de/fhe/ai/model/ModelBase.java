@@ -6,8 +6,8 @@ import de.fhe.ai.manager.EventManager;
  * Provides a base class for all models
  */
 public abstract class ModelBase {
-    private final int id;
-    protected final EventManager eventManager;
+    private final int          id;           // internal id iven by the model factory for easy comparison and identification
+    private final EventManager eventManager; // communication interface with the traffic manager that controls this model
 
     /**
      * Initalizes a new ModelBase

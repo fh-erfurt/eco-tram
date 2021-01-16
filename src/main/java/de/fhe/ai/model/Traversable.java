@@ -3,59 +3,67 @@ package de.fhe.ai.model;
 import de.fhe.ai.manager.EventManager;
 
 /**
- * A class that represents something that can be traversed by a
- * {@link PassengerTram}
+ * A class that represents something that can be traversed by a {@link Tram}
  */
 public abstract class Traversable extends ModelBase {
-
-    // instance fields
-    private final int maximumWeight;
+    private final int maxWeight;
     private final float length;
     private float trafficFactor;
 
-    public Traversable(int id, EventManager eventManager, float length, int maximumWeight, int trafficFactor) {
+    /**
+     * Initializes a new Traversable
+     * 
+     * @param id            the internal id of the traversable
+     * @param eventManager  the eventManager used to communicate with the TrafficManager, must be non-null
+     * @param length        the length of the traversable in km, must be above 0
+     * @param maxWeight     the maximum allowed weight of a traverser, must be above positive or 0
+     * @param trafficFactor the traversion factor, must be between 0 and 1.0f
+     * 
+     * @throws IllegalArgumentException if invalid arguments are passed
+     */
+    public Traversable(int id, EventManager eventManager, float length, int maxWeight, int trafficFactor) {
         super(id, eventManager);
 
+        if (length <= 0) {
+            throw new IllegalArgumentException("Length of `" + this + "` cannot be 0 or negative.");
+        } else if (maxWeight < 0) {
+            throw new IllegalArgumentException("MaxWeight of `" + this + "` cannot be negative.");
+        } else if (trafficFactor < 0 || trafficFactor > 1.0f) {
+            throw new IllegalArgumentException("TrafficFactor of `" + this + "` cannot be above 1.0f or negative.");
+        }
+
         this.length = length;
-        this.maximumWeight = maximumWeight;
+        this.maxWeight = maxWeight;
         this.trafficFactor = trafficFactor;
     }
 
     // #region Getters & Setters
-
     /**
-     * @return the given traversable's length in kilometers
+     * @return the given traversable's length in km
      */
-    public float getLength() {
-        return this.length;
-    }
-
-    /**
-     * @return the given traversable's traversion factor
-     */
-    public float getTrafficFactor() {
-        return this.trafficFactor;
-    }
+    public float getLength() { return this.length; }
 
     /**
      * @return the given traversable's maximum allowed traversion weight in kg
      */
-    public int getMaximumWeight() {
-        return this.maximumWeight;
-    }
+    public int getMaximumWeight() { return this.maxWeight; }
 
+    /**
+     * @return the given traversable's traversion factor
+     */
+    public float getTrafficFactor() { return this.trafficFactor; }
+    
     /**
      * Attempts to set the current traffic factor of the given traversable, that is
      * a percentage of a traverser top speed can be used freely while traversion
      * 
-     * @param trafficFactor the new traffic factor, this value should be between 0
-     *                      and 1.0
-     * @exception IllegalArgumentException if the traffic factor is below 0 or above
-     *                                     1.0
+     * @param trafficFactor the new traffic factor, this value should be between 0 and 1.0f
+     * 
+     * @exception IllegalArgumentException if the traffic factor is below 0 or above 1.0f
      */
     public void setTrafficFactor(float trafficFactor) {
-        if (trafficFactor < 0 || trafficFactor > 1.0) {
-            throw new IllegalArgumentException("The traffic factor can only be a value between 0f and 1.0f.");
+        if (trafficFactor < 0 || trafficFactor > 1.0f) {
+            throw new IllegalArgumentException("TrafficFactor of `" + this + "` cannot be above 1.0f or negative.");
         }
 
         this.trafficFactor = trafficFactor;
@@ -73,9 +81,10 @@ public abstract class Traversable extends ModelBase {
     }
 
     /**
+     * Checks whether a given tram is allowed to traverse this traversable
+     * 
      * @param tram the tram to check for
-     * @return {@code true} if the given tram can traverse this traversable;
-     *         otherwise {@code false}
+     * @return {@code true} if the given tram can traverse this traversable; otherwise {@code false}
      */
     public boolean isTramAllowed(Tram tram) {
         return tram.getWeight() <= this.getMaximumWeight();

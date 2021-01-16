@@ -13,23 +13,27 @@ public abstract class ModelBase {
      * Initalizes a new ModelBase
      * 
      * @param id           the internal id of the tram
-     * @param eventManager the eventManager used to communicate with the
-     * @throws IllegalArgumentException if invalid parameters are passed
+     * @param eventManager the eventManager used to communicate with the TrafficManager, must be non-null
+     * 
+     * @throws IllegalArgumentException if invalid arguments are passed
      */
     public ModelBase(int id, EventManager eventManager) {
-        if (eventManager == null) {
-            throw new IllegalArgumentException("TramType of tram `" + this + "` cannot be null.");
-        }
+        if (eventManager == null)
+            throw new IllegalArgumentException("TramType of `" + this + "` cannot be null.");
 
         this.id = id;
         this.eventManager = eventManager;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    protected EventManager getEventManager() {
-        return eventManager;
-    }
+    //#region Getters & Setters
+    /**
+     * @return the internal id of this model
+     */
+    public int getId() { return id; }
+    
+    /**
+     * @return the EventManager used for this model
+     */
+    protected EventManager getEventManager() { return eventManager; }
+    //#endregion
 }

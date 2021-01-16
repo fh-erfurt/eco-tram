@@ -7,9 +7,9 @@ import java.util.ArrayList;
 public class Line extends ModelBase
 {
     private final String name;
-    private final ArrayList<ITraversable> route;
+    private final ArrayList<Traversable> route;
 
-    public Line(int id, EventManager eventManager, String name, ArrayList<ITraversable> route) {
+    public Line(int id, EventManager eventManager, String name, ArrayList<Traversable> route) {
         super(id, eventManager);
 
         this.name = name; 
@@ -22,7 +22,7 @@ public class Line extends ModelBase
         return name;
     }
 
-    public ArrayList<ITraversable> getRoute() {
+    public ArrayList<Traversable> getRoute() {
         return route;
     }
 
@@ -36,7 +36,7 @@ public class Line extends ModelBase
     {
         for(int i = route.size() - 1; i >= 0; i--)
         {
-            ITraversable traversable = route.get(i);
+            Traversable traversable = route.get(i);
             if(traversable instanceof Station)
                 return (Station) traversable;
         }
@@ -52,7 +52,7 @@ public class Line extends ModelBase
     {
         for(int i = 0; i < this.route.size(); i++)
         {
-            ITraversable traversable = this.route.get(i);
+            Traversable traversable = this.route.get(i);
             if(!traversable.isTramAllowed(tram))
                 return false; 
         }

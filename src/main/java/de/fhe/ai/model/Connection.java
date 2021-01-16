@@ -2,132 +2,47 @@ package de.fhe.ai.model;
 
 import de.fhe.ai.manager.EventManager;
 
-public class Connection extends ModelBase implements ITraversable
-{
-    private int length;
+/**
+ * A class that represents a one-directional connecton between two {@link Station}s
+ */
+public class Connection extends Traversable {
     private int maximumWeight;
     private Station sourceStation;
     private Station destinationStation;
-    private int traversionTime;
-    private float trafficFactor;
 
     /**
      * Initializes the connection class instance and sets the default parameters
-     * @param length length of the connection in meters
-     * @param maximumWeight maximum weight in kilograms
-     * @param sourceStation source station
-     * @param destinationStation destination station
-     * @param traversionTime traversion time
-     * @param trafficFactor traffic factor
+     * 
+     * @param id                 the internal id of the traversable
+     * @param eventManager       the eventManager used to communicate with the TrafficManager, must be non-null
+     * @param sourceStation      the source station, must be non-null
+     * @param destinationStation the destination station, must be non-null
+     * @param length             the length of the traversable in km, must be above 0
+     * @param maxWeight          the maximum allowed weight of a traverser, must be above 0
+     * @param trafficFactor      the traversion factor, must be between 0 and 1.0f
+     * 
+     * @throws IllegalArgumentException if invalid arguments are passed
      */
-    public Connection(int id, EventManager eventManager, int length, int maximumWeight, Station sourceStation, Station destinationStation, int traversionTime, int trafficFactor) {
-        super(id, eventManager);
+    public Connection(int id, EventManager eventManager, Station sourceStation, Station destinationStation, float length, int maxWeight, int trafficFactor) {
+        super(id, eventManager, length, maxWeight, trafficFactor);
 
-        this.length = length;
-        this.maximumWeight = maximumWeight;
-        this.sourceStation = sourceStation;
-        this.destinationStation = destinationStation;
-        this.traversionTime = traversionTime;
-        this.trafficFactor = trafficFactor;
-    }
+        if (sourceStation == null)
+            throw new IllegalArgumentException("SourceStation of `" + this + "` cannot to be null.");
+        if (destinationStation == null)
+            throw new IllegalArgumentException("DestinationStation of `" + this + "` cannot to be null.");
 
-    /**
-     * Initializes the connection class instance and sets the default parameters
-     * @param length length of the connection in meters
-     * @param maximumWeight maximum weight in kilograms
-     * @param sourceStation source station
-     * @param destinationStation destination station
-     */
-    public Connection(int id, EventManager eventManager, int length, int maximumWeight, Station sourceStation, Station destinationStation) {
-        super(id, eventManager);
-
-        this.length = length;
-        this.maximumWeight = maximumWeight;
+        this.maximumWeight = maxWeight;
         this.sourceStation = sourceStation;
         this.destinationStation = destinationStation;
     }
 
-    /**
-     * Returns the length of the given connection
-     * @return length of connection in meters
-     */
-    public int getLength() {
-        return length;
-    }
+    //#region Getters & Setters
+    public int getMaximumWeight() { return maximumWeight; }
 
-    /**
-     * Updates the length of the given connection
-     * @param length length of the connection in meters
-     */
-    public void setLength(int length) {
-        this.length = length;
-    }
+    public void setMaximumWeight(int maximumWeight) { this.maximumWeight = maximumWeight; }
 
-    /**
-     * Returns the maximum weight of the given connection
-     * @return maximum weight in kilograms
-     */
-    public int getMaximumWeight() {
-        return maximumWeight;
-    }
+    public Station getSourceStation() { return sourceStation; }
 
-    /**
-     * Updates the maximum weight of the given connection
-     * @param maximumWeight maximum weight in kilograms
-     */
-    public void setMaximumWeight(int maximumWeight) {
-        this.maximumWeight = maximumWeight;
-    }
-
-    /**
-     * Returns the source station
-     * @return station object
-     */
-    public Station getSourceStation() {
-        return sourceStation;
-    }
-
-    /**
-     * Updates the source station
-     * @param station source station
-     */
-    public void setSourceStation(Station station) {
-        this.sourceStation = station;
-    }
-
-    /**
-     * Returns the second station
-     * @return station object
-     */
-    public Station getDestinationStation() {
-        return destinationStation;
-    }
-
-    /**
-     * Updates the destination station
-     * @param station destination station
-     */
-    public void setDestinationStation(Station station) {
-        this.destinationStation = station;
-    }
-
-    @Override
-    public int getTraversionTime(int tramSpeed) {
-        return traversionTime;
-    }
-
-    @Override
-    public boolean isTramAllowed(Tram tram) {
-        return tram.getWeight() <= maximumWeight;
-    }
-
-    @Override
-    public float getTrafficFactor() {
-        return trafficFactor;
-    }
-
-    @Override
-    public void setTrafficFactor(float trafficFactor) {
-        this.trafficFactor = trafficFactor;
-    }
+    public Station getDestinationStation() { return destinationStation; }
+    //#endregion
 }

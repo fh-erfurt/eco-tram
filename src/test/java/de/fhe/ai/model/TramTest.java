@@ -25,24 +25,14 @@ public class TramTest {
 
     @Before
     public void before_each() {
-        this.tram = new PassengerTram(0, null, 0, 0, 0, "testTram");
-        this.station1 = new Station("testStation1", 0);
-        this.station2 = new Station("testStation2", 0);
-        this.connection12 = new Connection(0, 0, station1, station2, 0, 0);
-        this.connection21 = new Connection(0, 0, station2, station1, 0, 0);
+        this.tram = new PassengerTram(-1, null, 0, 0, 0, "testTram");
+        this.station1 = new Station(-1, null, "testStation1", 0l, 500, 0.5f, 5000, 1.0f);
+        this.station2 = new Station(-1, null, "testStation2", 0l, 500, 0.5f, 5000, 1.0f);
+        this.connection12 = new Connection(-1, null, station1, station2, 2.5f, 5000, 1.0f);
+        this.connection21 = new Connection(-1, null, station2, station1, 2.5f, 5000, 1.0f);
 
-        station1.setAdjecentConnections(new ArrayList<>() {
-            {
-                add(connection12);
-                add(connection21);
-            }
-        });
-        station2.setAdjecentConnections(new ArrayList<>() {
-            {
-                add(connection12);
-                add(connection21);
-            }
-        });
+        station1.addAdjacentConnection(connection12);
+        station2.addAdjacentConnection(connection21);
         this.line1 = new Line(-1, EventManager.getInstance(), "testLine", new ArrayList<>() {
             {
                 add(station1);

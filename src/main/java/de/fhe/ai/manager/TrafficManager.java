@@ -11,15 +11,13 @@ import java.util.stream.Collectors;
 /**
  * A class that actively manages traffic for the current tram network
  */
-public class TrafficManager
-{
-    private static TrafficManager INSTANCE; // Instance of SingletonPattern
-
-    private final Set<Tram> trams = new HashSet<Tram>();
-    private final Set<Line> lines = new HashSet<Line>();
+public class TrafficManager {
+    private final Set<Tram>          trams = new HashSet<Tram>();
+    private final Set<Line>          lines = new HashSet<Line>();
     private final Set<TemporaryLine> temporarylines = new HashSet<TemporaryLine>();
 
-    //SingletonPattern
+    //#region SingletonPattern
+    private static TrafficManager INSTANCE; // Instance of SingletonPattern
     public static TrafficManager getInstance() {
         if (INSTANCE == null)
             INSTANCE = new TrafficManager();
@@ -27,49 +25,102 @@ public class TrafficManager
     }
 
     private TrafficManager() { }
+    //#endregion
 
-    public void addLine(Line line) {
-        this.lines.add(line);
+    //#region Getters & Setters
+    /**
+     * Attempts to add a line to the lines managed by this traffic manager
+     * 
+     * @param line the line to add to the current lines
+     * 
+     * @return {@code true} if the given line was not yet in the set and added successfully; otherwise {@code false}
+     */
+    public boolean addLine(Line line) { return this.lines.add(line); }
+
+    /**
+     * Attempts to remove a line from the lines managed by this traffic manager
+     * 
+     * @param line the line to add to the current lines
+     * 
+     * @return {@code true} if the given line was in the set of current lines and removed succesfully; otherwise {@code false}
+     */
+    public boolean removeLine(Line line) { return this.lines.remove(line); }
+    
+    /**
+     * Attempts to add a temporary line to the temporary lines managed by this traffic manager
+     * 
+     * @param temporaryline the line to add to the current temporary lines
+     * 
+     * @return {@code true} if the given temporary line was not yet in the set and added successfully lines; otherwise {@code false}
+     */
+    public boolean addTemporaryLine(TemporaryLine temporaryline) { return this.temporarylines.add(temporaryline); }
+
+    /**
+     * Attempts to remove a temporary line from the temporary lines managed by this traffic manager
+     * 
+     * @param temporaryLine the line to add to the current temporary lines
+     * 
+     * @return {@code true} if the given temporary line was in the set of temporary lines and removed succesfully lines; otherwise {@code false}
+     */
+    public boolean removeTemporaryLine(TemporaryLine temporaryLine) { return this.temporarylines.remove(temporaryLine); }
+    /**
+     * Attempts to add a tram to the trams managed by this traffic manager
+     * 
+     * @param tram the line to add to the current trams
+     * 
+     * @return {@code true} if the given tram was not yet in the set and added successfully; otherwise {@code false}
+     */
+    public boolean addTram(Tram tram) { return this.trams.add(tram); }
+
+    /**
+     * Attempts to remove a tram from the trams managed by this traffic manager
+     * 
+     * @param tram the line to add to the current trams
+     * 
+     * @return {@code true} if the given tram was in the set of trams and removed succesfully; otherwise {@code false}
+     */
+    public boolean removeTram(Tram tram) { return this.trams.remove(tram); }
+    //#endregion
+
+    public boolean isStationInUse(Station station) {
+        return trams.stream().anyMatch(tram -> tram.getCurrentPosition().equals(station));
     }
 
-    public void removeLine(Line line) {
-        this.lines.remove(line);
+    public List<Tram> getTramsInLine(Line line) {
+        return trams.stream().filter(tram -> tram.getPaths().contains(line)).collect(Collectors.toList());
     }
 
-    public void addTemporaryLine(TemporaryLine temporaryline) {
-        this.temporarylines.add(temporaryline);
-    }
-
-    public void removeTemporaryLine(TemporaryLine temporaryline) {
-        this.temporarylines.remove(temporaryline);
-    }
-
-    public void addTram(Tram tram) {
-        this.trams.add(tram);
-    }
-
-    public void removeTram(Tram tram) {
-        this.trams.remove(tram);
-    }
-
-    public boolean isStationInUse(Station station) { return trams.stream().anyMatch(tram -> tram.getCurrentPosition().equals(station)); }
-
-    public boolean isTramInUse(Tram tram) {
-        return tram.isInUse();
-    }
-
-    public List<Tram> getTramsInLine(Line line) { return trams.stream().filter(tram -> tram.getPaths().contains(line)).collect(Collectors.toList()); }
-
+    /**
+     * Attempts to assign a tram to new lines that are added after all it's current lines
+     * 
+     * @param tram the tram to assign
+     * @param lines the lines to assign the tram to
+     * 
+     * @exception IllegalArgumentException if the lines paths are not directly traversable, that is that moving from destination1 to start2
+     */
     public void assignTram(Tram tram, Collection<Line> lines) {
         for (Line line : lines) {
             tram.addLine(line);
         }
     }
 
+    /**
+     * Works similar to {@link #assignTram(Tram tram)} but sends the tram directly to the new lines
+     * 
+     * @param tram the tram to reassign
+     * @param lines the lines to assign the tram to
+     * 
+     * @exception IllegalArgumentException if the lines paths are not directly traversable, that is that moving from destination1 to start2
+     */
     public void reassignTram(Tram tram, TemporaryLine line) {
         tram.reassign(line);
     }
 
+    /**
+     * Stops a tram at the current position without giving it any new lines
+     * 
+     * @param tram the tram to unassign
+     */
     public void unassignTram(Tram tram) {
         tram.unassign();
     }

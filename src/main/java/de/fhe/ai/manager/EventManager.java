@@ -67,6 +67,17 @@ public class EventManager {
     }
 
     /**
+     * Same as {@link #emitToAllEntitiesOfType(Class<?> target, String event, Object data)} but emits the given event with no data
+     * 
+     * @param target the type of the entities that shold recieve the event
+     * @param event  the event to emit
+     */
+    public void emitToAllEntitiesOfType(Class<?> target, String event) {
+        boundEventEntities.entrySet().stream().filter(entry -> entry.getKey().getClass().equals(target))
+                .forEach(entry -> entry.getValue().emit(event, null));
+    }
+
+    /**
      * A class that represents an event entity bound to a runtime-object which manages event callbacks for said object
      */
     public static class EventEntity {

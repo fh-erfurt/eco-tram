@@ -51,7 +51,7 @@ public class PassengerTram extends Tram {
         this.currentPassengers += passengers;
 
         if (this.currentPassengers == this.maxPassengers)
-            this.getEventManager().getOrCreateEventEntity(this).emit("MAXIMUM_PASSENGERS_REACHED");
+            this.getEventManager().emitToAllEntitiesOfType(TrafficManager.class, "MAXIMUM_PASSENGERS_REACHED");
     }
 
     /**
@@ -71,7 +71,7 @@ public class PassengerTram extends Tram {
         this.currentPassengers -= passengers;
 
         if (this.currentPassengers == 0)
-            this.getEventManager().getOrCreateEventEntity(this).emit("MINIMUM_PASSENGERS_REACHED");
+            this.getEventManager().emitToAllEntitiesOfType(TrafficManager.class, "MINIMUM_PASSENGERS_REACHED");
     }
     //#endregion
 }

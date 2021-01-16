@@ -1,7 +1,6 @@
 package de.fhe.ai.model;
 
-import de.fhe.ai.manager.EventManager;
-import de.fhe.ai.manager.TrafficManager;
+import de.fhe.ai.manager.*;
 
 /**
  * A class that represents {@link Tram} for passenger transport
@@ -33,7 +32,7 @@ public class PassengerTram extends Tram {
 
     //#region Getters & Setters
     public int getMaxPassengers() { return maxPassengers; }
-    public int getPassengers() { return currentPassengers; }
+    public int getCurrentPassengers() { return currentPassengers; }
 
     /**
      * Attempts to add the given number of passengers to the given tram
@@ -45,14 +44,14 @@ public class PassengerTram extends Tram {
      */
     public void addPassengers(int passengers) {
         if (this.isOnConnection())
-        throw new IllegalStateException("Cannot add passengers to `" + this + "` while on connection.");
+            throw new IllegalStateException("Cannot add passengers to `" + this + "` while on connection.");
         if (this.currentPassengers + passengers > maxPassengers)
-        throw new IllegalStateException("Cannot add more passengers to `" + this + "` than max allowed passengers.");
-        
+            throw new IllegalStateException("Cannot add more passengers to `" + this + "` than max allowed passengers.");
+
         this.currentPassengers += passengers;
-        
+
         if (this.currentPassengers == this.maxPassengers)
-        this.getEventManager().getEventEntity(TrafficManager.getInstance()).emit("MAXIMUM_PASSENGERS_REACHED", this);
+            this.getEventManager().getOrCreateEventEntity(TrafficManager.getInstance()).emit("MAXIMUM_PASSENGERS_REACHED", this);
     }
 
     /**
@@ -65,14 +64,14 @@ public class PassengerTram extends Tram {
      */
     public void removePassengers(int passengers) {
         if (this.isOnConnection())
-        throw new IllegalStateException("Cannot remove passengers from `" + this + "` while on connection.");
+            throw new IllegalStateException("Cannot remove passengers from `" + this + "` while on connection.");
         if (this.currentPassengers - passengers < 0)
-        throw new IllegalStateException("Cannot remove more passengers from `" + this + "` than currently on the tram.");
-        
+            throw new IllegalStateException("Cannot remove more passengers from `" + this + "` than currently on the tram.");
+
         this.currentPassengers -= passengers;
-        
+
         if (this.currentPassengers == 0)
-        this.getEventManager().getEventEntity(TrafficManager.getInstance()).emit("MINIMUM_PASSENGERS_REACHED", this);
+            this.getEventManager().getOrCreateEventEntity(TrafficManager.getInstance()).emit("MINIMUM_PASSENGERS_REACHED", this);
     }
     //#endregion
 }

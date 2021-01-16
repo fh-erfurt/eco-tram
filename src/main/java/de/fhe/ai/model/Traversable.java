@@ -38,19 +38,11 @@ public abstract class Traversable extends ModelBase {
     }
 
     // #region Getters & Setters
-    /**
-     * @return the given traversable's length in km
-     */
+
     public float getLength() { return this.length; }
 
-    /**
-     * @return the given traversable's maximum allowed traversion weight in kg
-     */
     public int getMaximumWeight() { return this.maxWeight; }
 
-    /**
-     * @return the given traversable's traversion factor
-     */
     public float getTrafficFactor() { return this.trafficFactor; }
     
     /**
@@ -74,6 +66,7 @@ public abstract class Traversable extends ModelBase {
      * Calculates the time in hours needed for a tram to traverse this traversable
      * 
      * @param tram the tram to calcualte the traversion time for
+     * 
      * @return the traversion time in hours
      */
     public float getTraversionTime(Tram tram) {
@@ -84,6 +77,7 @@ public abstract class Traversable extends ModelBase {
      * Checks whether a given tram is allowed to traverse this traversable
      * 
      * @param tram the tram to check for
+     * 
      * @return {@code true} if the given tram can traverse this traversable; otherwise {@code false}
      */
     public boolean isTramAllowed(Tram tram) {

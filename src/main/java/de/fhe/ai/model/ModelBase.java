@@ -26,14 +26,8 @@ public abstract class ModelBase {
     }
 
     //#region Getters & Setters
-    /**
-     * @return the internal id of this model
-     */
     public int getId() { return id; }
-    
-    /**
-     * @return the EventManager used for this model
-     */
-    protected EventManager getEventManager() { return eventManager; }
+
+    public EventManager getEventManager() { return eventManager; }
     //#endregion
 }

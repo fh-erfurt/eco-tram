@@ -15,8 +15,8 @@ public class EventManagerTest {
         Tram exampleTramObject = new PassengerTram(0, null, 100, 1000, 100, "passenger");
         EventManager eventManager = EventManager.getInstance();
 
-        EventManager.EventEntity firstEventEntity = eventManager.getEventEntity(exampleTramObject);
-        EventManager.EventEntity secondEventEntity = eventManager.getEventEntity(exampleTramObject);
+        EventManager.EventEntity firstEventEntity = eventManager.getOrCreateEventEntity(exampleTramObject);
+        EventManager.EventEntity secondEventEntity = eventManager.getOrCreateEventEntity(exampleTramObject);
 
         Assert.assertEquals("The objects should be the same", firstEventEntity, secondEventEntity);
     }
@@ -26,7 +26,7 @@ public class EventManagerTest {
         Tram exampleTramObject = new PassengerTram(0, null, 100, 1000, 100, "passenger");
         EventManager eventManager = EventManager.getInstance();
 
-        EventManager.EventEntity eventEntity = eventManager.getEventEntity(exampleTramObject);
+        EventManager.EventEntity eventEntity = eventManager.getOrCreateEventEntity(exampleTramObject);
 
         String demoEvent = "helloWorld";
         boolean demoData = true;
@@ -51,7 +51,7 @@ public class EventManagerTest {
         Tram exampleTramObject = new PassengerTram(0, null, 100, 1000, 100, "passenger");
         EventManager eventManager = EventManager.getInstance();
 
-        EventManager.EventEntity eventEntity = eventManager.getEventEntity(exampleTramObject);
+        EventManager.EventEntity eventEntity = eventManager.getOrCreateEventEntity(exampleTramObject);
 
         String firstEvent = "create";
         String secondEvent = "destroy";
@@ -81,7 +81,7 @@ public class EventManagerTest {
         Tram exampleTramObject = new PassengerTram(0, null, 100, 1000, 100, "passenger");
         EventManager eventManager = EventManager.getInstance();
 
-        EventManager.EventEntity eventEntity = eventManager.getEventEntity(exampleTramObject);
+        EventManager.EventEntity eventEntity = eventManager.getOrCreateEventEntity(exampleTramObject);
 
         EventManager.EventCallback callback = (entity, event, data) -> {
         };
@@ -103,7 +103,7 @@ public class EventManagerTest {
         Tram exampleTramObject = new PassengerTram(0, null, 100, 1000, 100, "passenger");
         EventManager eventManager = EventManager.getInstance();
 
-        EventManager.EventEntity eventEntity = eventManager.getEventEntity(exampleTramObject);
+        EventManager.EventEntity eventEntity = eventManager.getOrCreateEventEntity(exampleTramObject);
 
         EventManager.EventCallback callback = (entity, event, data) -> {
         };
@@ -114,7 +114,7 @@ public class EventManagerTest {
 
         Assert.assertFalse("Event should no longer be registered", eventEntity.isListenerRegistered(callback));
 
-        EventManager.EventEntity otherEntity = eventManager.getEventEntity(exampleTramObject);
+        EventManager.EventEntity otherEntity = eventManager.getOrCreateEventEntity(exampleTramObject);
 
         Assert.assertNotEquals("Entites should be distinct", eventEntity, otherEntity);
 
@@ -130,9 +130,9 @@ public class EventManagerTest {
 
         EventManager eventManager = EventManager.getInstance();
 
-        EventManager.EventEntity firstTramEventEntity = eventManager.getEventEntity(firstTramObject);
-        EventManager.EventEntity secondTramEventEntity = eventManager.getEventEntity(secondTramObject);
-        EventManager.EventEntity lineEventEntity = eventManager.getEventEntity(lineObject);
+        EventManager.EventEntity firstTramEventEntity = eventManager.getOrCreateEventEntity(firstTramObject);
+        EventManager.EventEntity secondTramEventEntity = eventManager.getOrCreateEventEntity(secondTramObject);
+        EventManager.EventEntity lineEventEntity = eventManager.getOrCreateEventEntity(lineObject);
 
         String tramEvent = "createTram";
         String lineEvent = "createLine";

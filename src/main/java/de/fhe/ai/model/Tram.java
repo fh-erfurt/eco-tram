@@ -45,24 +45,13 @@ public abstract class Tram extends ModelBase {
     }
 
     //#region Getters & Setters
-    /**
-     * @return this tram's weight in kg
-     */
+
     public int getWeight() { return weight; }
-    
-    /**
-     * @return this tram's speed in km/h
-     */
+
     public int getSpeed() { return speed; }
-    
-    /**
-     * @return this tram's type descriptor
-     */
+
     public String getTramType() { return tramType; }
-    
-    /**
-     * @return this tram's enqueued lines
-     */
+
     public Queue<Line> getPaths() { return queuedLines; }
 
     /**
@@ -137,6 +126,7 @@ public abstract class Tram extends ModelBase {
      * Checks whether or not a this tram can move from the current destination (or position if non is given) to the start fo the line
      * 
      * @param line the line to check validity for
+     * 
      * @return {@code true} if this tram can move to the start of the given line; otherwise {@code false}
      */
     public boolean canAddLine(Line line) {
@@ -214,11 +204,11 @@ public abstract class Tram extends ModelBase {
         if (currentLine != null) {
             // skip A to A movement
             currentIndex = currentLine.getRoute().get(0) == prevPos ? 1 : 0;
-            this.getEventManager().getEventEntity(TrafficManager.getInstance()).emit("TRAM_PATH_SWITCHED", this);
+            this.getEventManager().getOrCreateEventEntity(TrafficManager.getInstance()).emit("TRAM_PATH_SWITCHED", this);
             return true;
         }
 
-        this.getEventManager().getEventEntity(TrafficManager.getInstance()).emit("TRAM_PATH_END_REACHED", this);
+        this.getEventManager().getOrCreateEventEntity(TrafficManager.getInstance()).emit("TRAM_PATH_END_REACHED", this);
         return false;
     }
 

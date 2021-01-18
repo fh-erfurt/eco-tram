@@ -10,7 +10,7 @@ import java.util.Map;
 import de.fhe.ai.model.ModelBase;
 
 /**
- * Class with static helper methods.
+ * A class with static helper methods
  */
 public final class Utils {
     private Utils() { }
@@ -19,6 +19,7 @@ public final class Utils {
      * Returns the name of a class without it's package names.
      * 
      * @param classType the underlying class of the object
+     * 
      * @return a string representing only the class itself
      */
     public static String getShortClassName(Class<?> classType) {
@@ -32,8 +33,8 @@ public final class Utils {
      * Indents each line in a string by the given depth
      * 
      * @param stringToIndent the string to indent each line for
-     * @param depth          the depth of indentation where one indentation is four
-     *                       spaces
+     * @param depth          the depth of indentation where one indentation is four spaces
+     * 
      * @return a new string with the specified indentation
      */
     public static String indentEachLine(String stringToIndent, int depth) {
@@ -51,15 +52,12 @@ public final class Utils {
     }
 
     /**
-     * Returns a string that represents the given model, this method will show
-     * private fields, their types and some additional information if necessary.
-     * This method should ideally only used for debugging as it can expose sensitive
-     * information and lead to massive outputs with the correct arguments
+     * Returns a string that represents the given model, this method will show private fields, their types and some additional information if necessary.
+     * This method should ideally only used for debugging as it can expose sensitive information and lead to massive outputs with the correct arguments
      * 
      * @param modelBase       the model to get a verbsoe representation of
-     * @param depth           the maximum depth at which to verbosely display
-     * @param showCollections indicates whether collections should be completely
-     *                        displayed non-primitive fields
+     * @param depth           the maximum depth at which to verbosely display displayed non-primitive fields
+     * 
      * @return a verbose json-like representation of the model
      */
     public static String getVerboseModelRepresentation(ModelBase modelBase, int depth) {

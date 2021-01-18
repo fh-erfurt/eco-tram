@@ -6,7 +6,6 @@ import de.fhe.ai.manager.EventManager;
  * A class that represents a one-directional connecton between two {@link Station}s
  */
 public class Connection extends Traversable {
-    private int           maximumWeight;
     private final Station sourceStation;
     private final Station destinationStation;
 
@@ -31,17 +30,28 @@ public class Connection extends Traversable {
         if (destinationStation == null)
             throw new IllegalArgumentException("DestinationStation of `" + this + "` cannot to be null.");
 
-        this.maximumWeight = maxWeight;
         this.sourceStation = sourceStation;
         this.destinationStation = destinationStation;
     }
 
     //#region Getters & Setters
-    public int getMaximumWeight() { return maximumWeight; }
-    public void setMaximumWeight(int maximumWeight) { this.maximumWeight = maximumWeight; }
-
     public Station getSourceStation() { return sourceStation; }
 
     public Station getDestinationStation() { return destinationStation; }
     //#endregion
+
+    /**
+     * Checks whether a given connection is a reverse of this connection
+     * 
+     * @param otherConnection the other connection to check for
+     * 
+     * @return {@code true} if the given connecion is a reverse of this connection; otherwise {@code false}
+     */
+    public boolean isReverse(Connection otherConnection) {
+        if (this.getDestinationStation() == otherConnection.getSourceStation()
+         && this.getSourceStation() == otherConnection.getDestinationStation())
+            return true;
+
+        return false;
+    }
 }

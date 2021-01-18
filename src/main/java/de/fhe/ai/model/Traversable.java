@@ -6,8 +6,8 @@ import de.fhe.ai.manager.EventManager;
  * A class that represents something that can be traversed by a {@link Tram}
  */
 public abstract class Traversable extends ModelBase {
-    private final int   maxWeight;
     private final float length;
+    private int         maxWeight;
     private float       trafficFactor; // [0..1.0f] defines percentage of traverser speed that is actively usable
 
     /**
@@ -24,13 +24,12 @@ public abstract class Traversable extends ModelBase {
     public Traversable(int id, EventManager eventManager, float length, int maxWeight, float trafficFactor) {
         super(id, eventManager);
 
-        if (length <= 0) {
+        if (length <= 0)
             throw new IllegalArgumentException("Length of `" + this + "` cannot be 0 or negative.");
-        } else if (maxWeight < 0) {
+        if (maxWeight < 0)
             throw new IllegalArgumentException("MaxWeight of `" + this + "` cannot be negative.");
-        } else if (trafficFactor < 0 || trafficFactor > 1.0f) {
+        if (trafficFactor < 0 || trafficFactor > 1.0f)
             throw new IllegalArgumentException("TrafficFactor of `" + this + "` cannot be above 1.0f or negative.");
-        }
 
         this.length = length;
         this.maxWeight = maxWeight;
@@ -42,6 +41,7 @@ public abstract class Traversable extends ModelBase {
     public float getLength() { return this.length; }
 
     public int getMaximumWeight() { return this.maxWeight; }
+    public void setMaximumWeight(int maxWeight) { this.maxWeight = maxWeight; }
 
     public float getTrafficFactor() { return this.trafficFactor; }
     

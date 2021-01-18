@@ -31,8 +31,25 @@ public class PassengerTram extends Tram {
     }
 
     //#region Getters & Setters
-    public int getMaxPassengers() { return maxPassengers; }
-    public int getCurrentPassengers() { return currentPassengers; }
+    public int getMaxPassengers() { return this.maxPassengers; }
+
+    public int getCurrentPassengers() {
+        return this.currentPassengers;
+    }
+
+    /**
+     * Attempts to set the current amount of passengers to the given number
+     * 
+     * @param passengers the amount to set the current amount of passengers to, must be between 0 and maxPassengers
+     * 
+     * @exception IllegalArgumentException if the given amount not between 0 and maxPassengers
+     */
+    public void setCurrentPassengers(int passengers) {
+        if (passengers < 0)
+            throw new IllegalArgumentException("CurrentPassengers of `" + this + "` must be between 0 and `" + this.maxPassengers + "`.");
+
+        this.currentPassengers = passengers;
+    }
 
     /**
      * Attempts to add the given number of passengers to the given tram
@@ -51,7 +68,7 @@ public class PassengerTram extends Tram {
         this.currentPassengers += passengers;
 
         if (this.currentPassengers == this.maxPassengers)
-            this.getEventManager().emitToAllEntitiesOfType(TrafficManager.class, "MAXIMUM_PASSENGERS_REACHED");
+            this.getEventManager().emitToAllEntitiesOfType(TrafficManager.class, "TRAM_MAXIMUM_PASSENGERS_REACHED");
     }
 
     /**
@@ -71,7 +88,7 @@ public class PassengerTram extends Tram {
         this.currentPassengers -= passengers;
 
         if (this.currentPassengers == 0)
-            this.getEventManager().emitToAllEntitiesOfType(TrafficManager.class, "MINIMUM_PASSENGERS_REACHED");
+            this.getEventManager().emitToAllEntitiesOfType(TrafficManager.class, "TRAM_MINIMUM_PASSENGERS_REACHED");
     }
     //#endregion
 }

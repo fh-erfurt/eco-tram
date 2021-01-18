@@ -11,12 +11,12 @@ import de.fhe.ai.manager.TrafficManager;
  * Provides a base class for all tram types
  */
 public abstract class Tram extends ModelBase {
-    private final int        weight;
-    private final String     tramType;
-    private int              speed;
-    private Line             currentLine;
-    private int              currentIndex;                     // index of position in currentLine
-    private ArrayDeque<Line> queuedLines = new ArrayDeque<>(); // lines that follow after completion of currentLine
+    private final int              weight;
+    private final String           tramType;
+    private int                    speed;
+    private Line                   currentLine;
+    private int                    currentIndex;                     // index of position in currentLine
+    private final ArrayDeque<Line> queuedLines = new ArrayDeque<>(); // lines that follow after completion of currentLine
 
     /**
      * Initializes a new Tram

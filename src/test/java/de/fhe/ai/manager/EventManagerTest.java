@@ -1,8 +1,6 @@
 package de.fhe.ai.manager;
 
-import de.fhe.ai.model.Line;
-import de.fhe.ai.model.PassengerTram;
-import de.fhe.ai.model.Tram;
+import de.fhe.ai.model.*;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -12,7 +10,7 @@ public class EventManagerTest {
 
     @Test
     public void get_single_event_entity_instance() {
-        Tram exampleTramObject = new PassengerTram(0, null, 100, 1000, 100, "passenger");
+        Tram exampleTramObject = new PassengerTram(0, EventManager.getInstance(), TrafficManager.getInstance(), 100, 1000, 100, "passenger");
         EventManager eventManager = EventManager.getInstance();
 
         EventManager.EventEntity firstEventEntity = eventManager.getEventEntity(exampleTramObject);
@@ -23,7 +21,7 @@ public class EventManagerTest {
 
     @Test
     public void add_listener_to_event_entity() {
-        Tram exampleTramObject = new PassengerTram(0, null, 100, 1000, 100, "passenger");
+        Tram exampleTramObject = new PassengerTram(0, EventManager.getInstance(), TrafficManager.getInstance(), 100, 1000, 100, "passenger");
         EventManager eventManager = EventManager.getInstance();
 
         EventManager.EventEntity eventEntity = eventManager.getEventEntity(exampleTramObject);
@@ -48,7 +46,7 @@ public class EventManagerTest {
 
     @Test
     public void test_different_listener_targets() {
-        Tram exampleTramObject = new PassengerTram(0, null, 100, 1000, 100, "passenger");
+        Tram exampleTramObject = new PassengerTram(0, EventManager.getInstance(), TrafficManager.getInstance(), 100, 1000, 100, "passenger");
         EventManager eventManager = EventManager.getInstance();
 
         EventManager.EventEntity eventEntity = eventManager.getEventEntity(exampleTramObject);
@@ -78,7 +76,7 @@ public class EventManagerTest {
 
     @Test
     public void check_listener_existence() {
-        Tram exampleTramObject = new PassengerTram(0, null, 100, 1000, 100, "passenger");
+        Tram exampleTramObject = new PassengerTram(0, EventManager.getInstance(), TrafficManager.getInstance(), 100, 1000, 100, "passenger");
         EventManager eventManager = EventManager.getInstance();
 
         EventManager.EventEntity eventEntity = eventManager.getEventEntity(exampleTramObject);
@@ -100,7 +98,7 @@ public class EventManagerTest {
 
     @Test
     public void remove_entity_and_listener() {
-        Tram exampleTramObject = new PassengerTram(0, null, 100, 1000, 100, "passenger");
+        Tram exampleTramObject = new PassengerTram(0, EventManager.getInstance(), TrafficManager.getInstance(), 100, 1000, 100, "passenger");
         EventManager eventManager = EventManager.getInstance();
 
         EventManager.EventEntity eventEntity = eventManager.getEventEntity(exampleTramObject);
@@ -124,9 +122,9 @@ public class EventManagerTest {
 
     @Test
     public void test_multiple_entities_and_listener() {
-        Tram firstTramObject = new PassengerTram(0, null, 100, 1000, 100, "passenger");
-        Tram secondTramObject = new PassengerTram(0, null, 100, 1000, 100, "passenger");
-        Line lineObject = new Line(-1, EventManager.getInstance(),"Linie 6", new ArrayList<>());
+        Tram firstTramObject = new PassengerTram(0, EventManager.getInstance(), TrafficManager.getInstance(), 100, 1000, 100, "passenger");
+        Tram secondTramObject = new PassengerTram(0, EventManager.getInstance(), TrafficManager.getInstance(), 100, 1000, 100, "passenger");
+        Line lineObject = new Line(-1, EventManager.getInstance(), TrafficManager.getInstance(),"Linie 6", new ArrayList<>());
 
         EventManager eventManager = EventManager.getInstance();
 

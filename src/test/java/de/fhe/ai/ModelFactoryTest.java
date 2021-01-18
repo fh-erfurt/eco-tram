@@ -1,5 +1,6 @@
 package de.fhe.ai;
 
+import de.fhe.ai.manager.*;
 import de.fhe.ai.model.*;
 
 import org.junit.Assert;
@@ -13,9 +14,9 @@ public class ModelFactoryTest {
     public void test_create_connection() {
         int length = 666666;
         int maximumWeight = 64;
-        Station sourceStation = new Station(-1, null, "Uniplatz", 0l, 500, 0.5f, 5000, 1.0f);
-        Station destinationStation = new Station(-1, null, "Anger", 0l, 500, 0.5f, 5000, 1.0f);
-        Tram tram = new PassengerTram(-1, null, 0, 0, 0, "testTram");
+        Station sourceStation = new Station(-1, EventManager.getInstance(), TrafficManager.getInstance(), "Uniplatz", 0l, 500, 0.5f, 5000, 1.0f);
+        Station destinationStation = new Station(-1, EventManager.getInstance(), TrafficManager.getInstance(), "Anger", 0l, 500, 0.5f, 5000, 1.0f);
+        Tram tram = new PassengerTram(-1, EventManager.getInstance(), TrafficManager.getInstance(), 0, 0, 0, "testTram");
         int traversionTime = 1;
         int trafficFactor = 1;
 

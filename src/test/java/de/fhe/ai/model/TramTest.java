@@ -2,7 +2,8 @@ package de.fhe.ai.model;
 
 import java.util.ArrayList;
 
-import de.fhe.ai.manager.EventManager;
+import de.fhe.ai.manager.*;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,22 +26,22 @@ public class TramTest {
 
     @Before
     public void before_each() {
-        this.tram = new PassengerTram(-1, null, 0, 0, 0, "testTram");
-        this.station1 = new Station(-1, null, "testStation1", 0l, 500, 0.5f, 5000, 1.0f);
-        this.station2 = new Station(-1, null, "testStation2", 0l, 500, 0.5f, 5000, 1.0f);
-        this.connection12 = new Connection(-1, null, station1, station2, 2.5f, 5000, 1.0f);
-        this.connection21 = new Connection(-1, null, station2, station1, 2.5f, 5000, 1.0f);
+        this.tram = new PassengerTram(-1, EventManager.getInstance(), TrafficManager.getInstance(), 0, 0, 0, "testTram");
+        this.station1 = new Station(-1, EventManager.getInstance(), TrafficManager.getInstance(), "testStation1", 0l, 500, 0.5f, 5000, 1.0f);
+        this.station2 = new Station(-1, EventManager.getInstance(), TrafficManager.getInstance(), "testStation2", 0l, 500, 0.5f, 5000, 1.0f);
+        this.connection12 = new Connection(-1, EventManager.getInstance(), TrafficManager.getInstance(), station1, station2, 2.5f, 5000, 1.0f);
+        this.connection21 = new Connection(-1, EventManager.getInstance(), TrafficManager.getInstance(), station2, station1, 2.5f, 5000, 1.0f);
 
         station1.addAdjacentConnection(connection12);
         station2.addAdjacentConnection(connection21);
-        this.line1 = new Line(-1, EventManager.getInstance(), "testLine", new ArrayList<>() {
+        this.line1 = new Line(-1, EventManager.getInstance(), TrafficManager.getInstance(), "testLine", new ArrayList<>() {
             {
                 add(station1);
                 add(connection12);
                 add(station2);
             }
         });
-        this.line2 = new Line(-1, EventManager.getInstance(), "testLineReturn", new ArrayList<>() {
+        this.line2 = new Line(-1, EventManager.getInstance(), TrafficManager.getInstance(), "testLineReturn", new ArrayList<>() {
             {
                 add(station2);
                 add(connection21);

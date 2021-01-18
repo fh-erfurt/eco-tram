@@ -4,8 +4,7 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Queue;
 
-import de.fhe.ai.manager.EventManager;
-import de.fhe.ai.manager.TrafficManager;
+import de.fhe.ai.manager.*;
 
 /**
  * Provides a base class for all tram types
@@ -29,8 +28,8 @@ public abstract class Tram extends ModelBase {
      * 
      * @throws IllegalArgumentException if invalid arguments are passed
      */
-    protected Tram(int id, EventManager eventManager, int weight, int speed, String tramType) {
-        super(id, eventManager);
+    protected Tram(int id, EventManager eventManager, TrafficManager trafficManager, int weight, int speed, String tramType) {
+        super(id, eventManager, trafficManager);
 
         if (weight < 0)
             throw new IllegalArgumentException("Weight of `" + this + "` cannot to be negative.");
@@ -204,11 +203,11 @@ public abstract class Tram extends ModelBase {
         if (currentLine != null) {
             // skip A to A movement
             currentIndex = currentLine.getRoute().get(0) == prevPos ? 1 : 0;
-            this.getEventManager().emitToAllEntitiesOfType(TrafficManager.class, "TRAM_PATH_SWITCHED");
+            this.getEventManager().getEventEntity(this.getTrafficManager()).emit("TRAM_PATH_SWITCHED");
             return true;
         }
 
-        this.getEventManager().emitToAllEntitiesOfType(TrafficManager.class, "TRAM_PATH_END_REACHED");
+        this.getEventManager().getEventEntity(this.getTrafficManager()).emit("TRAM_PATH_END_REACHED");
         return false;
     }
 
@@ -231,7 +230,9 @@ public abstract class Tram extends ModelBase {
         queuedLines.clear();
         // TODO: use factory method to get temporary line
         // so far id is copied which means it is not uniqe
-        currentLine = new TemporaryLine(currentLine.getId(), currentLine.getEventManager(),
-                new ArrayList<>(currentLine.getRoute().subList(0, currentIndex)));
+        currentLine = new TemporaryLine(currentLine.getId(),
+            currentLine.getEventManager(),
+            this.getTrafficManager(),
+            new ArrayList<>(currentLine.getRoute().subList(0, currentIndex)));
     }
 }

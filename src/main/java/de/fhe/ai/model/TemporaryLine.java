@@ -2,7 +2,7 @@ package de.fhe.ai.model;
 
 import java.util.Collection;
 
-import de.fhe.ai.manager.EventManager;
+import de.fhe.ai.manager.*;
 
 /**
  * A class that represents a {@link Line} that only exists temporarily, such as a return path for a Tram should it be stopped mid-traversal
@@ -18,7 +18,7 @@ public class TemporaryLine extends Line {
      * 
      * @throws IllegalArgumentException if invalid arguments are passed
      */
-    public TemporaryLine(int id, EventManager eventManager, Collection<Traversable> route) {
-        super(id, eventManager, "", route);
+    public TemporaryLine(int id, EventManager eventManager, TrafficManager trafficManager, Collection<Traversable> route) {
+        super(id, eventManager, trafficManager, "", route);
     }
 }

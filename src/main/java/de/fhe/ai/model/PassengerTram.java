@@ -21,8 +21,8 @@ public class PassengerTram extends Tram {
      * 
      * @throws IllegalArgumentException if invalid parameters are passed
      */
-    public PassengerTram(int id, EventManager eventManager, int maxPassengers, int weight, int speed, String tramType) {
-        super(id, eventManager, weight, speed, tramType);
+    public PassengerTram(int id, EventManager eventManager, TrafficManager trafficManager, int maxPassengers, int weight, int speed, String tramType) {
+        super(id, eventManager, trafficManager, weight, speed, tramType);
 
         if (maxPassengers < 0)
             throw new IllegalArgumentException("MaxPassengers of `" + this + "` cannot to be negative.");
@@ -68,7 +68,7 @@ public class PassengerTram extends Tram {
         this.currentPassengers += passengers;
 
         if (this.currentPassengers == this.maxPassengers)
-            this.getEventManager().emitToAllEntitiesOfType(TrafficManager.class, "TRAM_MAXIMUM_PASSENGERS_REACHED");
+            this.getEventManager().getEventEntity(this.getTrafficManager()).emit("TRAM_MAXIMUM_PASSENGERS_REACHED");
     }
 
     /**
@@ -88,7 +88,7 @@ public class PassengerTram extends Tram {
         this.currentPassengers -= passengers;
 
         if (this.currentPassengers == 0)
-            this.getEventManager().emitToAllEntitiesOfType(TrafficManager.class, "TRAM_MINIMUM_PASSENGERS_REACHED");
+        this.getEventManager().getEventEntity(this.getTrafficManager()).emit("TRAM_MINIMUM_PASSENGERS_REACHED");
     }
     //#endregion
 }

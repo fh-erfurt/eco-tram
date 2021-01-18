@@ -1,6 +1,6 @@
 package de.fhe.ai.model;
 
-import de.fhe.ai.manager.EventManager;
+import de.fhe.ai.manager.*;
 
 /**
  * A class that represents something that can be traversed by a {@link Tram}
@@ -21,8 +21,8 @@ public abstract class Traversable extends ModelBase {
      * 
      * @throws IllegalArgumentException if invalid arguments are passed
      */
-    public Traversable(int id, EventManager eventManager, float length, int maxWeight, float trafficFactor) {
-        super(id, eventManager);
+    public Traversable(int id, EventManager eventManager, TrafficManager trafficManager, float length, int maxWeight, float trafficFactor) {
+        super(id, eventManager, trafficManager);
 
         if (length <= 0)
             throw new IllegalArgumentException("Length of `" + this + "` cannot be 0 or negative.");

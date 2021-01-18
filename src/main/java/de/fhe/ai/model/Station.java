@@ -1,7 +1,6 @@
 package de.fhe.ai.model;
 
-import de.fhe.ai.manager.EventManager;
-import de.fhe.ai.manager.TrafficManager;
+import de.fhe.ai.manager.*;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -30,8 +29,8 @@ public class Station extends Traversable {
      * 
      * @throws IllegalArgumentException if invalid arguments are passed
      */
-    public Station(int id, EventManager eventManager, String name, float waitingTime, int maxPassengers, float length, int maxWeight, float trafficFactor) {
-        super(id, eventManager, length, maxWeight, trafficFactor);
+    public Station(int id, EventManager eventManager, TrafficManager trafficManager, String name, float waitingTime, int maxPassengers, float length, int maxWeight, float trafficFactor) {
+        super(id, eventManager, trafficManager, length, maxWeight, trafficFactor);
 
         if (name == null || name == "")
             throw new IllegalArgumentException("Name of `" + this + "` cannot be null or empty.");
@@ -84,7 +83,7 @@ public class Station extends Traversable {
         this.currentPassengers += passengers;
 
         if (this.currentPassengers == this.maxPassengers)
-            this.getEventManager().emitToAllEntitiesOfType(TrafficManager.class, "STATION_MAXIMUM_PASSENGERS_REACHED");
+        this.getEventManager().getEventEntity(this.getTrafficManager()).emit("STATION_MAXIMUM_PASSENGERS_REACHED");
     }
 
     /**
@@ -101,7 +100,7 @@ public class Station extends Traversable {
         this.currentPassengers -= passengers;
 
         if (this.currentPassengers == 0)
-            this.getEventManager().emitToAllEntitiesOfType(TrafficManager.class, "STATION_MINIMUM_PASSENGERS_REACHED");
+        this.getEventManager().getEventEntity(this.getTrafficManager()).emit("STATION_MINIMUM_PASSENGERS_REACHED");
     }
 
     @Override

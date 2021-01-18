@@ -1,6 +1,6 @@
 package de.fhe.ai.model;
 
-import de.fhe.ai.manager.EventManager;
+import de.fhe.ai.manager.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,8 +23,8 @@ public class Line extends ModelBase {
      * 
      * @throws IllegalArgumentException if invalid arguments are passed
      */
-    public Line(int id, EventManager eventManager, String name, Collection<Traversable> route) {
-        super(id, eventManager);
+    public Line(int id, EventManager eventManager, TrafficManager trafficManager, String name, Collection<Traversable> route) {
+        super(id, eventManager, trafficManager);
 
         if (name == null)
             throw new IllegalArgumentException("TramType of `" + this + "` cannot be null.");

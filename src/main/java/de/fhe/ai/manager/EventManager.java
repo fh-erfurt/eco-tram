@@ -31,7 +31,7 @@ public class EventManager {
      * 
      * @return the event entity bound to the given object
      */
-    public EventEntity getOrCreateEventEntity(Object object) {
+    public EventEntity getEventEntity(Object object) {
         if (boundEventEntities.containsKey(object))
             return boundEventEntities.get(object);
 
@@ -62,8 +62,11 @@ public class EventManager {
      * @param data   the data to send with the event
      */
     public void emitToAllEntitiesOfType(Class<?> target, String event, Object data) {
-        boundEventEntities.entrySet().stream().filter(entry -> entry.getKey().getClass().equals(target))
-                .forEach(entry -> entry.getValue().emit(event, data));
+        boundEventEntities
+            .entrySet()
+            .stream()
+            .filter(entry -> entry.getKey().getClass().equals(target))
+            .forEach(entry -> entry.getValue().emit(event, data));
     }
 
     /**
@@ -73,8 +76,11 @@ public class EventManager {
      * @param event  the event to emit
      */
     public void emitToAllEntitiesOfType(Class<?> target, String event) {
-        boundEventEntities.entrySet().stream().filter(entry -> entry.getKey().getClass().equals(target))
-                .forEach(entry -> entry.getValue().emit(event, null));
+        boundEventEntities
+            .entrySet()
+            .stream()
+            .filter(entry -> entry.getKey().getClass().equals(target))
+            .forEach(entry -> entry.getValue().emit(event, null));
     }
 
     /**

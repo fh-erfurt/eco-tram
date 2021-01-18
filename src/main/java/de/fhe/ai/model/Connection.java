@@ -1,6 +1,6 @@
 package de.fhe.ai.model;
 
-import de.fhe.ai.manager.EventManager;
+import de.fhe.ai.manager.*;
 
 /**
  * A class that represents a one-directional connecton between two {@link Station}s
@@ -22,8 +22,8 @@ public class Connection extends Traversable {
      * 
      * @throws IllegalArgumentException if invalid arguments are passed
      */
-    public Connection(int id, EventManager eventManager, Station sourceStation, Station destinationStation, float length, int maxWeight, float trafficFactor) {
-        super(id, eventManager, length, maxWeight, trafficFactor);
+    public Connection(int id, EventManager eventManager, TrafficManager trafficManager, Station sourceStation, Station destinationStation, float length, int maxWeight, float trafficFactor) {
+        super(id, eventManager, trafficManager, length, maxWeight, trafficFactor);
 
         if (sourceStation == null)
             throw new IllegalArgumentException("SourceStation of `" + this + "` cannot to be null.");

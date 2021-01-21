@@ -1,45 +1,29 @@
 package de.fhe.ai;
 
 
-
-import de.fhe.ai.manager.EventManager;
-import de.fhe.ai.model.*;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import de.fhe.ai.storage.*;
 
 public class ModelFactory {
 
-    private static ModelFactory INSTANCE; // Instance of SingletonPattern
+    private static  ModelFactory INSTANCE; // Instance of SingletonPattern
+    private final IConnectionRepository CONNECTION_REPOSITORY;
+    private final ILineRepository LINE_REPOSITORY;
+    private final IStationRepository STATION_REPOSITORY;
+    private final ITramRepository TRAM_REPOSITORY;
 
     //SingletonPattern
     public static ModelFactory getInstance() {
-        if (INSTANCE == null)
-            INSTANCE = new ModelFactory();
+        synchronized (ModelFactory.class) {
+            if (INSTANCE == null)
+                INSTANCE = new ModelFactory();
+        }
         return INSTANCE;
     }
 
-    private ModelFactory() { }
-
-    public Connection createConnection(int id, int length, int maximumWeight, Station sourceStation, Station destinationStation, int traversionTime, int trafficFactor) {
-        return new Connection(id, EventManager.getInstance(), length, maximumWeight, sourceStation, destinationStation, traversionTime, trafficFactor);
-    }
-
-    public Line createLine(int id, String name, ArrayList<ITraversable> route) {
-        return new Line(id, EventManager.getInstance(), name, route);
-    }
-
-    public Station createStation(int id, String name, long waitingTime, int maxPassengers, int actualPassengers) {
-        return new Station(id, EventManager.getInstance(), name,  waitingTime, maxPassengers, actualPassengers);
-    }
-
-    //TODO passengerTram, Station(ITraversable)
-
-    public PassengerTram createPassengerTram(int id, int maxPassengers, int weight, int speed, String tramType) {
-        if (maxPassengers < 0)
-            throw new IllegalArgumentException("Cannot declare maxPassengers to be negative.");
-        return new PassengerTram(id, EventManager.getInstance(), maxPassengers, weight, speed, tramType);
+    private ModelFactory() {
+        CONNECTION_REPOSITORY = new ConnectionRepository();
+        LINE_REPOSITORY = new LineRepository();
+        STATION_REPOSITORY = new StationRepository();
+        TRAM_REPOSITORY = new TramRepository();
     }
 }

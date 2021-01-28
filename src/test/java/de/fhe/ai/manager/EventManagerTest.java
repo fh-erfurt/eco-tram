@@ -8,6 +8,17 @@ import java.util.ArrayList;
 
 public class EventManagerTest {
 
+    private Connection createFakeConnection(int id) {
+        Station sourceStation = new Station(-1, EventManager.getInstance(), TrafficManager.getInstance(), "Uniplatz", 0, 500, 0.5f, 5000, 1.0f);
+        Station destinationStation = new Station(-1, EventManager.getInstance(), TrafficManager.getInstance(), "Anger", 0, 500, 0.5f, 5000, 1.0f);
+
+        return new Connection(id, EventManager.getInstance(), TrafficManager.getInstance(), sourceStation, destinationStation, 666, 1, 1);
+    }
+
+    private Station createFakeStation(int id) {
+        return new Station(id, EventManager.getInstance(), TrafficManager.getInstance(), "Anger", 10, 100, 200, 1, 1);
+    }
+
     @Test
     public void get_single_event_entity_instance() {
         Tram exampleTramObject = new PassengerTram(0, EventManager.getInstance(), TrafficManager.getInstance(), 100, 1000, 100, "passenger");
@@ -124,7 +135,14 @@ public class EventManagerTest {
     public void test_multiple_entities_and_listener() {
         Tram firstTramObject = new PassengerTram(0, EventManager.getInstance(), TrafficManager.getInstance(), 100, 1000, 100, "passenger");
         Tram secondTramObject = new PassengerTram(0, EventManager.getInstance(), TrafficManager.getInstance(), 100, 1000, 100, "passenger");
-        Line lineObject = new Line(-1, EventManager.getInstance(), TrafficManager.getInstance(),"Linie 6", new ArrayList<>());
+
+        ArrayList<Traversable> route = new ArrayList<>();
+
+        route.add(createFakeStation(1));
+        route.add(createFakeConnection(2));
+        route.add(createFakeStation(3));
+
+        Line lineObject = new Line(-1, EventManager.getInstance(), TrafficManager.getInstance(),"Linie 6", route);
 
         EventManager eventManager = EventManager.getInstance();
 

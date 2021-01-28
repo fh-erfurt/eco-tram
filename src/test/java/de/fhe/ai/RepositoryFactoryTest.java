@@ -11,7 +11,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 public class RepositoryFactoryTest {
 
@@ -43,14 +42,13 @@ public class RepositoryFactoryTest {
 
     @Test
     public void test_create_line() {
-        String name = "Linie2 Ringelberg";
         ArrayList<Traversable> route = new ArrayList<>();
 
         route.add(createFakeStation(1));
         route.add(createFakeConnection(2));
         route.add(createFakeStation(3));
 
-        Line line = new Line(-1, EventManager.getInstance(), TrafficManager.getInstance(), name, route);
+        Line line = new Line(-1, EventManager.getInstance(), TrafficManager.getInstance(), "Linie2 Ringelberg", route);
         ILineRepository lineRepository = RepositoryFactory.getInstance().getLineRepository();
 
         lineRepository.insert(line, null);

@@ -23,7 +23,7 @@ public class Line extends ModelBase {
      * 
      * @throws IllegalArgumentException if invalid arguments are passed
      */
-    public Line(int id, EventManager eventManager, TrafficManager trafficManager, String name, Collection<Traversable> route) {
+    public Line(int id, EventManager eventManager, TrafficManager trafficManager, String name, List<Traversable> route) {
         super(id, eventManager, trafficManager);
 
         if (name == null)
@@ -32,7 +32,7 @@ public class Line extends ModelBase {
             throw new IllegalArgumentException("Route of `" + this + "` cannot be null.");
         if (route.size() < 3)
             throw new IllegalArgumentException("Route of `" + this + "` cannot have less than 3 traversables.");
-        if (!(this.route.get(0) instanceof Station && this.route.get(this.route.size() - 1) instanceof Station))
+        if (!(route.get(0) instanceof Station && route.get(route.size() - 1) instanceof Station))
             throw new IllegalArgumentException("Route of `" + this + "` must start and end in a Station.");
 
         this.name = name;

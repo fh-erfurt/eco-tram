@@ -26,4 +26,9 @@ public class RepositoryFactory {
         STATION_REPOSITORY = new StationRepository(this);
         TRAM_REPOSITORY = new TramRepository(this);
     }
+
+    public IConnectionRepository getConnectionRepository() { return CONNECTION_REPOSITORY; }
+    public ILineRepository getLineRepository() { return LINE_REPOSITORY; }
+    public IStationRepository getStationRepository() { return STATION_REPOSITORY; }
+    public ITramRepository getTramRepository() { return TRAM_REPOSITORY; }
 }

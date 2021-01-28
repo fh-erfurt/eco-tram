@@ -1,5 +1,5 @@
 package de.fhe.ai.storage;
 
-public interface ITramRepository /*extends IBaseRepository*/ {
+public interface ITramRepository extends IBaseRepository {
 
 }

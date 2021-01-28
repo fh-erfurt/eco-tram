@@ -1,6 +1,7 @@
 package de.fhe.ai.model;
 
 import java.util.Collection;
+import java.util.List;
 
 import de.fhe.ai.manager.*;
 
@@ -18,7 +19,7 @@ public class TemporaryLine extends Line {
      * 
      * @throws IllegalArgumentException if invalid arguments are passed
      */
-    public TemporaryLine(int id, EventManager eventManager, TrafficManager trafficManager, Collection<Traversable> route) {
+    public TemporaryLine(int id, EventManager eventManager, TrafficManager trafficManager, List<Traversable> route) {
         super(id, eventManager, trafficManager, "", route);
     }
 }

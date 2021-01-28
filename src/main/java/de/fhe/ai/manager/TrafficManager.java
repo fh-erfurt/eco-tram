@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 public class TrafficManager {
     private final Set<Tram>          trams = new HashSet<Tram>();
     private final Set<Line>          lines = new HashSet<Line>();
-    private final Set<TemporaryLine> temporarylines = new HashSet<TemporaryLine>();
+    private final Set<TemporaryLine> temporaryLines = new HashSet<TemporaryLine>();
 
     //#region SingletonPattern
     private static TrafficManager INSTANCE; // Instance of SingletonPattern
@@ -53,7 +53,7 @@ public class TrafficManager {
      * 
      * @return {@code true} if the given temporary line was not yet in the set and added successfully lines; otherwise {@code false}
      */
-    public boolean addTemporaryLine(TemporaryLine temporaryline) { return this.temporarylines.add(temporaryline); }
+    public boolean addTemporaryLine(TemporaryLine temporaryline) { return this.temporaryLines.add(temporaryline); }
 
     /**
      * Attempts to remove a temporary line from the temporary lines managed by this traffic manager
@@ -62,7 +62,7 @@ public class TrafficManager {
      * 
      * @return {@code true} if the given temporary line was in the set of temporary lines and removed succesfully lines; otherwise {@code false}
      */
-    public boolean removeTemporaryLine(TemporaryLine temporaryLine) { return this.temporarylines.remove(temporaryLine); }
+    public boolean removeTemporaryLine(TemporaryLine temporaryLine) { return this.temporaryLines.remove(temporaryLine); }
     /**
      * Attempts to add a tram to the trams managed by this traffic manager
      * 
@@ -105,23 +105,19 @@ public class TrafficManager {
     }
 
     /**
-     * Works similar to {@link #assignTram(Tram tram)} but sends the tram directly to the new lines
+     * Works similar to {@link #assignTram(Tram tram, Collection<Line> lines)} but sends the tram directly to the new line
      * 
      * @param tram the tram to reassign
-     * @param lines the lines to assign the tram to
+     * @param line the line to assign the tram to
      * 
-     * @exception IllegalArgumentException if the lines paths are not directly traversable, that is that moving from destination1 to start2
+     * @exception IllegalArgumentException if the line paths are not directly traversable, that is that moving from destination1 to start2
      */
-    public void reassignTram(Tram tram, TemporaryLine line) {
-        tram.reassign(line);
-    }
+    public void reassignTram(Tram tram, TemporaryLine line) { tram.reassign(line); }
 
     /**
      * Stops a tram at the current position without giving it any new lines
      * 
      * @param tram the tram to unassign
      */
-    public void unassignTram(Tram tram) {
-        tram.unassign();
-    }
+    public void unassignTram(Tram tram) { tram.unassign(); }
 }

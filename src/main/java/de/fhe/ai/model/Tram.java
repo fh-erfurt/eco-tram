@@ -12,7 +12,7 @@ import de.fhe.ai.manager.*;
 public abstract class Tram extends ModelBase {
     private final int              weight;
     private final String           tramType;
-    private int                    speed;
+    private final int              speed;
     private Line                   currentLine;
     private int                    currentIndex;                     // index of position in currentLine
     private final ArrayDeque<Line> queuedLines = new ArrayDeque<>(); // lines that follow after completion of currentLine
@@ -35,7 +35,7 @@ public abstract class Tram extends ModelBase {
             throw new IllegalArgumentException("Weight of `" + this + "` cannot to be negative.");
         if (speed < 0)
             throw new IllegalArgumentException("Speed of `" + this + "` cannot to be negative.");
-        if (tramType == null || tramType == "")
+        if (tramType == null || tramType.isEmpty())
             throw new IllegalArgumentException("TramType of `" + this + "` cannot be null or empty.");
 
         this.weight = weight;
@@ -163,27 +163,21 @@ public abstract class Tram extends ModelBase {
      * 
      * @return true if it still has a destination to move to; otherwise false
      */
-    public boolean isInUse() {
-        return getDestination() != null;
-    }
+    public boolean isInUse() { return getDestination() != null; }
 
     /**
      * Checks whether this tram is currently on a station
      * 
      * @return true if this tram is currently on a station; otherwise false
      */
-    public boolean isOnStation() {
-        return this.getCurrentPosition() instanceof Station;
-    }
+    public boolean isOnStation() { return this.getCurrentPosition() instanceof Station; }
 
     /**
      * Checks whether this tram is currently on a connection
      * 
      * @return {@code true} if this tram is currently on a connection; otherwise {@code false}
      */
-    public boolean isOnConnection() {
-        return this.getCurrentPosition() instanceof Connection;
-    }
+    public boolean isOnConnection() { return this.getCurrentPosition() instanceof Connection; }
 
     /**
      * Advances this tram along it's path if possible, this method will ignore duplicates along it's path

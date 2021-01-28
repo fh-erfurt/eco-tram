@@ -78,7 +78,5 @@ public abstract class Traversable extends ModelBase {
      * 
      * @return {@code true} if the given tram can traverse this traversable; otherwise {@code false}
      */
-    public boolean isTramAllowed(Tram tram) {
-        return tram.getWeight() <= this.getMaxWeight();
-    }
+    public boolean isTramAllowed(Tram tram) { return tram.getWeight() <= this.getMaxWeight(); }
 }

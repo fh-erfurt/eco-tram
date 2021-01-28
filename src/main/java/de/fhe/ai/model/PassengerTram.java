@@ -33,9 +33,7 @@ public class PassengerTram extends Tram {
     //#region Getters & Setters
     public int getMaxPassengers() { return this.maxPassengers; }
 
-    public int getCurrentPassengers() {
-        return this.currentPassengers;
-    }
+    public int getCurrentPassengers() { return this.currentPassengers; }
 
     /**
      * Attempts to set the current amount of passengers to the given number

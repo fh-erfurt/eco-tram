@@ -1,6 +1,5 @@
 package de.fhe.ai.model;
 
-import java.util.Collection;
 import java.util.List;
 
 import de.fhe.ai.manager.*;

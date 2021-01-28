@@ -32,7 +32,7 @@ public class Station extends Traversable {
     public Station(int id, EventManager eventManager, TrafficManager trafficManager, String name, float waitingTime, int maxPassengers, float length, int maxWeight, float trafficFactor) {
         super(id, eventManager, trafficManager, length, maxWeight, trafficFactor);
 
-        if (name == null || name == "")
+        if (name == null || name.isEmpty())
             throw new IllegalArgumentException("Name of `" + this + "` cannot be null or empty.");
 
         this.name = name;

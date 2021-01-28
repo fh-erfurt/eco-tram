@@ -13,6 +13,7 @@ import de.fhe.ai.model.ModelBase;
  * A class with static helper methods
  */
 public final class Utils {
+
     private Utils() { }
 
     /**
@@ -25,7 +26,7 @@ public final class Utils {
     public static String getShortClassName(Class<?> classType) {
         String fullClassName = classType.toString();
         return fullClassName.contains(".") && fullClassName.lastIndexOf('.') + 1 < fullClassName.length()
-                ? fullClassName.substring(fullClassName.lastIndexOf('.') + 1, fullClassName.length())
+                ? fullClassName.substring(fullClassName.lastIndexOf('.') + 1)
                 : fullClassName;
     }
 
@@ -38,25 +39,22 @@ public final class Utils {
      * @return a new string with the specified indentation
      */
     public static String indentEachLine(String stringToIndent, int depth) {
-        // java internal String.replace does not work for whatever reason
-        // return stringToIndent.replace("\n", "\n" + indentation);
-
-        String output = "";
+        StringBuilder output = new StringBuilder();
         var subStr = stringToIndent.split("\n");
-        for (int ii = 0; ii < depth; ii++) {
-            for (int jj = 0; jj < depth; jj++)
-                output += "    ";
-            output += subStr[ii];
+        for (int i = 0; i < depth; i++) {
+            for (int j = 0; j < depth; j++)
+                output.append("    ");
+            output.append(subStr[i]);
         }
-        return output;
+        return output.toString();
     }
 
     /**
      * Returns a string that represents the given model, this method will show private fields, their types and some additional information if necessary.
      * This method should ideally only used for debugging as it can expose sensitive information and lead to massive outputs with the correct arguments
      * 
-     * @param modelBase       the model to get a verbsoe representation of
-     * @param depth           the maximum depth at which to verbosely display displayed non-primitive fields
+     * @param modelBase the model to get a verbsoe representation of
+     * @param depth     the maximum depth at which to verbosely display displayed non-primitive fields
      * 
      * @return a verbose json-like representation of the model
      */
@@ -79,7 +77,7 @@ public final class Utils {
         // prepare output
         StringBuilder outputBuilder = new StringBuilder(Utils.getShortClassName(modelType) + "(" + modelBase.getId() + ") {\n");
 
-        // appaned all fields with name and value and one indentation
+        // append all fields with name and value and one indentation
         for (Field field : allFields) {
             StringBuilder fieldLineBuilder = new StringBuilder(field.getName() + ": ");
             try {
@@ -90,16 +88,16 @@ public final class Utils {
                     // append field name and value
                     // view count on collections
                     if (fieldValue instanceof Collection<?>)
-                        fieldLineBuilder.append("{ Count: " + ((Collection<?>) fieldValue).size() + " }");
+                        fieldLineBuilder.append("{ Count: ").append(((Collection<?>) fieldValue).size()).append(" }");
                     else if (fieldValue instanceof Map<?, ?>)
-                        fieldLineBuilder.append("{ Count: " + ((Map<?, ?>) fieldValue).size() + " }");
+                        fieldLineBuilder.append("{ Count: ").append(((Map<?, ?>) fieldValue).size()).append(" }");
                     else if (fieldValue instanceof ModelBase) {
                         fieldLineBuilder.append(targetDepth > 0
                                 ? Utils.getVerboseModelRepresentation((ModelBase) fieldValue, targetDepth - currentDepth)
                                 : Utils.getShortClassName(fieldValue.getClass()) + "(" + ((ModelBase) fieldValue).getId() + ") { ... }");
                     }
                     else if (fieldValue instanceof String)
-                        fieldLineBuilder.append("'" + fieldValue + "'");
+                        fieldLineBuilder.append("'").append(fieldValue).append("'");
                     else
                         fieldLineBuilder.append(fieldValue.toString());
                 }
@@ -109,7 +107,7 @@ public final class Utils {
                 fieldLineBuilder.append("UnknownType = UnknownValue");
             }
             // add indentation for fieldLine according to targetDepth
-            outputBuilder.append(Utils.indentEachLine(fieldLineBuilder.toString(), currentDepth + 1) + "\n");
+            outputBuilder.append(Utils.indentEachLine(fieldLineBuilder.toString(), currentDepth + 1)).append("\n");
         }
         return outputBuilder.append('}').toString();
     }

@@ -41,7 +41,6 @@ public class EventManager {
         return eventEntity;
     }
 
-    // TODO: name implies removal of event entity but only removes listeners
     // removeEventEntityByObject(Object object) should be an overload for this
     public void removeEventEntity(EventEntity eventEntity) {
         if (boundEventEntities.entrySet().removeIf(entry -> entry.getValue().equals(eventEntity)))
@@ -105,9 +104,7 @@ public class EventManager {
         }
 
         //#region Getters & Setters
-        public Object getEntity() {
-            return entity;
-        }
+        public Object getEntity() { return entity; }
         //#endregion
 
         /**
@@ -134,14 +131,12 @@ public class EventManager {
          * 
          * @param eventCallback the callback to execute on receival of all events
          */
-        public void addListener(EventCallback eventCallback) {
-            this.addListener(null, eventCallback);
-        }
+        public void addListener(EventCallback eventCallback) { this.addListener(null, eventCallback); }
 
         /**
          * Removes the given callback for the given event if they exist
          * 
-         * @param event         the event to remvoe the callback for, can be null or empty to remove a callback that is registered for all events
+         * @param event         the event to remove the callback for, can be null or empty to remove a callback that is registered for all events
          * @param eventCallback the callback to remove
          */
         public void removeListener(String event, EventCallback eventCallback) {
@@ -158,24 +153,18 @@ public class EventManager {
          * 
          * @param eventCallback the callback taht is registered for all events
          */
-        public void removeListener(EventCallback eventCallback) {
-            this.removeListener(null, eventCallback);
-        }
+        public void removeListener(EventCallback eventCallback) { this.removeListener(null, eventCallback); }
 
         /**
          * Removes all callbacks that registered for the given event
          * @param event the event to remove all callbacks for
          */
-        public void removeAllListeners(String event) {
-            callbacks.remove(event);
-        }
+        public void removeAllListeners(String event) { callbacks.remove(event); }
 
         /**
          * Removes all callbacks for all events
          */
-        public void removeAllListeners() {
-            callbacks.clear();
-        }
+        public void removeAllListeners() { callbacks.clear(); }
 
         /**
          * Checks whether a callback is registered for any event
@@ -184,9 +173,7 @@ public class EventManager {
          * 
          * @return {@code true} if the callback is registered for any event; otherwise {@code false}
          */
-        public boolean isListenerRegistered(EventCallback eventCallback) {
-            return callbacks.values().stream().anyMatch(list -> list.contains(eventCallback));
-        }
+        public boolean isListenerRegistered(EventCallback eventCallback) { return callbacks.values().stream().anyMatch(list -> list.contains(eventCallback)); }
 
         /**
          * Emits the given event with the given data to all registered listeners and executes their callbacks
@@ -208,9 +195,7 @@ public class EventManager {
          * 
          * @param event the event to emit
          */
-        public void emit(String event) {
-            this.emit(event, null);
-        }
+        public void emit(String event) { this.emit(event, null); }
     }
 
     /**
@@ -218,11 +203,11 @@ public class EventManager {
      */
     public interface EventCallback {
         /**
-         * The callback action taht is executed on event receival
+         * The callback action that is executed on event receival
          * 
          * @param entity the entity of this callback
          * @param event  the event that is received
-         * @param data   the datat that is sent to the event
+         * @param data   the data that is sent to the event
          */
         void onEvent(Object entity, String event, Object data);
     }

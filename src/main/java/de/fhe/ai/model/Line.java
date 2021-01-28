@@ -3,7 +3,6 @@ package de.fhe.ai.model;
 import de.fhe.ai.manager.*;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**

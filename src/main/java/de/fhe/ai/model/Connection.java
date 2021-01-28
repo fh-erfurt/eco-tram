@@ -48,10 +48,6 @@ public class Connection extends Traversable {
      * @return {@code true} if the given connecion is a reverse of this connection; otherwise {@code false}
      */
     public boolean isReverse(Connection otherConnection) {
-        if (this.getDestinationStation() == otherConnection.getSourceStation()
-         && this.getSourceStation() == otherConnection.getDestinationStation())
-            return true;
-
-        return false;
+        return this.getDestinationStation() == otherConnection.getSourceStation() && this.getSourceStation() == otherConnection.getDestinationStation();
     }
 }

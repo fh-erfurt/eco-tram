@@ -58,11 +58,9 @@ public class Line extends ModelBase {
      */
     public boolean isTramAllowed(Tram tram)
     {
-        for(int i = 0; i < this.route.size(); i++)
-        {
-            if (!this.route.get(i).isTramAllowed(tram))
+        for (Traversable traversable : this.route)
+            if (!traversable.isTramAllowed(tram))
                 return false;
-        }
 
         return true;
     }

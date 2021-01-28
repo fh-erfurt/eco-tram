@@ -2,7 +2,7 @@ package de.fhe.ai.model;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Queue;
+import java.util.Collection;
 
 import de.fhe.ai.manager.*;
 
@@ -51,7 +51,7 @@ public abstract class Tram extends ModelBase {
 
     public String getTramType() { return tramType; }
 
-    public Queue<Line> getPaths() { return queuedLines; }
+    public Collection<Line> getPaths() { return queuedLines; }
 
     /**
      * Returns the current line if possible
@@ -76,13 +76,14 @@ public abstract class Tram extends ModelBase {
         if (currentLine != null) {
             // path still has nextPosition
             if (currentLine.getRoute().size() - 1 >= currentIndex + 1)
-            return currentLine.getRoute().get(currentIndex + 1);
+                return currentLine.getRoute().get(currentIndex + 1);
             
             // nextPath exists and has nextPosition
             Line nextPath = queuedLines.peek();
             if (nextPath != null)
-            return getCurrentPosition() == nextPath.getRoute().get(0) ? nextPath.getRoute().get(1)
-            : nextPath.getRoute().get(0); // prevent position == nextPosition
+                return getCurrentPosition() == nextPath.getRoute().get(0) // prevent position == nextPosition
+                    ? nextPath.getRoute().get(1)
+                    : nextPath.getRoute().get(0);
         }
         return null;
     }
@@ -92,7 +93,7 @@ public abstract class Tram extends ModelBase {
      * 
      * @return the current destination if one exists; otherwise {@code null}
      */
-    public Station getDestinationStation() {
+    public Station getDestination() {
         if (queuedLines.peekLast() != null)
             return queuedLines.peekLast().getDestinationStation();
         if (currentLine != null)
@@ -114,10 +115,10 @@ public abstract class Tram extends ModelBase {
                 currentLine = line;
             else
                 queuedLines.add(line);
-        } else if (getDestinationStation() == null)
-            throw new IllegalStateException("Cannot directly move from current position `" + getCurrentPosition() + "` to path start `" + line.getRoute().get(0) + "`.");
+        } else if (this.getDestination() == null)
+            throw new IllegalStateException("Cannot directly move from current position `" + this.getCurrentPosition() + "` to path start `" + line.getRoute().get(0) + "`.");
         else
-            throw new IllegalStateException("Cannot directly move from current destination `" + getDestinationStation() + "` to path start `" + line.getRoute().get(0) + "`.");
+            throw new IllegalStateException("Cannot directly move from current destination `" + this.getDestination() + "` to path start `" + line.getRoute().get(0) + "`.");
     }
     //#endregion
 
@@ -130,7 +131,7 @@ public abstract class Tram extends ModelBase {
      */
     public boolean canAddLine(Line line) {
         // can move to start since not yet deployed
-        if (this.getDestinationStation() == null && this.getCurrentPosition() == null)
+        if (this.getDestination() == null && this.getCurrentPosition() == null)
             return true;
 
         var lineStartStation = line.getRoute().get(0);
@@ -139,7 +140,7 @@ public abstract class Tram extends ModelBase {
         // can directly move from destination to start of line path
         // either can move destination same as start
         // or destination adjacent to startConnection
-        if (this.getDestinationStation() != null && (this.getDestinationStation() == lineStartStation || this.getDestinationStation().getAdjacentConnections().contains(lineStartConnection)))
+        if (this.getDestination() != null && (this.getDestination() == lineStartStation || this.getDestination().getAdjacentConnections().contains(lineStartConnection)))
             return true;
 
         // destination must be null, therefore position cannot be null, no check needed
@@ -163,7 +164,7 @@ public abstract class Tram extends ModelBase {
      * @return true if it still has a destination to move to; otherwise false
      */
     public boolean isInUse() {
-        return getDestinationStation() != null;
+        return getDestination() != null;
     }
 
     /**
@@ -192,7 +193,7 @@ public abstract class Tram extends ModelBase {
     public boolean moveForward() {
         Traversable prevPos = getCurrentPosition();
 
-        // preceed normally if path still has elements left
+        // proceed normally if path still has elements left
         if (currentLine.getRoute().size() - 1 >= currentIndex + 1) {
             currentIndex++;
             return true;
@@ -229,7 +230,7 @@ public abstract class Tram extends ModelBase {
     public void unassign() {
         queuedLines.clear();
         // TODO: use factory method to get temporary line
-        // so far id is copied which means it is not uniqe
+        // so far id is copied which means it is not unique
         currentLine = new TemporaryLine(currentLine.getId(),
             currentLine.getEventManager(),
             this.getTrafficManager(),

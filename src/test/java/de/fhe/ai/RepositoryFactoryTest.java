@@ -35,7 +35,7 @@ public class RepositoryFactoryTest {
         Connection toCompare = (Connection) connectionRepository.getEntityById(connection.getId());
 
         Assert.assertEquals("length should be equal to connection length", connection.getLength(), toCompare.getLength(), 0);
-        Assert.assertEquals("maximumWeight should be equal to connection maximumWeight", connection.getMaximumWeight(), toCompare.getMaximumWeight());
+        Assert.assertEquals("maximumWeight should be equal to connection maximumWeight", connection.getMaxWeight(), toCompare.getMaxWeight());
         Assert.assertEquals("sourceStation should be equal to connection sourceStation", connection.getSourceStation(), toCompare.getSourceStation());
         Assert.assertEquals("destinationStation should be equal to connection destinationStation", connection.getDestinationStation(), toCompare.getDestinationStation());
     }

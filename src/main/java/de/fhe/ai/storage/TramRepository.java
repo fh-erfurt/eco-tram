@@ -1,8 +1,10 @@
 package de.fhe.ai.storage;
 
+import de.fhe.ai.RepositoryFactory;
+
 public class TramRepository implements ITramRepository {
 
-    public TramRepository() {
+    public TramRepository(RepositoryFactory repositoryFactory) {
 
     }
 }

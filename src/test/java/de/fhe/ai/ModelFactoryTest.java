@@ -23,7 +23,7 @@ public class ModelFactoryTest {
         Connection connection = ModelFactory.getInstance().createConnection(length,maximumWeight,sourceStation,destinationStation,traversionTime,trafficFactor);
 
         Assert.assertEquals("length should be equal to connection length", length, connection.getLength(), 0);
-        Assert.assertEquals("maximumWeight should be equal to connection maximumWeight", maximumWeight, connection.getMaximumWeight());
+        Assert.assertEquals("maximumWeight should be equal to connection maximumWeight", maximumWeight, connection.getMaxWeight());
         Assert.assertEquals("sourceStation should be equal to connection sourceStation", sourceStation, connection.getSourceStation());
         Assert.assertEquals("destinationStation should be equal to connection destinationStation",destinationStation, connection.getDestinationStation());
         Assert.assertEquals("traversionTime should be equal to connection traversionTime",traversionTime, connection.getTraversionTime(tram), 0);

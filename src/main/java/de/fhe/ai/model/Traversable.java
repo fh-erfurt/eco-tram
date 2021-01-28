@@ -40,11 +40,11 @@ public abstract class Traversable extends ModelBase {
 
     public float getLength() { return this.length; }
 
-    public int getMaximumWeight() { return this.maxWeight; }
-    public void setMaximumWeight(int maxWeight) { this.maxWeight = maxWeight; }
+    public int getMaxWeight() { return this.maxWeight; }
+    public void setMaxWeight(int maxWeight) { this.maxWeight = maxWeight; }
 
     public float getTrafficFactor() { return this.trafficFactor; }
-    
+
     /**
      * Attempts to set the current traffic factor of the given traversable, that is
      * a percentage of a traverser top speed can be used freely while traversion
@@ -69,9 +69,7 @@ public abstract class Traversable extends ModelBase {
      * 
      * @return the traversion time in hours
      */
-    public float getTraversionTime(Tram tram) {
-        return this.getTrafficFactor() * (this.getLength() / tram.getSpeed());
-    }
+    public float getTraversionTime(Tram tram) { return this.getTrafficFactor() * (this.getLength() / tram.getSpeed()); }
 
     /**
      * Checks whether a given tram is allowed to traverse this traversable
@@ -81,6 +79,6 @@ public abstract class Traversable extends ModelBase {
      * @return {@code true} if the given tram can traverse this traversable; otherwise {@code false}
      */
     public boolean isTramAllowed(Tram tram) {
-        return tram.getWeight() <= this.getMaximumWeight();
+        return tram.getWeight() <= this.getMaxWeight();
     }
 }

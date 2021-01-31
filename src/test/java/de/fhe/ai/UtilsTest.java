@@ -9,7 +9,7 @@ import de.fhe.ai.model.PassengerTram;
 public class UtilsTest {
     @Test
     public void get_short_class_name() {
-        var stringType = new String();
+        var stringType = "testTramType";
         var tramType = new PassengerTram(0, EventManager.getInstance(), TrafficManager.getInstance(), 0, 0, 0, stringType);
 
         var expectedString = Utils.getShortClassName(stringType.getClass());

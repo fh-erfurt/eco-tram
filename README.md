@@ -1,3 +1,5 @@
+![Header](readme-header.jpg "Eco Tram Header")
+
 # Eco-Tram
 ### Program Description
 * data model and base business logic for a tram management system
@@ -8,10 +10,10 @@
 <details>
   <summary>Dependencies</summary>
 
-  * JRE 15
-  * JDK 15
-  * Maven
-  * J-Unit
+  * [JRE 15](https://www.oracle.com/java/technologies/javase/jdk15-archive-downloads.html)
+  * [JDK 15](https://www.oracle.com/java/technologies/javase/jdk15-archive-downloads.html)
+  * [Maven](https://maven.apache.org/)
+  * [J-Unit](https://mvnrepository.com/artifact/junit/junit)
 </details>
 <details>
   <summary>Installation Steps</summary>
@@ -30,69 +32,20 @@
 
 ---
 ### Program Flow Diagrams
+
+[View PlantUML Text Diagrams](readme_assets/plantumlTextDiagrams.md)
+
 #### Event Dispatch
-```plantuml
-@startuml
-    actor Tram
-    TrafficManager -> EventManager : register Listener for Tram: `Line finsihed`
-    TrafficManager -> Tram : assign Tram to Line
-    activate Tram
-    Tram -> EventManager : dispatch Event: `Line finsihed`
-    deactivate Tram
-    activate EventManager
-    EventManager -> Tram : Listener assignes Tram to new line
-    deactivate EventManager
-    activate Tram
-@enduml
-```
+![Event Dispatcher UML](readme_assets/event_dispatch.png "Event Dispatcher UML")
 
 <details>
   <summary>See more</summary>
 
 #### General Tram Movement
-```plantuml
-@startuml
-    actor Tram
-    -> Tram : addLine(Line)
-    -> Tram : moveForward()
-    activate Tram
-    Tram -> TramInternal : Traversable left?
-    TramInternal -> Tram : true
-    Tram -> TramInternal : Increment position
-    <-- Tram : true
-    deactivate Tram
-    -> Tram : moveForward()
-    activate Tram
-    Tram -> TramInternal : Traversable left?
-    TramInternal -> Tram : false
-    Tram -> TramInternal : Path left?
-    TramInternal -> Tram : true
-    Tram -> TramInternal : Reset positionIndex, set currentPath
-    <-- Tram : true
-    deactivate Tram
-    -> Tram : moveForward()
-    activate Tram
-    Tram -> TramInternal : Traversable left?
-    TramInternal -> Tram : false
-    Tram -> TramInternal : Path left?
-    TramInternal -> Tram : false
-    <-- Tram : false
-    deactivate Tram
-@enduml
-```
+![General Tram Movement UML](readme_assets/general_tram_movement.png "General Tram Movement UML")
+
 #### RepositoryFactory
-```plantuml
-@startuml
-    actor Caller
-    actor Connection
-    Caller -> RepositoryFactory : getConnectionRepository()
-    RepositoryFactory -> Caller : ConnectionRepository
-    Caller -> ConnectionRepository : getEntityById(id)
-    ConnectionRepository -> Caller : Connection
-    activate Connection
-    Caller -> Connection : use Connection
-@enduml
-```
+![Repository Factory UML](readme_assets/repository_factory.png "Repository Factory UML")
 </details>
 
 ---

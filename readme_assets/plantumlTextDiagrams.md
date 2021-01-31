@@ -7,10 +7,10 @@ Paste the contents with `@startuml` and `@enduml` into the textarea and click on
 ```plantuml
 @startuml
     actor Tram
-    TrafficManager -> EventManager : register Listener for Tram: `Line finsihed`
+    TrafficManager -> EventManager : register Listener for Tram: `Line finished`
     TrafficManager -> Tram : assign Tram to Line
     activate Tram
-    Tram -> EventManager : dispatch Event: `Line finsihed`
+    Tram -> EventManager : dispatch Event: `Line finished`
     deactivate Tram
     activate EventManager
     EventManager -> Tram : Listener assignes Tram to new line

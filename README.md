@@ -1,10 +1,10 @@
-#Eco-Tram
-###Program Description
+# Eco-Tram
+### Program Description
 * data model and base business logic for a tram management system
 * uses event-based communication between single entities of the tram network, eg: Tram, Station, TrafficManager, etc.
 * written with extensibility in mind
 ---
-###Installation
+### Installation
 <details>
   <summary>Dependencies</summary>
 
@@ -22,15 +22,15 @@
 </details>
 
 ---
-###General Design Decisions
+### General Design Decisions
 * Usage of Singleton-Pattern for extensibility of currently static objects
 * Usage of Repository- and Factory-Pattern for easier testing and entity instantiation
 * Loose coupling of entities through usage of an EventManager as communication interface
 * Testing of single functionalities through unit tests for easier development and debugging
 
 ---
-###Program Flow Diagrams
-####Event Dispatch
+### Program Flow Diagrams
+#### Event Dispatch
 ```plantuml
 @startuml
     actor Tram
@@ -49,7 +49,7 @@
 <details>
   <summary>See more</summary>
 
-####General Tram Movement
+#### General Tram Movement
 ```plantuml
 @startuml
     actor Tram
@@ -80,7 +80,7 @@
     deactivate Tram
 @enduml
 ```
-####RepositoryFactory
+#### RepositoryFactory
 ```plantuml
 @startuml
     actor Caller
@@ -96,8 +96,8 @@
 </details>
 
 ---
-###Code Examples
-####Registering an EventListener
+### Code Examples
+#### Registering an EventListener
 ```java
 Tram tram;
 Line continuationLine;
@@ -121,7 +121,7 @@ eventEntity.addListener("TRAM_PATH_END_REACHED",
 <details>
     <summary>See more</summary>
 
-####Usage of Repositories
+#### Usage of Repositories
 ```java
 var tramRepository = RepositoryFactory.getInstance().getTramRepository();
 var lineRepository = RepositoryFactory.getInstance().getLineRepository();

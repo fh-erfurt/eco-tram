@@ -1,9 +1,12 @@
 package de.fhe.ai;
 
-import de.fhe.ai.manager.*;
+import de.fhe.ai.manager.EventManager;
+import de.fhe.ai.manager.TrafficManager;
 import de.fhe.ai.model.*;
-
-import de.fhe.ai.storage.*;
+import de.fhe.ai.storage.IConnectionRepository;
+import de.fhe.ai.storage.ILineRepository;
+import de.fhe.ai.storage.IStationRepository;
+import de.fhe.ai.storage.ITramRepository;
 import org.junit.Assert;
 import org.junit.Test;
 

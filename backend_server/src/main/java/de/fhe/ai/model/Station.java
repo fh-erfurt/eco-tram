@@ -1,6 +1,7 @@
 package de.fhe.ai.model;
 
-import de.fhe.ai.manager.*;
+import de.fhe.ai.manager.EventManager;
+import de.fhe.ai.manager.TrafficManager;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -9,15 +10,15 @@ import java.util.Set;
  * A class that represents a Station for {@link Tram}s to stop at and exchange passengers
  */
 public class Station extends Traversable {
-    private final String          name;
-    private final int             maxPassengers;
-    private int                   currentPassengers;
-    private float                 waitingTime;
+    private final String name;
+    private final int maxPassengers;
     private final Set<Connection> adjacentConnections = new HashSet<>(); // set of connections that lead form this Station to another station (one-directional)
+    private int currentPassengers;
+    private float waitingTime;
 
     /**
      * Initializes a new Station
-     * 
+     *
      * @param id            the internal id of the station
      * @param eventManager  the eventManager used to communicate with the TrafficManager, must be non-null
      * @param name          the name of the station for public use, must be non-null and not empty
@@ -26,7 +27,6 @@ public class Station extends Traversable {
      * @param length        the length of this station in km
      * @param maxWeight     the maximum allowed weight of a traverser, must be above positive or 0
      * @param trafficFactor the traversion factor, must be between 0 and 1.0f
-     * 
      * @throws IllegalArgumentException if invalid arguments are passed
      */
     public Station(int id, EventManager eventManager, TrafficManager trafficManager, String name, float waitingTime, int maxPassengers, float length, int maxWeight, float trafficFactor) {
@@ -40,26 +40,43 @@ public class Station extends Traversable {
         this.maxPassengers = maxPassengers;
     }
 
-    //#region Getters & Setters
-    public String getName() { return name; }
+    public String getName() {
+        return name;
+    }
 
-    public Set<Connection> getAdjacentConnections() { return adjacentConnections; }
-    public void addAdjacentConnection(Connection adjacentConnection) { this.adjacentConnections.add(adjacentConnection); }
-    public void removeAdjacentConnection(Connection adjacentConnection) { this.adjacentConnections.remove(adjacentConnection); }
+    public Set<Connection> getAdjacentConnections() {
+        return adjacentConnections;
+    }
 
-    public float getWaitingTime() { return waitingTime; }
-    public void setWaitingTime(long waitingTime) { this.waitingTime = waitingTime; }
+    public void addAdjacentConnection(Connection adjacentConnection) {
+        this.adjacentConnections.add(adjacentConnection);
+    }
 
-    public int getMaxPassengers() { return maxPassengers; }
+    public void removeAdjacentConnection(Connection adjacentConnection) {
+        this.adjacentConnections.remove(adjacentConnection);
+    }
 
-    public int getCurrentPassengers() { return currentPassengers; }
+    public float getWaitingTime() {
+        return waitingTime;
+    }
+
+    public void setWaitingTime(long waitingTime) {
+        this.waitingTime = waitingTime;
+    }
+
+    public int getMaxPassengers() {
+        return maxPassengers;
+    }
+
+    public int getCurrentPassengers() {
+        return currentPassengers;
+    }
 
     /**
      * Attempts to set the current amount of passengers to the given number
-     * 
+     *
      * @param passengers the amount to set the current amount of passengers to, must be between 0 and maxPassengers
-     * 
-     * @exception IllegalArgumentException if the given amount not between 0 and maxPassengers
+     * @throws IllegalArgumentException if the given amount not between 0 and maxPassengers
      */
     public void setCurrentPassengers(int passengers) {
         if (passengers < 0)
@@ -67,13 +84,11 @@ public class Station extends Traversable {
 
         this.currentPassengers = passengers;
     }
-    //#endregion
 
     /**
      * Attempts to add the given number of passengers to the given station
-     * 
+     *
      * @param passengers the amount of passengers to add to the station
-     * 
      * @throws IllegalArgumentException if it is attempted to add passengers past the maximum allowed passengers
      */
     public void addPassengers(int passengers) {
@@ -83,14 +98,13 @@ public class Station extends Traversable {
         this.currentPassengers += passengers;
 
         if (this.currentPassengers == this.maxPassengers)
-        this.getEventManager().getEventEntity(this.getTrafficManager()).emit("STATION_MAXIMUM_PASSENGERS_REACHED");
+            this.getEventManager().getEventEntity(this.getTrafficManager()).emit("STATION_MAXIMUM_PASSENGERS_REACHED");
     }
 
     /**
      * Attempts to remove the given number of passengers from the given station
-     * 
+     *
      * @param passengers the amount of passengers to remove from the station
-     * 
      * @throws IllegalArgumentException if it is attempted to remove more passengers than there are in the station
      */
     public void removePassengers(int passengers) {
@@ -100,9 +114,11 @@ public class Station extends Traversable {
         this.currentPassengers -= passengers;
 
         if (this.currentPassengers == 0)
-        this.getEventManager().getEventEntity(this.getTrafficManager()).emit("STATION_MINIMUM_PASSENGERS_REACHED");
+            this.getEventManager().getEventEntity(this.getTrafficManager()).emit("STATION_MINIMUM_PASSENGERS_REACHED");
     }
 
     @Override
-    public float getTraversionTime(Tram tram) { return (this.getTrafficFactor() * (this.getLength() / tram.getSpeed()) + this.getWaitingTime()); }
+    public float getTraversionTime(Tram tram) {
+        return (this.getTrafficFactor() * (this.getLength() / tram.getSpeed()) + this.getWaitingTime());
+    }
 }

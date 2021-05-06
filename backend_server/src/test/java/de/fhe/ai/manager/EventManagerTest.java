@@ -142,7 +142,7 @@ public class EventManagerTest {
         route.add(createFakeConnection(2));
         route.add(createFakeStation(3));
 
-        Line lineObject = new Line(-1, EventManager.getInstance(), TrafficManager.getInstance(),"Linie 6", route);
+        Line lineObject = new Line(-1, EventManager.getInstance(), TrafficManager.getInstance(), "Linie 6", route);
 
         EventManager eventManager = EventManager.getInstance();
 

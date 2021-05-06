@@ -1,10 +1,10 @@
 package de.fhe.ai;
 
+import de.fhe.ai.manager.EventManager;
+import de.fhe.ai.manager.TrafficManager;
+import de.fhe.ai.model.PassengerTram;
 import org.junit.Assert;
 import org.junit.Test;
-
-import de.fhe.ai.manager.*;
-import de.fhe.ai.model.PassengerTram;
 
 public class UtilsTest {
     @Test

@@ -21,10 +21,10 @@ public class ConnectionRepository implements IConnectionRepository {
     public void insert(ModelBase entity, Runnable callback) {
         //TODO 2nd java-semester for database
 
-        if(!(entity instanceof Connection)) return;
+        if (!(entity instanceof Connection)) return;
 
         List<ModelBase> result = connections.stream().filter(modelBase -> modelBase.getId() == entity.getId()).collect(Collectors.toList());
-        if(result.isEmpty())
+        if (result.isEmpty())
             connections.add(entity);
     }
 
@@ -32,10 +32,10 @@ public class ConnectionRepository implements IConnectionRepository {
     public void update(ModelBase entity) {
         //TODO 2nd java-semester for database
 
-        if(!(entity instanceof Connection)) return;
+        if (!(entity instanceof Connection)) return;
 
         List<ModelBase> result = connections.stream().filter(modelBase -> modelBase.getId() == entity.getId()).collect(Collectors.toList());
-        if(result.isEmpty())
+        if (result.isEmpty())
             connections.add(entity);
         else {
             int index = connections.indexOf(result.get(0));
@@ -47,7 +47,7 @@ public class ConnectionRepository implements IConnectionRepository {
     public void delete(ModelBase entity) {
         //TODO 2nd java-semester for database
 
-        if(!(entity instanceof Connection)) return;
+        if (!(entity instanceof Connection)) return;
 
         connections.removeIf(modelBase -> modelBase.equals(entity));
     }
@@ -63,7 +63,7 @@ public class ConnectionRepository implements IConnectionRepository {
     public ModelBase getEntityById(int id) {
         //TODO 2nd java-semester for database
 
-        List<ModelBase> result = connections.stream().filter(modelBase -> modelBase.getId() == id ).collect(Collectors.toList());
+        List<ModelBase> result = connections.stream().filter(modelBase -> modelBase.getId() == id).collect(Collectors.toList());
         return result.isEmpty() ? null : result.get(0);
     }
 }

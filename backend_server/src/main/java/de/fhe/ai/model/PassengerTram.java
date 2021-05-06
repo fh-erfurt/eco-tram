@@ -1,24 +1,24 @@
 package de.fhe.ai.model;
 
-import de.fhe.ai.manager.*;
+import de.fhe.ai.manager.EventManager;
+import de.fhe.ai.manager.TrafficManager;
 
 /**
  * A class that represents {@link Tram} for passenger transport
  */
 public class PassengerTram extends Tram {
     private final int maxPassengers;
-    private int       currentPassengers;
+    private int currentPassengers;
 
     /**
      * Initializes a new passenger Tram
-     * 
+     *
      * @param id            the internal id of the tram
      * @param eventManager  the eventManager used to communicate with the TrafficManager, must be non-null
      * @param maxPassengers the maximum capacity of passengers of the tram, must be a positive integer
      * @param weight        the total weight of the tram excluding passengers in kg, must be a positive integer
      * @param speed         the speed the tram will move at in km/h, must be a positive integer
      * @param tramType      the type identifier of the tram, must be non-null and not empty
-     * 
      * @throws IllegalArgumentException if invalid parameters are passed
      */
     public PassengerTram(int id, EventManager eventManager, TrafficManager trafficManager, int maxPassengers, int weight, int speed, String tramType) {
@@ -30,17 +30,19 @@ public class PassengerTram extends Tram {
         this.maxPassengers = maxPassengers;
     }
 
-    //#region Getters & Setters
-    public int getMaxPassengers() { return this.maxPassengers; }
+    public int getMaxPassengers() {
+        return this.maxPassengers;
+    }
 
-    public int getCurrentPassengers() { return this.currentPassengers; }
+    public int getCurrentPassengers() {
+        return this.currentPassengers;
+    }
 
     /**
      * Attempts to set the current amount of passengers to the given number
-     * 
+     *
      * @param passengers the amount to set the current amount of passengers to, must be between 0 and maxPassengers
-     * 
-     * @exception IllegalArgumentException if the given amount not between 0 and maxPassengers
+     * @throws IllegalArgumentException if the given amount not between 0 and maxPassengers
      */
     public void setCurrentPassengers(int passengers) {
         if (passengers < 0)
@@ -51,9 +53,8 @@ public class PassengerTram extends Tram {
 
     /**
      * Attempts to add the given number of passengers to the given tram
-     * 
+     *
      * @param passengers the amount of passengers to add to the tram
-     * 
      * @throws IllegalStateException    if it is attempted to add passengers while the tram is on a connection
      * @throws IllegalArgumentException if it is attempted to add passengers past the maximum allowed passengers
      */
@@ -71,9 +72,8 @@ public class PassengerTram extends Tram {
 
     /**
      * Attempts to remove the given number of passengers from the given tram
-     * 
+     *
      * @param passengers the amount of passengers to remove from the tram
-     * 
      * @throws IllegalStateException    if it is attempted to remove passengers while the tram is on a connection
      * @throws IllegalArgumentException if it is attempted to remove more passengers than there are in the tram
      */
@@ -86,7 +86,6 @@ public class PassengerTram extends Tram {
         this.currentPassengers -= passengers;
 
         if (this.currentPassengers == 0)
-        this.getEventManager().getEventEntity(this.getTrafficManager()).emit("TRAM_MINIMUM_PASSENGERS_REACHED");
+            this.getEventManager().getEventEntity(this.getTrafficManager()).emit("TRAM_MINIMUM_PASSENGERS_REACHED");
     }
-    //#endregion
 }

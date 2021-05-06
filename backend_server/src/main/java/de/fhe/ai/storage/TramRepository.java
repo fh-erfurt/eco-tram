@@ -21,10 +21,10 @@ public class TramRepository implements ITramRepository {
     public void insert(ModelBase entity, Runnable callback) {
         //TODO 2nd java-semester for database
 
-        if(!(entity instanceof Tram)) return;
+        if (!(entity instanceof Tram)) return;
 
         List<ModelBase> result = trams.stream().filter(modelBase -> modelBase.getId() == entity.getId()).collect(Collectors.toList());
-        if(result.isEmpty())
+        if (result.isEmpty())
             trams.add(entity);
     }
 
@@ -32,10 +32,10 @@ public class TramRepository implements ITramRepository {
     public void update(ModelBase entity) {
         //TODO 2nd java-semester for database
 
-        if(!(entity instanceof Tram)) return;
+        if (!(entity instanceof Tram)) return;
 
         List<ModelBase> result = trams.stream().filter(modelBase -> modelBase.getId() == entity.getId()).collect(Collectors.toList());
-        if(result.isEmpty())
+        if (result.isEmpty())
             trams.add(entity);
         else {
             int index = trams.indexOf(result.get(0));
@@ -47,7 +47,7 @@ public class TramRepository implements ITramRepository {
     public void delete(ModelBase entity) {
         //TODO 2nd java-semester for database
 
-        if(!(entity instanceof Tram)) return;
+        if (!(entity instanceof Tram)) return;
 
         trams.removeIf(modelBase -> modelBase.equals(entity));
     }
@@ -63,7 +63,7 @@ public class TramRepository implements ITramRepository {
     public ModelBase getEntityById(int id) {
         //TODO 2nd java-semester for database
 
-        List<ModelBase> result = trams.stream().filter(modelBase -> modelBase.getId() == id ).collect(Collectors.toList());
+        List<ModelBase> result = trams.stream().filter(modelBase -> modelBase.getId() == id).collect(Collectors.toList());
         return result.isEmpty() ? null : result.get(0);
     }
 }

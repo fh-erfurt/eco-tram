@@ -1,12 +1,12 @@
 package de.fhe.ai.model;
 
-import java.util.ArrayList;
-
-import de.fhe.ai.manager.*;
-
+import de.fhe.ai.manager.EventManager;
+import de.fhe.ai.manager.TrafficManager;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.ArrayList;
 
 public class TramTest {
     // testing tram

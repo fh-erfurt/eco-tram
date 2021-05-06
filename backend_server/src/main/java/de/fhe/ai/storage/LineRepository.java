@@ -21,10 +21,10 @@ public class LineRepository implements ILineRepository {
     public void insert(ModelBase entity, Runnable callback) {
         //TODO 2nd java-semester for database
 
-        if(!(entity instanceof Line)) return;
+        if (!(entity instanceof Line)) return;
 
         List<ModelBase> result = lines.stream().filter(modelBase -> modelBase.getId() == entity.getId()).collect(Collectors.toList());
-        if(result.isEmpty())
+        if (result.isEmpty())
             lines.add(entity);
     }
 
@@ -32,10 +32,10 @@ public class LineRepository implements ILineRepository {
     public void update(ModelBase entity) {
         //TODO 2nd java-semester for database
 
-        if(!(entity instanceof Line)) return;
+        if (!(entity instanceof Line)) return;
 
         List<ModelBase> result = lines.stream().filter(modelBase -> modelBase.getId() == entity.getId()).collect(Collectors.toList());
-        if(result.isEmpty())
+        if (result.isEmpty())
             lines.add(entity);
         else {
             int index = lines.indexOf(result.get(0));
@@ -47,7 +47,7 @@ public class LineRepository implements ILineRepository {
     public void delete(ModelBase entity) {
         //TODO 2nd java-semester for database
 
-        if(!(entity instanceof Line)) return;
+        if (!(entity instanceof Line)) return;
 
         lines.removeIf(modelBase -> modelBase.equals(entity));
     }
@@ -63,7 +63,7 @@ public class LineRepository implements ILineRepository {
     public ModelBase getEntityById(int id) {
         //TODO 2nd java-semester for database
 
-        List<ModelBase> result = lines.stream().filter(modelBase -> modelBase.getId() == id ).collect(Collectors.toList());
+        List<ModelBase> result = lines.stream().filter(modelBase -> modelBase.getId() == id).collect(Collectors.toList());
         return result.isEmpty() ? null : result.get(0);
     }
 }

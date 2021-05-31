@@ -4,7 +4,10 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 public class Line extends EntityBase {
@@ -13,8 +16,7 @@ public class Line extends EntityBase {
     @Setter
     private String name;
 
+    @Getter
     @ManyToMany( mappedBy = "lines" )
-    private List<Traversable> route;
-
-
+    private Set<Traversable> route = new HashSet<>();
 }

@@ -17,7 +17,7 @@ import java.util.Set;
 public abstract class Traversable extends EntityBase {
     @Getter
     @Setter
-    private float length;
+    private int length;
 
     @Getter
     @Setter

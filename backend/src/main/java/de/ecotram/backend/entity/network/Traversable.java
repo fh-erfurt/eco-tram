@@ -1,14 +1,12 @@
 package de.ecotram.backend.entity.network;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.ecotram.backend.entity.EntityBase;
 import de.ecotram.backend.entity.Line;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Entity;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.ManyToMany;
+import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -28,6 +26,7 @@ public abstract class Traversable extends EntityBase {
     private float trafficFactor;
 
     @Getter
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.ALL})
+    @JsonIgnore
     private Set<Line> lines = new HashSet<>();
 }

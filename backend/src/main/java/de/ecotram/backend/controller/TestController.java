@@ -3,7 +3,6 @@ package de.ecotram.backend.controller;
 import de.ecotram.backend.entity.Line;
 import de.ecotram.backend.entity.network.Station;
 import de.ecotram.backend.repository.LineRepository;
-import de.ecotram.backend.repository.StationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

@@ -2,8 +2,7 @@ package de.ecotram.backend.entity.network;
 
 import de.ecotram.backend.entity.EntityBase;
 import de.ecotram.backend.entity.Line;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
@@ -12,22 +11,25 @@ import javax.persistence.ManyToMany;
 import java.util.HashSet;
 import java.util.Set;
 
+@Getter
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Traversable extends EntityBase {
-    @Getter
-    @Setter
-    private int length;
+    public static final int DEFAULT_LENGTH = 100; // m
+    public static final int DEFAULT_MAX_WEIGHT = 5000; // kg
+    public static final float DEFAULT_TRAFFIC_FACTOR = 1.0f; // speed multiplier
 
-    @Getter
     @Setter
-    private int maxWeight;
+    protected int length = DEFAULT_LENGTH;
 
-    @Getter
     @Setter
-    private float trafficFactor;
+    protected int maxWeight = DEFAULT_MAX_WEIGHT;
 
-    @Getter
+    @Setter
+    protected float trafficFactor = DEFAULT_TRAFFIC_FACTOR;
+
     @ManyToMany
     private Set<Line> lines = new HashSet<>();
 }

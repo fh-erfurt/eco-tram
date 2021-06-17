@@ -1,8 +1,6 @@
 package de.ecotram.backend.entity.network;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.security.InvalidParameterException;
 import java.util.HashMap;
@@ -12,23 +10,33 @@ import java.util.stream.Collectors;
 public final class Network {
     @Getter
     private final Map<Station, Set<Station>> adjacencyMap = new HashMap<>();
+    @Getter
+    private final Map<Station, MinimalSpanningTree> minimalSpanningTrees = new HashMap<>();
 
-    public Network(List<Station> stations) {
+    private Network() {
+    }
+
+    static Network fromStations(List<Station> stations) {
+        var network = new Network();
         for (Station station : stations) {
-            if (!this.adjacencyMap.containsKey(station)) {
-                this.adjacencyMap.put(station, station.getDestinationConnections()
+            if (!network.adjacencyMap.containsKey(station)) {
+                network.adjacencyMap.put(station, station.getDestinationConnections()
                         .stream()
                         .map(Connection::getDestinationStation)
                         .collect(Collectors.toSet())
                 );
-
             }
         }
+
+        for (Station station : stations) {
+            network.minimalSpanningTrees.put(station, dijkstra(station, network.adjacencyMap));
+        }
+
+        return network;
     }
 
-    // TODO: cache results
-    public Map<Station, DijkstraTuple> pathDijkstra(Station start) {
-        if (!this.adjacencyMap.containsKey(start))
+    public static MinimalSpanningTree dijkstra(Station start, Map<Station, Set<Station>> adjacencyMap) {
+        if (!adjacencyMap.containsKey(start))
             throw new InvalidParameterException("The start station does not exist in this network.");
 
         // initialize
@@ -39,7 +47,7 @@ public final class Network {
         }};
         Map<Station, DijkstraTuple> distanceMap = new HashMap<>(adjacencyMap.keySet()
                 .stream()
-                .collect(Collectors.toMap(k -> k, v -> new DijkstraTuple(Integer.MAX_VALUE, null)))
+                .collect(Collectors.toMap(k -> k, v -> new DijkstraTuple(Integer.MAX_VALUE, 0, null)))
         );
 
         distanceMap.get(currentMinimum).distance = 0;
@@ -61,9 +69,15 @@ public final class Network {
                             ? minimumToCurrent.get().getLength()
                             : distanceMap.get(currentMinimum).distance + minimumToCurrent.get().getLength();
 
+                    // hops from start to current
+                    int hops = key == start ? 0
+                            : currentMinimum == start ? 1
+                            : distanceMap.get(currentMinimum).hops + 1;
+
                     // if smaller assign as new previous etc
                     if (value.distance > distance) {
                         value.distance = distance;
+                        value.hops = hops;
                         value.previous = currentMinimum;
 
                         // add to queue
@@ -84,17 +98,80 @@ public final class Network {
             nodeQueue.remove(currentMinimum);
         }
 
-        return distanceMap;
+        return new MinimalSpanningTree(start, distanceMap);
     }
 
-    @AllArgsConstructor
-    public final class DijkstraTuple {
-        @Getter
-        @Setter
-        private int distance;
+    public List<Station> getPathTo(Station start, Station destination) {
+        if (!this.adjacencyMap.containsKey(start))
+            throw new IllegalArgumentException("The destination was not part of this network.");
 
-        @Getter
-        @Setter
+        if (!this.adjacencyMap.containsKey(destination))
+            throw new IllegalArgumentException("The destination was not part of this network.");
+
+        return this.minimalSpanningTrees.get(start).getPathTo(destination);
+    }
+
+    public int getDistance(Station start, Station destination) {
+        if (!this.adjacencyMap.containsKey(start))
+            throw new IllegalArgumentException("The destination was not part of this network.");
+
+        if (!this.adjacencyMap.containsKey(destination))
+            throw new IllegalArgumentException("The destination was not part of this network.");
+
+        return this.minimalSpanningTrees.get(start).getDistanceTo(destination);
+    }
+
+    public int getHops(Station start, Station destination) {
+        if (!this.adjacencyMap.containsKey(start))
+            throw new IllegalArgumentException("The destination was not part of this network.");
+
+        if (!this.adjacencyMap.containsKey(destination))
+            throw new IllegalArgumentException("The destination was not part of this network.");
+
+        return this.minimalSpanningTrees.get(start).getHopsTo(destination);
+    }
+
+    public Station getPrevious(Station start, Station destination) {
+        if (!this.adjacencyMap.containsKey(start))
+            throw new IllegalArgumentException("The destination was not part of this network.");
+
+        if (!this.adjacencyMap.containsKey(destination))
+            throw new IllegalArgumentException("The destination was not part of this network.");
+
+        return this.minimalSpanningTrees.get(start).getPreviousOf(destination);
+    }
+
+    @Data
+    @AllArgsConstructor
+    protected static final class DijkstraTuple {
+        private int distance;
+        private int hops;
         private Station previous;
+    }
+
+    protected static final record MinimalSpanningTree(Station root, Map<Station, DijkstraTuple> paths) {
+        public List<Station> getPathTo(Station destination) {
+            LinkedList<Station> list = new LinkedList<>();
+
+            Station previous = destination;
+            while (previous != null) {
+                list.addFirst(previous);
+                previous = paths.get(previous).previous;
+            }
+
+            return list;
+        }
+
+        public int getDistanceTo(Station destination) {
+            return this.paths.get(destination).getDistance();
+        }
+
+        public int getHopsTo(Station destination) {
+            return this.paths.get(destination).getHops();
+        }
+
+        public Station getPreviousOf(Station destination) {
+            return this.paths.get(destination).getPrevious();
+        }
     }
 }

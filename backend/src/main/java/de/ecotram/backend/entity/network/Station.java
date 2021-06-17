@@ -61,7 +61,7 @@ public final class Station extends Traversable {
                 Connection.builder().sourceStation(this).destinationStation(destination)
         ).build();
 
-        sourceConnections.add(connection);
+        this.sourceConnections.add(connection);
         destination.destinationConnections.add(connection);
         return connection;
     }
@@ -75,10 +75,10 @@ public final class Station extends Traversable {
                 Connection.builder().sourceStation(destination).destinationStation(this)
         ).build();
 
-        sourceConnections.add(connectionTo);
+        this.sourceConnections.add(connectionTo);
         destination.destinationConnections.add(connectionTo);
 
-        destinationConnections.add(connectionFrom);
+        this.destinationConnections.add(connectionFrom);
         destination.sourceConnections.add(connectionFrom);
         return new ConnectionPair(connectionTo, connectionFrom);
     }
@@ -93,14 +93,14 @@ public final class Station extends Traversable {
                 Connection.builder().sourceStation(this).destinationStation(destination)
         ).build();
 
-        sourceConnections.add(connectionTo);
+        this.sourceConnections.add(connectionTo);
         destination.destinationConnections.add(connectionTo);
 
         Connection connectionFrom = modifyFromBuilder.Modify(
                 Connection.builder().sourceStation(destination).destinationStation(this)
         ).build();
 
-        destinationConnections.add(connectionFrom);
+        this.destinationConnections.add(connectionFrom);
         destination.sourceConnections.add(connectionFrom);
 
         return new ConnectionPair(connectionTo, connectionFrom);

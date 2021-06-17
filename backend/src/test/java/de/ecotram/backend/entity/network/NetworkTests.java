@@ -196,13 +196,13 @@ public class NetworkTests {
 
     @Test
     public void minimalSpanningTree_distances() {
-        Assertions.assertEquals(0, network.getDistance(stationA, stationA), "StationA should have a distance of 0.");
-        Assertions.assertEquals(4, network.getDistance(stationA, stationB), "StationB should have a distance of 4.");
-        Assertions.assertEquals(6, network.getDistance(stationA, stationC), "StationC should have a distance of 6.");
-        Assertions.assertEquals(16, network.getDistance(stationA, stationD), "StationD should have a distance of 16.");
-        Assertions.assertEquals(12, network.getDistance(stationA, stationE), "StationE should have a distance of 12.");
-        Assertions.assertEquals(9, network.getDistance(stationA, stationF), "StationF should have a distance of 9.");
-        Assertions.assertEquals(5, network.getDistance(stationA, stationG), "StationG should have a distance of 5.");
+        Assertions.assertEquals(0, network.getDistance(stationA, stationA), "StationA's distance to StationA should be 0.");
+        Assertions.assertEquals(4, network.getDistance(stationA, stationB), "StationA's distance to StationB should be 4.");
+        Assertions.assertEquals(6, network.getDistance(stationA, stationC), "StationA's distance to StationC should be 6.");
+        Assertions.assertEquals(16, network.getDistance(stationA, stationD), "StationA's distance to StationD should be 16.");
+        Assertions.assertEquals(12, network.getDistance(stationA, stationE), "StationA's distance to StationE should be 12.");
+        Assertions.assertEquals(9, network.getDistance(stationA, stationF), "StationA's distance to StationF should be 9.");
+        Assertions.assertEquals(5, network.getDistance(stationA, stationG), "StationA's distance to StationG should be 5.");
     }
 
     @Test

@@ -1,5 +1,6 @@
 package de.ecotram.backend.entity.network;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.ecotram.backend.entity.EntityBase;
 import de.ecotram.backend.entity.Line;
 import lombok.*;
@@ -27,6 +28,7 @@ public abstract class Traversable extends EntityBase {
     @Transient
     protected float trafficFactor = DEFAULT_TRAFFIC_FACTOR;
 
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.ALL})
+    @JsonIgnore
     private Set<Line> lines = new HashSet<>();
 }

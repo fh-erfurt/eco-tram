@@ -1,6 +1,9 @@
 package de.ecotram.backend.entity.network;
 
 import lombok.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
@@ -8,8 +11,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
+
+import java.util.Optional;
 import java.util.stream.Stream;
 
 @Getter
@@ -34,6 +38,7 @@ public final class Station extends Traversable {
     private Network network;
 
     @OneToMany(mappedBy = "sourceStation")
+    @JsonBackReference
     private Set<Connection> sourceConnections = new HashSet<>();
 
     @OneToMany(mappedBy = "destinationStation")

@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 import java.util.HashSet;
@@ -18,6 +19,7 @@ public final class Line extends EntityBase {
     private String name;
 
     // TODO: can this really be duplicate-free?
-    @ManyToMany(mappedBy = "lines")
+    @Getter
+    @ManyToMany(mappedBy = "lines", cascade = {CascadeType.ALL})
     private Set<Traversable> route = new HashSet<>();
 }

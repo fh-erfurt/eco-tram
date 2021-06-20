@@ -1,13 +1,11 @@
 package de.ecotram.backend.entity.network;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Transient;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -16,7 +14,6 @@ import java.util.stream.Stream;
 
 @Getter
 @Entity
-@AllArgsConstructor
 @NoArgsConstructor
 public final class Station extends Traversable {
     public static final String DEFAULT_NAME = "Station";
@@ -30,6 +27,7 @@ public final class Station extends Traversable {
     private int maxPassengers = DEFAULT_MAX_PASSENGERS;
 
     @Setter
+    @Transient
     private int currentPassengers = DEFAULT_CURRENT_PASSENGERS;
 
     @ManyToOne
@@ -60,7 +58,6 @@ public final class Station extends Traversable {
                 .findFirst();
     }
 
-    // TODO: check if connection already exists
     public Connection connectTo(Station destination, Connection.Builder.ModifyDelegate modifyBuilder) {
         Connection connection = modifyBuilder.Modify(Connection.builder())
                 .sourceStation(this)
@@ -128,6 +125,7 @@ public final class Station extends Traversable {
         return new Builder();
     }
 
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static final class Builder {
         private int length = Traversable.DEFAULT_LENGTH;
         private int maxWeight = Traversable.DEFAULT_MAX_WEIGHT;

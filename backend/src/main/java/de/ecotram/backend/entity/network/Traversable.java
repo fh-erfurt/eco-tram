@@ -4,16 +4,12 @@ import de.ecotram.backend.entity.EntityBase;
 import de.ecotram.backend.entity.Line;
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.ManyToMany;
+import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
 @Getter
 @Entity
-@AllArgsConstructor
 @NoArgsConstructor
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Traversable extends EntityBase {
@@ -28,6 +24,7 @@ public abstract class Traversable extends EntityBase {
     protected int maxWeight = DEFAULT_MAX_WEIGHT;
 
     @Setter
+    @Transient
     protected float trafficFactor = DEFAULT_TRAFFIC_FACTOR;
 
     @ManyToMany

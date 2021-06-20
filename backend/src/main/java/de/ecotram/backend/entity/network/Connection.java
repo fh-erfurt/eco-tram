@@ -8,7 +8,6 @@ import javax.persistence.ManyToOne;
 @Getter
 @Setter
 @Entity
-@AllArgsConstructor
 @NoArgsConstructor
 public final class Connection extends Traversable {
     @ManyToOne
@@ -29,6 +28,7 @@ public final class Connection extends Traversable {
         return new Builder();
     }
 
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static final class Builder {
         private int length = Traversable.DEFAULT_LENGTH;
         private int maxWeight = Traversable.DEFAULT_MAX_WEIGHT;

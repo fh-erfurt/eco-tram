@@ -9,13 +9,17 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
 import java.util.List;
 
+@Getter
+@Setter
 @MappedSuperclass
 public abstract class Tram extends EntityBase {
-    @Getter
-    @Setter
-    private int weight;
+    public static final int DEFAULT_WEIGHT = 5000; // kg
+    public static final int DEFAULT_MAX_SPEED = 50; // km/h
+    public static final int DEFAULT_SPEED = 0; // km/h
 
-    @Getter
-    @Setter
-    private int speed;
+    protected int weight = DEFAULT_WEIGHT;
+    protected int maxSpeed = DEFAULT_MAX_SPEED;
+
+    @Transient
+    protected int speed = DEFAULT_SPEED;
 }

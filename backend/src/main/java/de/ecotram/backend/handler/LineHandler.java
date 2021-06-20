@@ -8,7 +8,7 @@ import de.ecotram.backend.repository.ConnectionRepository;
 import de.ecotram.backend.repository.LineRepository;
 import de.ecotram.backend.repository.StationRepository;
 import de.ecotram.backend.utilities.ErrorResponseException;
-import de.ecotram.backend.utilities.Utilities;
+import de.ecotram.backend.utilities.ValidationUtilities;
 import lombok.Getter;
 
 import java.util.ArrayList;
@@ -41,7 +41,7 @@ public final class LineHandler {
     }
 
     public List<Long> validateLineBody(LineBody lineBody) throws ErrorResponseException {
-        if (!Utilities.isStringValid(lineBody.name, 1, 100))
+        if (!ValidationUtilities.isStringValid(lineBody.name, 1, 100))
             throw new ErrorResponseException("invalid-name", "name is invalid");
 
         ArrayList<Long> ids = new ArrayList<>();

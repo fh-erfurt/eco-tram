@@ -3,22 +3,22 @@ package de.ecotram.backend.handler;
 import de.ecotram.backend.entity.PassengerTram;
 import de.ecotram.backend.repository.PassengerTramRepository;
 import de.ecotram.backend.utilities.ErrorResponseException;
-import de.ecotram.backend.utilities.Utilities;
+import de.ecotram.backend.utilities.ValidationUtilities;
 import lombok.Getter;
 import org.springframework.lang.Nullable;
 
 public final class PassengerTramHandler {
     public void validatePassengerTramBody(PassengerTramBody passengerTramBody) throws ErrorResponseException {
-        if (!Utilities.isIntegerValid(passengerTramBody.weight, 0))
+        if (!ValidationUtilities.isIntegerValid(passengerTramBody.weight, 0))
             throw new ErrorResponseException("invalid-max-weight", "weight is invalid");
 
-        if (!Utilities.isFloatValid(passengerTramBody.speed, 0))
+        if (!ValidationUtilities.isFloatValid(passengerTramBody.speed, 0))
             throw new ErrorResponseException("invalid-traffic-factor", "speed is invalid");
 
-        if (!Utilities.isIntegerValid(passengerTramBody.maxPassengers, 0))
+        if (!ValidationUtilities.isIntegerValid(passengerTramBody.maxPassengers, 0))
             throw new ErrorResponseException("invalid-max-passengers", "maxPassengers is invalid");
 
-        if (!Utilities.isIntegerValid(passengerTramBody.currentPassengers, 0))
+        if (!ValidationUtilities.isIntegerValid(passengerTramBody.currentPassengers, 0))
             throw new ErrorResponseException("invalid-current-passengers", "currentPassengers is invalid");
     }
 

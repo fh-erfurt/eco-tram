@@ -36,14 +36,11 @@ public final class Connection extends Traversable {
         private Station sourceStation;
         private Station destinationStation;
 
-        // TODO(erik): either make protected which restricts creation to connectTo/package or create a public builder
-        // should not be used in Station#connectTo()
         public Builder sourceStation(Station sourceStation) {
             this.sourceStation = sourceStation;
             return this;
         }
 
-        // should not be used in Station#connectTo()
         public Builder destinationStation(Station destinationStation) {
             this.destinationStation = destinationStation;
             return this;
@@ -72,5 +69,12 @@ public final class Connection extends Traversable {
         public interface ModifyDelegate {
             Builder Modify(Builder a);
         }
+    }
+
+    @Data
+    @AllArgsConstructor(access = AccessLevel.PROTECTED)
+    public static final class Pair {
+        private Connection sourceDestination;
+        private Connection destinationSource;
     }
 }

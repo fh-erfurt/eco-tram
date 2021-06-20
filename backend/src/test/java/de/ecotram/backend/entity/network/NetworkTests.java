@@ -5,9 +5,9 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
-public class NetworkTests {
-
+public final class NetworkTests {
     private static Network network;
     private static final Station stationA = new Station();
     private static final Station stationB = new Station();
@@ -17,152 +17,21 @@ public class NetworkTests {
     private static final Station stationF = new Station();
     private static final Station stationG = new Station();
 
-    //    @BeforeAll
-//    static void setUp() {
-//        // the graph
-//        //    b -- c    // 7
-//        //  /  \  / \   // 4 | 12 | 1 | 12
-//        // a -- g    d  // 5
-//        //  \  / \  /   // 10 | 4 | 8 | 4
-//        //   f -- e     // 3
-//
-//        // should result in this spanning tree with root a
-//        //    b    c
-//        //  /     /
-//        // a -- g    d
-//        //     /    /
-//        //   f -- e
-//
-//        stationA.setName("stationA");
-//        stationB.setName("stationB");
-//        stationC.setName("stationC");
-//        stationD.setName("stationD");
-//        stationE.setName("stationE");
-//        stationF.setName("stationF");
-//        stationG.setName("stationG");
-//
-//        var connectionAB = new Connection(stationA, stationB);
-//        connectionAB.setLength(4);
-//        var connectionAF = new Connection(stationA, stationF);
-//        connectionAF.setLength(10);
-//        var connectionAG = new Connection(stationA, stationG);
-//        connectionAG.setLength(5);
-//        stationA.getSourceConnections().add(connectionAB);
-//        stationA.getSourceConnections().add(connectionAF);
-//        stationA.getSourceConnections().add(connectionAG);
-//        stationB.getDestinationConnections().add(connectionAB);
-//        stationF.getDestinationConnections().add(connectionAF);
-//        stationG.getDestinationConnections().add(connectionAG);
-//
-//        var connectionBA = new Connection(stationB, stationA);
-//        connectionBA.setLength(4);
-//        var connectionBC = new Connection(stationB, stationC);
-//        connectionBC.setLength(7);
-//        var connectionBG = new Connection(stationB, stationG);
-//        connectionBG.setLength(10);
-//        stationB.getSourceConnections().add(connectionBA);
-//        stationB.getSourceConnections().add(connectionBC);
-//        stationB.getSourceConnections().add(connectionBG);
-//        stationA.getDestinationConnections().add(connectionBA);
-//        stationC.getDestinationConnections().add(connectionBC);
-//        stationG.getDestinationConnections().add(connectionBG);
-//
-//        var connectionCB = new Connection(stationC, stationB);
-//        connectionCB.setLength(7);
-//        var connectionCD = new Connection(stationC, stationD);
-//        connectionCD.setLength(12);
-//        var connectionCG = new Connection(stationC, stationG);
-//        connectionCG.setLength(1);
-//        stationC.getSourceConnections().add(connectionCB);
-//        stationC.getSourceConnections().add(connectionCD);
-//        stationC.getSourceConnections().add(connectionCG);
-//        stationB.getDestinationConnections().add(connectionCB);
-//        stationD.getDestinationConnections().add(connectionCD);
-//        stationG.getDestinationConnections().add(connectionCG);
-//
-//        var connectionDC = new Connection(stationD, stationC);
-//        connectionDC.setLength(12);
-//        var connectionDE = new Connection(stationD, stationE);
-//        connectionDE.setLength(4);
-//        stationD.getSourceConnections().add(connectionDC);
-//        stationD.getSourceConnections().add(connectionDE);
-//        stationC.getDestinationConnections().add(connectionDC);
-//        stationE.getDestinationConnections().add(connectionDE);
-//
-//        var connectionED = new Connection(stationE, stationD);
-//        connectionED.setLength(4);
-//        var connectionEF = new Connection(stationE, stationF);
-//        connectionEF.setLength(3);
-//        var connectionEG = new Connection(stationE, stationG);
-//        connectionEG.setLength(8);
-//        stationE.getSourceConnections().add(connectionED);
-//        stationE.getSourceConnections().add(connectionEF);
-//        stationE.getSourceConnections().add(connectionEG);
-//        stationD.getDestinationConnections().add(connectionED);
-//        stationF.getDestinationConnections().add(connectionEF);
-//        stationG.getDestinationConnections().add(connectionEG);
-//
-//        var connectionFA = new Connection(stationF, stationA);
-//        connectionFA.setLength(10);
-//        var connectionFE = new Connection(stationF, stationE);
-//        connectionFE.setLength(3);
-//        var connectionFG = new Connection(stationF, stationG);
-//        connectionFG.setLength(4);
-//        stationF.getSourceConnections().add(connectionFA);
-//        stationF.getSourceConnections().add(connectionFE);
-//        stationF.getSourceConnections().add(connectionFG);
-//        stationA.getDestinationConnections().add(connectionFA);
-//        stationE.getDestinationConnections().add(connectionFE);
-//        stationG.getDestinationConnections().add(connectionFG);
-//
-//        var connectionGA = new Connection(stationG, stationA);
-//        connectionGA.setLength(5);
-//        var connectionGB = new Connection(stationG, stationB);
-//        connectionGB.setLength(10);
-//        var connectionGC = new Connection(stationG, stationC);
-//        connectionGC.setLength(1);
-//        var connectionGE = new Connection(stationG, stationE);
-//        connectionGE.setLength(8);
-//        var connectionGF = new Connection(stationG, stationF);
-//        connectionGF.setLength(4);
-//        stationG.getSourceConnections().add(connectionGA);
-//        stationG.getSourceConnections().add(connectionGB);
-//        stationG.getSourceConnections().add(connectionGC);
-//        stationG.getSourceConnections().add(connectionGE);
-//        stationG.getSourceConnections().add(connectionGF);
-//        stationG.getDestinationConnections().add(connectionGA);
-//        stationB.getDestinationConnections().add(connectionGB);
-//        stationC.getDestinationConnections().add(connectionGC);
-//        stationE.getDestinationConnections().add(connectionGE);
-//        stationF.getDestinationConnections().add(connectionGF);
-//
-//        var stations = new ArrayList<Station>() {{
-//            add(stationA);
-//            add(stationB);
-//            add(stationC);
-//            add(stationD);
-//            add(stationE);
-//            add(stationF);
-//            add(stationG);
-//        }};
-//
-//        network = Network.fromStations(stations);
-//    }
     @BeforeAll
     static void setUp() {
         // the graph
-        //    b -- c    // 7
-        //  /  \  / \   // 4 | 12 | 1 | 12
-        // a -- g    d  // 5
-        //  \  / \  /   // 10 | 4 | 8 | 4
-        //   f -- e     // 3
+        //    b -- c   // 7
+        //  /  \  / \  // 4 | 12 | 1 | 12
+        // a -- g    d // 5
+        //  \  / \  /  // 10 | 4 | 8 | 4
+        //   f -- e    // 3
 
         // should result in this spanning tree with root a
-        //    b    c
-        //  /     /
-        // a -- g    d
-        //     /    /
-        //   f -- e
+        //    b    c   //
+        //  /     /    // 4 | 1
+        // a -- g    d // 5
+        //     /    /  // 4 | 4
+        //   f -- e    // 3
 
         stationA.connectToAndFrom(stationB, c -> c.length(4));
         stationA.connectToAndFrom(stationF, c -> c.length(10));
@@ -181,7 +50,7 @@ public class NetworkTests {
 
         stationF.connectToAndFrom(stationG, c -> c.length(4));
 
-        var stations = new ArrayList<Station>() {{
+        var stations = new HashSet<Station>() {{
             add(stationA);
             add(stationB);
             add(stationC);
@@ -229,8 +98,9 @@ public class NetworkTests {
 
     @Test
     public void minimalSpanningTree_path() {
-
-        var minimalTree = network.getMinimalSpanningTrees().get(stationA);
-        Assertions.assertArrayEquals(new Station[]{stationA, stationG, stationF, stationE, stationD}, minimalTree.getPathTo(stationD).toArray());
+        Assertions.assertArrayEquals(
+                new Station[]{stationA, stationG, stationF, stationE, stationD},
+                network.getMinimalSpanningTrees().get(stationA).getPathTo(stationD).toArray()
+        );
     }
 }

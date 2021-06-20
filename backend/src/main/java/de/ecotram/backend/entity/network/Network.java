@@ -1,40 +1,56 @@
 package de.ecotram.backend.entity.network;
 
+import de.ecotram.backend.entity.EntityBase;
 import lombok.*;
 
+import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+import javax.persistence.Transient;
 import java.security.InvalidParameterException;
 import java.util.HashMap;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public final class Network {
+@Entity
+@NoArgsConstructor
+public final class Network extends EntityBase {
     @Getter
-    private final Map<Station, Set<Station>> adjacencyMap = new HashMap<>();
-    @Getter
-    private final Map<Station, MinimalSpanningTree> minimalSpanningTrees = new HashMap<>();
+    @OneToMany(mappedBy = "network")
+    private Set<Station> stations;
 
-    private Network() {
+    @Getter
+    @Transient
+    private Map<Station, Set<Station>> adjacencyMap = new HashMap<>();
+
+    @Getter
+    @Transient
+    private Map<Station, MinimalSpanningTree> minimalSpanningTrees = new HashMap<>();
+
+    private Network(Set<Station> stations) {
+        this.stations = stations;
     }
 
-    static Network fromStations(List<Station> stations) {
-        var network = new Network();
-        for (Station station : stations) {
-            if (!network.adjacencyMap.containsKey(station)) {
-                network.adjacencyMap.put(station, station.getDestinationConnections()
-                        .stream()
-                        .map(Connection::getDestinationStation)
-                        .collect(Collectors.toSet())
-                );
-            }
+    public static Network fromStations(Set<Station> stations) {
+        Network network = new Network(stations);
+
+        // map all adjacent stations
+        for (Station station : network.stations) {
+            network.adjacencyMap.put(station, station.getDestinationConnections()
+                    .stream()
+                    .map(Connection::getDestinationStation)
+                    .collect(Collectors.toSet())
+            );
         }
 
-        for (Station station : stations) {
+        // create the minimal spanning trees for each station
+        for (Station station : network.stations) {
             network.minimalSpanningTrees.put(station, dijkstra(station, network.adjacencyMap));
         }
 
         return network;
     }
 
+    // TODO(erik): optimize
     public static MinimalSpanningTree dijkstra(Station start, Map<Station, Set<Station>> adjacencyMap) {
         if (!adjacencyMap.containsKey(start))
             throw new InvalidParameterException("The start station does not exist in this network.");

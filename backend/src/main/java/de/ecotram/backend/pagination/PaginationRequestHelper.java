@@ -11,4 +11,3 @@ public interface PaginationRequestHelper<T> {
 
     PaginationRequest<T> getAsPaginationRequest(Class<T> tClass, PaginationRequest<T> paginationRequest);
 }
-

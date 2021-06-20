@@ -16,8 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-public class LineHandler {
-
+public final class LineHandler {
     public List<Traversable> validateTraversableIds(List<Long> ids, StationRepository stationRepository, ConnectionRepository connectionRepository) throws ErrorResponseException {
         List<Station> stations = stationRepository.findAllById(ids);
         List<Connection> connections = connectionRepository.findAllById(ids);
@@ -115,7 +114,6 @@ public class LineHandler {
     }
 
     public static class LineBody {
-
         @Getter
         private String name;
 

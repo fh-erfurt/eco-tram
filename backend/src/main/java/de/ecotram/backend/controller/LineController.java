@@ -18,12 +18,14 @@ import java.util.Optional;
 
 @RestController
 public class LineController {
-
     private final LineHandler lineHandler = new LineHandler();
+
     @Autowired
     private LineRepository lineRepository;
+
     @Autowired
     private StationRepository stationRepository;
+
     @Autowired
     private ConnectionRepository connectionRepository;
 
@@ -73,5 +75,4 @@ public class LineController {
         } else
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("invalid-line", "No line with id found"));
     }
-
 }

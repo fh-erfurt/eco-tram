@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
 
 @RestController
-public class PassengerTramController {
-
+public final class PassengerTramController {
     private final PassengerTramHandler passengerTramHandler = new PassengerTramHandler();
+
     @Autowired
     private PassengerTramRepository passengerTramRepository;
 
@@ -67,5 +67,4 @@ public class PassengerTramController {
         } else
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("invalid-passenger-tram", "No passenger tram with id found"));
     }
-
 }

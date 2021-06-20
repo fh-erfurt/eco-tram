@@ -4,8 +4,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
 
-public class PaginationRequestHelperImpl<T> implements PaginationRequestHelper<T> {
-
+public final class PaginationRequestHelperImpl<T> implements PaginationRequestHelper<T> {
     @PersistenceContext
     EntityManager entityManager;
 

@@ -1,9 +1,5 @@
 package de.ecotram.backend.handler;
 
-import de.ecotram.backend.repository.ConnectionRepository;
-import de.ecotram.backend.repository.LineRepository;
-import de.ecotram.backend.repository.PassengerTramRepository;
-import de.ecotram.backend.repository.StationRepository;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,8 +8,7 @@ import org.springframework.stereotype.Component;
 import javax.persistence.EntityManager;
 
 @Component
-public class StatisticsHandler {
-
+public final class StatisticsHandler {
     @Autowired
     private EntityManager entityManager;
 
@@ -41,7 +36,6 @@ public class StatisticsHandler {
 
     @AllArgsConstructor
     public static class StatisticsCountResult {
-
         @Getter
         private final String type;
 
@@ -52,7 +46,6 @@ public class StatisticsHandler {
 
     @AllArgsConstructor
     public static class StatisticsOverallCountResult {
-
         @Getter
         private final StatisticsCountResult connections;
 
@@ -64,7 +57,5 @@ public class StatisticsHandler {
 
         @Getter
         private final StatisticsCountResult stations;
-
     }
-
 }

@@ -7,8 +7,7 @@ import de.ecotram.backend.utilities.Utilities;
 import lombok.Getter;
 import org.springframework.lang.Nullable;
 
-public class StationHandler {
-
+public final class StationHandler {
     public void validateStationBody(StationBody stationBody) throws ErrorResponseException {
         if (!Utilities.isFloatValid(stationBody.length, 0))
             throw new ErrorResponseException("invalid-length", "length is invalid");
@@ -46,7 +45,6 @@ public class StationHandler {
     }
 
     public static class StationBody {
-
         @Getter
         private int length;
 

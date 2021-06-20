@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
 
 @RestController
-public class StationController {
-
+public final class StationController {
     private final StationHandler stationHandler = new StationHandler();
+
     @Autowired
     private StationRepository stationRepository;
 
@@ -67,5 +67,4 @@ public class StationController {
         } else
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("invalid-station", "No station with id found"));
     }
-
 }

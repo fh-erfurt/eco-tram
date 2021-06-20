@@ -10,8 +10,7 @@ import lombok.Getter;
 
 import java.util.Optional;
 
-public class ConnectionHandler {
-
+public final class ConnectionHandler {
     public ConnectionStations validateConnectionBody(ConnectionBody connectionBody, StationRepository stationRepository) throws ErrorResponseException {
         Optional<Station> sourceStation = stationRepository.findById(connectionBody.sourceStationId);
         if (sourceStation.isEmpty())
@@ -58,22 +57,19 @@ public class ConnectionHandler {
     }
 
     public static class ConnectionBody {
+        @Getter
+        private long sourceStationId;
 
         @Getter
-        private Long sourceStationId;
-
-        @Getter
-        private Long destinationStationId;
+        private long destinationStationId;
     }
 
     @AllArgsConstructor
     class ConnectionStations {
-
         @Getter
         private final Station sourceStation;
 
         @Getter
         private final Station destinationStation;
-
     }
 }

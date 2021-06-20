@@ -16,11 +16,12 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
 
 @RestController
-public class ConnectionController {
-
+public final class ConnectionController {
     private final ConnectionHandler connectionHandler = new ConnectionHandler();
+
     @Autowired
     private ConnectionRepository connectionRepository;
+
     @Autowired
     private StationRepository stationRepository;
 
@@ -70,5 +71,4 @@ public class ConnectionController {
         } else
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("invalid-connection", "No connection with id found"));
     }
-
 }

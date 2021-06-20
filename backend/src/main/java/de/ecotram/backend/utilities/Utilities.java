@@ -1,7 +1,6 @@
 package de.ecotram.backend.utilities;
 
-public class Utilities {
-
+public final class Utilities {
     public static boolean isIntegerValid(int value, int min, int max) {
         if (value < min) return false;
         return max == -1 || value <= max;
@@ -33,5 +32,4 @@ public class Utilities {
     public static boolean isStringValid(String value, int min) {
         return isStringValid(value, min, -1, false);
     }
-
 }

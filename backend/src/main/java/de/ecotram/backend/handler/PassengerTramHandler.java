@@ -7,8 +7,7 @@ import de.ecotram.backend.utilities.Utilities;
 import lombok.Getter;
 import org.springframework.lang.Nullable;
 
-public class PassengerTramHandler {
-
+public final class PassengerTramHandler {
     public void validatePassengerTramBody(PassengerTramBody passengerTramBody) throws ErrorResponseException {
         if (!Utilities.isIntegerValid(passengerTramBody.weight, 0))
             throw new ErrorResponseException("invalid-max-weight", "weight is invalid");
@@ -40,7 +39,6 @@ public class PassengerTramHandler {
     }
 
     public static class PassengerTramBody {
-
         @Getter
         private int speed;
 

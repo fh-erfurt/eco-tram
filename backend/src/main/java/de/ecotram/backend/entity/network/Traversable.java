@@ -3,7 +3,9 @@ package de.ecotram.backend.entity.network;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.ecotram.backend.entity.EntityBase;
 import de.ecotram.backend.entity.Line;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.HashSet;

@@ -1,13 +1,15 @@
 package de.ecotram.backend.entity.network;
 
 import de.ecotram.backend.entity.EntityBase;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 import java.security.InvalidParameterException;
-import java.util.HashMap;
 import java.util.*;
 import java.util.stream.Collectors;
 

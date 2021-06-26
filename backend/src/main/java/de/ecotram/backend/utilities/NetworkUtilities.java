@@ -220,6 +220,8 @@ public final class NetworkUtilities {
         pushkinStr.connectTo(hochheimerStr, c -> c);
         pushkinStr.connectToAndFrom(kaffetrichter, c -> c);
 
+        riethStr.connectToAndFrom(berlinerStr, c -> c);
+
 
         HashSet<Station> stations = new HashSet<>() {{
             add(europaPlatz);

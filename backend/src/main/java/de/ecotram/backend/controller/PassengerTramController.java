@@ -21,11 +21,13 @@ public final class PassengerTramController {
     @Autowired
     private PassengerTramRepository passengerTramRepository;
 
+    @CrossOrigin
     @GetMapping("/passenger-trams/list")
     public ResponseEntity<PaginationRequest<PassengerTram>> list(@RequestParam(defaultValue = "20") int limit, @RequestParam(defaultValue = "0") int page) {
         return ResponseEntity.ok().body(passengerTramRepository.getAsPaginationRequest(PassengerTram.class, limit, page));
     }
 
+    @CrossOrigin
     @GetMapping(value = "/passenger-trams/get/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> list(@PathVariable("id") Long id) {
         Optional<PassengerTram> passengerTram = passengerTramRepository.findById(id);

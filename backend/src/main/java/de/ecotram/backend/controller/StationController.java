@@ -21,11 +21,13 @@ public final class StationController {
     @Autowired
     private StationRepository stationRepository;
 
+    @CrossOrigin
     @GetMapping("/stations/list")
     public ResponseEntity<PaginationRequest<Station>> list(@RequestParam(defaultValue = "20") int limit, @RequestParam(defaultValue = "0") int page) {
         return ResponseEntity.ok().body(stationRepository.getAsPaginationRequest(Station.class, limit, page));
     }
 
+    @CrossOrigin
     @GetMapping(value = "/stations/get/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> list(@PathVariable("id") Long id) {
         Optional<Station> station = stationRepository.findById(id);

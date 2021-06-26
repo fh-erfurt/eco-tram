@@ -4,11 +4,35 @@
     <div class="options">
       <router-link :to="{ name: 'connections' }" class="option">
         <div class="name">
-          <i class="fa fa-th-large"></i>
+          <i class="fas fa-sitemap"></i>
           Verbindungen
         </div>
         <div class="count" v-if="statistics == null"><i class="fas fa-circle-notch fa-spin"></i></div>
         <div class="count" v-else>{{ statistics.connections }}</div>
+      </router-link>
+      <router-link :to="{ name: 'lines' }" class="option">
+        <div class="name">
+          <i class="fas fa-code-branch"></i>
+          Linien
+        </div>
+        <div class="count" v-if="statistics == null"><i class="fas fa-circle-notch fa-spin"></i></div>
+        <div class="count" v-else>{{ statistics.lines.results }}</div>
+      </router-link>
+      <router-link :to="{ name: 'passengerTrams' }" class="option">
+        <div class="name">
+          <i class="fa fa-subway"></i>
+          Straßenbahnen
+        </div>
+        <div class="count" v-if="statistics == null"><i class="fas fa-circle-notch fa-spin"></i></div>
+        <div class="count" v-else>{{ statistics.passengerTrams.results }}</div>
+      </router-link>
+      <router-link :to="{ name: 'stations' }" class="option">
+        <div class="name">
+          <i class="fas fa-h-square"></i>
+          Stationen
+        </div>
+        <div class="count" v-if="statistics == null"><i class="fas fa-circle-notch fa-spin"></i></div>
+        <div class="count" v-else>{{ statistics.stations.results }}</div>
       </router-link>
     </div>
   </div>
@@ -25,8 +49,9 @@ interface Statistics {
 export default class Home extends Vue {
   private statistics?: Statistics;
 
-  mounted() {
-    //TODO Statistiken laden
+  async mounted() {
+    const response = await fetch(`${config.host}/statistics`)
+    this.statistics = await response.json()
   }
 }
 </script>

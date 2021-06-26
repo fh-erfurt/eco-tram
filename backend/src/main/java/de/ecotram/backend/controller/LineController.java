@@ -29,11 +29,13 @@ public class LineController {
     @Autowired
     private ConnectionRepository connectionRepository;
 
+    @CrossOrigin
     @GetMapping("/lines/list")
     public ResponseEntity<PaginationRequest<Line>> list(@RequestParam(defaultValue = "20") int limit, @RequestParam(defaultValue = "0") int page) {
         return ResponseEntity.ok().body(lineRepository.getAsPaginationRequest(Line.class, limit, page));
     }
 
+    @CrossOrigin
     @GetMapping(value = "/lines/get/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> list(@PathVariable("id") Long id) {
         Optional<Line> line = lineRepository.findById(id);

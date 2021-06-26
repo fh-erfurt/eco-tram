@@ -25,11 +25,13 @@ public final class ConnectionController {
     @Autowired
     private StationRepository stationRepository;
 
+    @CrossOrigin
     @GetMapping("/connections/list")
     public ResponseEntity<PaginationRequest<Connection>> list(@RequestParam(defaultValue = "20") int limit, @RequestParam(defaultValue = "0") int page) {
         return ResponseEntity.ok().body(connectionRepository.getAsPaginationRequest(Connection.class, limit, page));
     }
 
+    @CrossOrigin
     @GetMapping(value = "/connections/get/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> list(@PathVariable("id") Long id) {
         Optional<Connection> connection = connectionRepository.findById(id);

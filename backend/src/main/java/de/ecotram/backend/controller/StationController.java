@@ -32,6 +32,7 @@ public final class StationController {
         return station.<ResponseEntity<Object>>map(value -> ResponseEntity.ok().body(value)).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("invalid-station", "No station with id found")));
     }
 
+    @CrossOrigin
     @PostMapping(value = "/stations/new", consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> newStation(@RequestBody StationHandler.StationBody stationBody) {
         try {
@@ -42,6 +43,7 @@ public final class StationController {
         }
     }
 
+    @CrossOrigin
     @PostMapping(value = "/stations/update/{id}", consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> updateStation(@RequestBody StationHandler.StationBody stationBody, @PathVariable("id") Long id) {
         Optional<Station> stationEntry = stationRepository.findById(id);
@@ -57,6 +59,7 @@ public final class StationController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("invalid-station", "No station with id found"));
     }
 
+    @CrossOrigin
     @PostMapping(value = "/stations/delete/{id}")
     public ResponseEntity<Object> deleteStation(@RequestBody StationHandler.StationBody stationBody, @PathVariable("id") Long id) {
         Optional<Station> stationEntry = stationRepository.findById(id);

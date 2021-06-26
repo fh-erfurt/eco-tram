@@ -40,6 +40,7 @@ public class LineController {
         return line.<ResponseEntity<Object>>map(value -> ResponseEntity.ok().body(value)).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("invalid-line", "No line with id found")));
     }
 
+    @CrossOrigin
     @PostMapping(value = "/lines/new", consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> newLine(@RequestBody LineHandler.LineBody lineBody) {
         try {
@@ -50,6 +51,7 @@ public class LineController {
         }
     }
 
+    @CrossOrigin
     @PostMapping(value = "/lines/update/{id}", consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> updateLine(@RequestBody LineHandler.LineBody lineBody, @PathVariable("id") Long id) {
         Optional<Line> lineEntry = lineRepository.findById(id);
@@ -65,6 +67,7 @@ public class LineController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("invalid-line", "No line with id found"));
     }
 
+    @CrossOrigin
     @PostMapping(value = "/lines/delete/{id}")
     public ResponseEntity<Object> deleteLine(@RequestBody LineHandler.LineBody lineBody, @PathVariable("id") Long id) {
         Optional<Line> lineEntry = lineRepository.findById(id);

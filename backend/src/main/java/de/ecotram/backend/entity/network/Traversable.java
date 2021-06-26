@@ -27,7 +27,6 @@ public abstract class Traversable extends EntityBase {
     protected int maxWeight = DEFAULT_MAX_WEIGHT;
 
     @Setter
-    @Transient
     protected float trafficFactor = DEFAULT_TRAFFIC_FACTOR;
 
     @ManyToMany(cascade = {CascadeType.ALL})

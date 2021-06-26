@@ -32,6 +32,7 @@ public final class PassengerTramController {
         return passengerTram.<ResponseEntity<Object>>map(value -> ResponseEntity.ok().body(value)).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("invalid-passenger-tram", "No passenger tram with id found")));
     }
 
+    @CrossOrigin
     @PostMapping(value = "/passenger-trams/new", consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> newPassengerTram(@RequestBody PassengerTramHandler.PassengerTramBody passengerTramBody) {
         try {
@@ -42,6 +43,7 @@ public final class PassengerTramController {
         }
     }
 
+    @CrossOrigin
     @PostMapping(value = "/passenger-trams/update/{id}", consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> updatePassengerTram(@RequestBody PassengerTramHandler.PassengerTramBody passengerTramBody, @PathVariable("id") Long id) {
         Optional<PassengerTram> passengerTramEntry = passengerTramRepository.findById(id);
@@ -57,6 +59,7 @@ public final class PassengerTramController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("invalid-passenger-tram", "No passenger tram with id found"));
     }
 
+    @CrossOrigin
     @PostMapping(value = "/passenger-trams/delete/{id}")
     public ResponseEntity<Object> deletePassengerTram(@RequestBody PassengerTramHandler.PassengerTramBody passengerTramBody, @PathVariable("id") Long id) {
         Optional<PassengerTram> passengerTramEntry = passengerTramRepository.findById(id);

@@ -36,6 +36,7 @@ public final class ConnectionController {
         return connection.<ResponseEntity<Object>>map(value -> ResponseEntity.ok().body(value)).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("invalid-connection", "No connection with id found")));
     }
 
+    @CrossOrigin
     @PostMapping(value = "/connections/new", consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> newConnection(@RequestBody ConnectionHandler.ConnectionBody connectionBody) {
         try {
@@ -46,6 +47,7 @@ public final class ConnectionController {
         }
     }
 
+    @CrossOrigin
     @PostMapping(value = "/connections/update/{id}", consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> updateConnection(@RequestBody ConnectionHandler.ConnectionBody connectionBody, @PathVariable("id") Long id) {
         Optional<Connection> connectionEntry = connectionRepository.findById(id);
@@ -61,8 +63,9 @@ public final class ConnectionController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("invalid-connection", "No connection with id found"));
     }
 
+    @CrossOrigin
     @PostMapping(value = "/connections/delete/{id}")
-    public ResponseEntity<Object> deleteConnection(@RequestBody ConnectionHandler.ConnectionBody connectionBody, @PathVariable("id") Long id) {
+    public ResponseEntity<Object> deleteConnection(@PathVariable("id") Long id) {
         Optional<Connection> connectionEntry = connectionRepository.findById(id);
 
         if (connectionEntry.isPresent()) {

@@ -3,6 +3,10 @@ import App from './App.vue'
 import './registerServiceWorker'
 import router from './router'
 
+import './assets/styles/administration.scss'
+
+import './assets/plugins/fontawesome/css/all.min.css';
+
 Vue.config.productionTip = false
 
 new Vue({

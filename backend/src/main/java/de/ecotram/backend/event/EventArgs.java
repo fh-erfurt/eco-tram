@@ -1,4 +1,4 @@
 package de.ecotram.backend.event;
 
-public class EventArgs {
+public abstract class EventArgs {
 }

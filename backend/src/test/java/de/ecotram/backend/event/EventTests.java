@@ -1,6 +1,5 @@
 package de.ecotram.backend.event;
 
-import lombok.Getter;
 import org.eclipse.persistence.jpa.jpql.Assert;
 import org.junit.jupiter.api.Test;
 
@@ -11,11 +10,11 @@ public final class EventTests {
         var emitter1 = new EventEmitter(1);
         var emitter2 = new EventEmitter(2);
 
-        emitter1.getEventHandler().add(args ->
+        emitter1.getEvent().add(args ->
                 Assert.isEqual(1, args.id, "Id should be equal to 1.")
         );
 
-        emitter2.getEventHandler().add(args ->
+        emitter2.getEvent().add(args ->
                 Assert.isEqual(2, args.id, "Id should be equal to 2.")
         );
 
@@ -24,15 +23,14 @@ public final class EventTests {
     }
 
     private final class EventEmitter {
-        private final Event<TestEventArgs> event;
+        private final Event<TestEventArgs> event = new Event<>();
         private final int id;
 
-        @Getter
-        private final EventHandler<TestEventArgs> eventHandler;
+        public Event<TestEventArgs>.Accessor getEvent() {
+            return event.getAccess();
+        }
 
         public EventEmitter(int id) {
-            this.event = new Event<>();
-            this.eventHandler = new EventHandler<>(event);
             this.id = id;
         }
 
@@ -41,7 +39,7 @@ public final class EventTests {
         }
     }
 
-    private final class TestEventArgs extends EventArgs {
+    private final static class TestEventArgs extends EventArgs {
         private final int id;
 
         public TestEventArgs(int id) {

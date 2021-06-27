@@ -67,11 +67,6 @@ public final class Connection extends Traversable {
         public Connection build() {
             return new Connection(this);
         }
-
-        @FunctionalInterface
-        public interface ModifyDelegate {
-            Builder Modify(Builder a);
-        }
     }
 
     @Data

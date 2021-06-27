@@ -13,6 +13,7 @@ import javax.persistence.Transient;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 @Getter
@@ -62,8 +63,8 @@ public final class Station extends Traversable {
                 .findFirst();
     }
 
-    public Connection connectTo(Station destination, Connection.Builder.ModifyDelegate modifyBuilder) {
-        Connection connection = modifyBuilder.Modify(Connection.builder())
+    public Connection connectTo(Station destination, Function<Connection.Builder, Connection.Builder> modifyBuilder) {
+        Connection connection = modifyBuilder.apply(Connection.builder())
                 .sourceStation(this)
                 .destinationStation(destination)
                 .build();
@@ -73,8 +74,8 @@ public final class Station extends Traversable {
         return connection;
     }
 
-    public Connection.Pair connectToAndFrom(Station destination, Connection.Builder.ModifyDelegate modifyBuilder) {
-        Connection connectionTo = modifyBuilder.Modify(Connection.builder())
+    public Connection.Pair connectToAndFrom(Station destination, Function<Connection.Builder, Connection.Builder> modifyBuilder) {
+        Connection connectionTo = modifyBuilder.apply(Connection.builder())
                 .sourceStation(this)
                 .destinationStation(destination)
                 .build();
@@ -82,7 +83,7 @@ public final class Station extends Traversable {
         this.sourceConnections.add(connectionTo);
         destination.destinationConnections.add(connectionTo);
 
-        Connection connectionFrom = modifyBuilder.Modify(Connection.builder())
+        Connection connectionFrom = modifyBuilder.apply(Connection.builder())
                 .sourceStation(destination)
                 .destinationStation(this)
                 .build();
@@ -94,10 +95,10 @@ public final class Station extends Traversable {
 
     public Connection.Pair connectToAndFrom(
             Station destination,
-            Connection.Builder.ModifyDelegate modifyToBuilder,
-            Connection.Builder.ModifyDelegate modifyFromBuilder
+            Function<Connection.Builder, Connection.Builder> modifyToBuilder,
+            Function<Connection.Builder, Connection.Builder> modifyFromBuilder
     ) {
-        Connection connectionTo = modifyToBuilder.Modify(Connection.builder())
+        Connection connectionTo = modifyToBuilder.apply(Connection.builder())
                 .sourceStation(this)
                 .destinationStation(destination)
                 .build();
@@ -105,7 +106,7 @@ public final class Station extends Traversable {
         this.sourceConnections.add(connectionTo);
         destination.destinationConnections.add(connectionTo);
 
-        Connection connectionFrom = modifyFromBuilder.Modify(Connection.builder())
+        Connection connectionFrom = modifyFromBuilder.apply(Connection.builder())
                 .sourceStation(destination)
                 .destinationStation(this)
                 .build();

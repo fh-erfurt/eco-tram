@@ -1,19 +1,18 @@
 package de.ecotram.backend.simulation;
 
 import de.ecotram.backend.entity.network.Network;
+import de.ecotram.backend.simulation.event.RunnerStartedArgs;
+import de.ecotram.backend.simulation.event.RunnerStoppedArgs;
 import lombok.Getter;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.*;
+import java.util.Optional;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public final class SimulationRunner {
-    private final Executor mainExecutor;
-    private final Executor taskExecutor;
-    private final List<Runnable> tasks = new ArrayList<>(); // TODO: determine whether multiple tasks are needed
-    private final Object taskLock = new Object();
+    private final ExecutorService executor;
+    private final ExecutorService eventExecutor;
 
-    private final FutureTask<Object> mainTask;
     private boolean runInternal;
     private long ticks;
 
@@ -21,74 +20,91 @@ public final class SimulationRunner {
     private final Network network;
 
     @Getter
+    private final Schedule schedule;
+
+    @Getter
+    private final ProgressReporter progressReporter;
+
+    @Getter
     private boolean isRunning;
 
-    @Getter
-    private DispatchPlan dispatchPlan;
-
-    @Getter
-    private ProgressReporter progressReporter;
-
-    private SimulationRunner(Network network) {
-        this.mainExecutor = Executors.newFixedThreadPool(1);
-        this.taskExecutor = Executors.newFixedThreadPool(1); // TODO(erik): determine appropriate degree of parallelism
-        this.mainTask = new FutureTask<>(this::runInternal);
-        this.network = network;
+    public SimulationRunner(System.Logger logger, Schedule schedule) {
+        this.executor = Executors.newFixedThreadPool(1);
+        this.eventExecutor = Executors.newFixedThreadPool(1);
+        this.network = schedule.getNetwork();
+        this.schedule = schedule;
+        this.progressReporter = new ProgressReporter(logger, this);
     }
 
-    public synchronized ProgressReporter start(DispatchPlan plan) {
+    public synchronized ProgressReporter start() {
         if (this.isRunning)
             throw new IllegalStateException("Cannot start runner that is currently running.");
 
-        if (this.ticks != 0 || this.dispatchPlan != null || this.progressReporter != null)
+        if (this.ticks != 0)
             throw new IllegalStateException("Runner was stopped and not reset before starting.");
 
         this.isRunning = true;
-        this.dispatchPlan = plan;
-        this.progressReporter = new ProgressReporter();
         this.runInternal = true;
 
-        this.mainExecutor.execute(this.mainTask);
+        this.executor.execute(this::runInternal);
         return this.progressReporter;
     }
 
-    public synchronized void stop() throws ExecutionException, InterruptedException {
+    public synchronized void stop() {
         if (!this.isRunning)
             throw new IllegalStateException("Cannot stop runner that is not currently running.");
 
         this.runInternal = false;
-        this.mainTask.get();
     }
 
-    public synchronized void stop(long timeout, TimeUnit timeUnit) throws ExecutionException, InterruptedException, TimeoutException {
-        if (!this.isRunning)
-            throw new IllegalStateException("Cannot stop runner that is not currently running.");
+    private void runInternal() {
+        Exception exception = null;
 
-        this.runInternal = false;
-        this.mainTask.get(timeout, timeUnit);
-    }
+        eventExecutor.execute(() -> this.progressReporter.getRunnerStarted().invoke(new RunnerStartedArgs()));
 
-    private Object runInternal() {
-        while (this.runInternal) {
-            // TODO(erik): let task executor run these in parallel to some degree
-            // TODO(erik): what kind of tasks should be stored here, how can they simulate the network
-            for (Runnable task : this.tasks) {
-                task.run();
+        while (true) {
+            synchronized (this) {
+                if (!this.runInternal)
+                    break;
             }
+
+            try {
+                // TODO(erik): let task executor run these in parallel to some degree
+                // TODO(erik): what kind of tasks should be stored here, how can they simulate the network
+            } catch (Exception ex) {
+                exception = ex;
+                break;
+            }
+
             synchronized (this) {
                 this.ticks++;
             }
         }
+
         synchronized (this) {
             this.isRunning = false;
         }
-        return null;
-    }
 
-    // TODO(erik): builder, allow running once create new if running again
-    public SimulationRunner forNetwork(Network network) {
-        SimulationRunner runner = new SimulationRunner(network);
-        // room for any non trivial set up
-        return runner;
+        if (exception != null) {
+            final Exception ex = exception;
+            eventExecutor.execute(() -> this.progressReporter.getRunnerStopped().invoke(RunnerStoppedArgs.builder()
+                    .reason("An exception was thrown.")
+                    .exception(Optional.of(ex))
+                    .cause(RunnerStoppedArgs.Cause.EXCEPTION)
+                    .build()
+            ));
+        } else if (!this.runInternal) {
+            eventExecutor.execute(() -> this.progressReporter.getRunnerStopped().invoke(RunnerStoppedArgs.builder()
+                    .reason("The runner was stopped externally.")
+                    .cause(RunnerStoppedArgs.Cause.STOP_CALLED)
+                    .build()
+            ));
+        } else {
+            eventExecutor.execute(() -> this.progressReporter.getRunnerStopped().invoke(RunnerStoppedArgs.builder()
+                    .reason("Runner finished.")
+                    .cause(RunnerStoppedArgs.Cause.FINISHED)
+                    .build()
+            ));
+        }
     }
 }

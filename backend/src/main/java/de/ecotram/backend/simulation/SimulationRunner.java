@@ -28,12 +28,12 @@ public final class SimulationRunner {
     @Getter
     private boolean isRunning;
 
-    public SimulationRunner(System.Logger logger, Schedule schedule) {
+    public SimulationRunner(Schedule schedule) {
         this.executor = Executors.newFixedThreadPool(1);
         this.eventExecutor = Executors.newFixedThreadPool(1);
         this.network = schedule.getNetwork();
         this.schedule = schedule;
-        this.progressReporter = new ProgressReporter(logger, this);
+        this.progressReporter = new ProgressReporter(this);
     }
 
     public synchronized ProgressReporter start() {
@@ -69,8 +69,7 @@ public final class SimulationRunner {
             }
 
             try {
-                // TODO(erik): let task executor run these in parallel to some degree
-                // TODO(erik): what kind of tasks should be stored here, how can they simulate the network
+                // TODO(erik): actual simulation logic
             } catch (Exception ex) {
                 exception = ex;
                 break;

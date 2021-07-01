@@ -46,8 +46,8 @@ public final class LineHandler {
         ids.forEach(id -> {
             Optional<Station> station = stations.stream().filter(filterStation -> filterStation.getId() == id).findFirst();
             if (station.isPresent()) {
-                if(previousItem[0] == null) previousItem[0] = station.get();
-                else if(previousItem[0] instanceof Station) {
+                if (previousItem[0] == null) previousItem[0] = station.get();
+                else if (previousItem[0] instanceof Station) {
                     traversables.add(getConnectionInBetween((Station) previousItem[0], station.get()));
                     previousItem[0] = station.get();
                 }
@@ -56,9 +56,9 @@ public final class LineHandler {
             } else {
                 Optional<Connection> connection = connections.stream().filter(filterConnection -> filterConnection.getId() == id).findFirst();
 
-                if(connection.isPresent()) {
+                if (connection.isPresent()) {
                     traversables.add(connection.get());
-                    if(previousItem[0] == null) previousItem[0] = connection.get();
+                    if (previousItem[0] == null) previousItem[0] = connection.get();
                 }
             }
         });
@@ -68,7 +68,7 @@ public final class LineHandler {
 
     public Connection getConnectionInBetween(Station station1, Station station2) {
         Connection connection = connectionRepository.findByLineAndTraversable(station1, station2);
-        if(connection != null) return connection;
+        if (connection != null) return connection;
 
         connection = new Connection();
         connection.setSourceStation(station1);
@@ -134,7 +134,7 @@ public final class LineHandler {
         traversableList.forEach(traversable -> {
             LineEntry lineEntry = lineEntryRepository.findByLineAndTraversable(line, traversable);
 
-            if(lineEntry == null) {
+            if (lineEntry == null) {
                 lineEntry = new LineEntry();
 
                 lineEntry.setLine(line);

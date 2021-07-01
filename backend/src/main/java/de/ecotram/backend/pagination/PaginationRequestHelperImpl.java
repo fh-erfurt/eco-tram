@@ -12,10 +12,10 @@ public final class PaginationRequestHelperImpl<T> implements PaginationRequestHe
     public PaginationRequest<T> getAsPaginationRequest(Class<T> tClass, int limit, int page, PaginationRequest<T> paginationRequest) {
         List<T> results = limit > 0 ?
                 entityManager
-                    .createQuery("select t from " + tClass.getSimpleName() + " t", tClass)
-                    .setMaxResults(limit + 1)
-                    .setFirstResult(limit * page)
-                    .getResultList() :
+                        .createQuery("select t from " + tClass.getSimpleName() + " t", tClass)
+                        .setMaxResults(limit + 1)
+                        .setFirstResult(limit * page)
+                        .getResultList() :
                 entityManager
                         .createQuery("select t from " + tClass.getSimpleName() + " t", tClass)
                         .getResultList();

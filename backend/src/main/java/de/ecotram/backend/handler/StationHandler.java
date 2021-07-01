@@ -1,7 +1,6 @@
 package de.ecotram.backend.handler;
 
 import de.ecotram.backend.entity.network.Station;
-import de.ecotram.backend.repository.PassengerTramRepository;
 import de.ecotram.backend.repository.StationRepository;
 import de.ecotram.backend.utilities.ErrorResponseException;
 import de.ecotram.backend.utilities.ValidationUtilities;

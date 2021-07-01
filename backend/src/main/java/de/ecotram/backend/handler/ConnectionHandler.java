@@ -7,11 +7,21 @@ import de.ecotram.backend.repository.StationRepository;
 import de.ecotram.backend.utilities.ErrorResponseException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
+@Component("connectionHandler")
 public final class ConnectionHandler {
-    public ConnectionStations validateConnectionBody(ConnectionBody connectionBody, StationRepository stationRepository) throws ErrorResponseException {
+
+    @Autowired
+    private StationRepository stationRepository;
+
+    @Autowired
+    private ConnectionRepository connectionRepository;
+
+    public ConnectionStations validateConnectionBody(ConnectionBody connectionBody) throws ErrorResponseException {
         Optional<Station> sourceStation = stationRepository.findById(connectionBody.sourceStationId);
         if (sourceStation.isEmpty())
             throw new ErrorResponseException("invalid-source-station", "No station with id found");
@@ -31,8 +41,8 @@ public final class ConnectionHandler {
         connection.setDestinationStation(destinationStation);
     }
 
-    public Connection createConnectionFromRequest(StationRepository stationRepository, ConnectionRepository connectionRepository, ConnectionBody connectionBody) throws ErrorResponseException {
-        ConnectionStations connectionStations = validateConnectionBody(connectionBody, stationRepository);
+    public Connection createConnectionFromRequest(ConnectionBody connectionBody) throws ErrorResponseException {
+        ConnectionStations connectionStations = validateConnectionBody(connectionBody);
 
         Connection connection = new Connection();
         appendSourceAndDestinationStation(connection, connectionStations);
@@ -44,8 +54,8 @@ public final class ConnectionHandler {
         return connection;
     }
 
-    public Connection updateConnectionFromRequest(Connection connection, StationRepository stationRepository, ConnectionRepository connectionRepository, ConnectionBody connectionBody) throws ErrorResponseException {
-        ConnectionStations connectionStations = validateConnectionBody(connectionBody, stationRepository);
+    public Connection updateConnectionFromRequest(Connection connection, ConnectionBody connectionBody) throws ErrorResponseException {
+        ConnectionStations connectionStations = validateConnectionBody(connectionBody);
 
         appendSourceAndDestinationStation(connection, connectionStations);
 

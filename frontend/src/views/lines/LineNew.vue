@@ -19,8 +19,8 @@
                                 <div class="input-item">
                                     <label>Verfügbare Stationen</label>
                                     <div class="select-box">
-                                        <div class="item" v-for="station in stations" :key="station.id" @click="addStationToTraversableItems(station)">
-                                            <i class="fa fa-sitemap"></i> {{ station.name }} ({{ station.id }})
+                                        <div class="item" v-for="station in stationsOrdered" :key="station.id" @click="addStationToTraversableItems(station)">
+                                            <i class="fas fa-h-square"></i> {{ station.name }} ({{ station.id }})
                                         </div>
                                     </div>
                                 </div>
@@ -28,7 +28,7 @@
                                     <label>Verfügbare Linien</label>
                                     <div class="select-box">
                                         <div class="item" v-for="connection in connections" :key="connection.id" @click="addConnectionToTraversableItems(connection)">
-                                            <i class="fas fa-h-square"></i> {{ connection.sourceStation.name }} - {{ connection.destinationStation.name }} ({{ connection.id }})
+                                            <i class="fa fa-sitemap"></i> {{ connection.sourceStation.name }} - {{ connection.destinationStation.name }} ({{ connection.id }})
                                         </div>
                                     </div>
                                 </div>
@@ -37,10 +37,10 @@
                                     <div class="select-box">
                                         <div class="item" v-for="traversableItem in traversableItems" :key="traversableItem.id" @click="removeTraversableItem(traversableItem)">
                                             <template v-if="traversableItem.station">
-                                                <i class="fa fa-sitemap"></i> {{ traversableItem.station.name }} ({{ traversableItem.station.id }})
+                                                <i class="fas fa-h-square"></i> {{ traversableItem.station.name }} ({{ traversableItem.station.id }})
                                             </template>
                                             <template v-else-if="traversableItem.connection">
-                                                <i class="fas fa-h-square"></i> {{ traversableItem.connection.sourceStation.name }} - {{ traversableItem.connection.destinationStation.name }} ({{ traversableItem.connection.id }})
+                                                <i class="fa fa-sitemap"></i> {{ traversableItem.connection.sourceStation.name }} - {{ traversableItem.connection.destinationStation.name }} ({{ traversableItem.connection.id }})
                                             </template>
                                         </div>
                                     </div>
@@ -89,13 +89,21 @@ export default class LineNew extends Vue {
 
     private traversableItems: TraversableItem[] = []
 
+    get stationsOrdered() {
+        function compare(station1: Station, station2: Station) {
+            if(station1.name < station2.name) return -1;
+            if(station1.name > station2.name) return 1;
+            return 0;
+        }
+
+        return this.stations!.sort(compare);
+    }
+
     private addStationToTraversableItems(station: Station) {
         this.traversableItems.push({
             id: station.id,
             station: station
         })
-
-        this.stations!.splice(this.stations!.indexOf(station), 1)
     }
 
     private addConnectionToTraversableItems(connection: Connection) {
@@ -103,14 +111,9 @@ export default class LineNew extends Vue {
             id: connection.id,
             connection: connection
         })
-
-        this.connections!.splice(this.connections!.indexOf(connection), 1)
     }
 
     private removeTraversableItem(traversableItem: TraversableItem) {
-        if(traversableItem.station) this.stations!.push(traversableItem.station)
-        if(traversableItem.connection) this.connections!.push(traversableItem.connection)
-
         this.traversableItems.splice(this.traversableItems.indexOf(traversableItem), 1)
     }
 

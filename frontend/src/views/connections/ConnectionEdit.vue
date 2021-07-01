@@ -25,6 +25,20 @@
                                     </select>
                                 </div>
                             </div>
+                            <div class="input-group">
+                                <div class="input-item">
+                                    <label for="length">Länge</label>
+                                    <input type="number" v-model="length" id="length">
+                                </div>
+                                <div class="input-item">
+                                    <label for="trafficFactor">Traffic Factor</label>
+                                    <input type="number" v-model="trafficFactor" id="trafficFactor">
+                                </div>
+                            </div>
+                            <div class="input-item">
+                                <label for="maxWeight">Maximales Gewicht</label>
+                                <input type="number" v-model="maxWeight" id="maxWeight">
+                            </div>
                             <div class="submit-holder">
                                 <button type="submit">
                                     <i class="fas fa-circle-notch fa-spin" v-if="submissions.general"></i>
@@ -67,8 +81,12 @@ export default class ConnectionEdit extends Vue {
 
     private stations: Station[] | null = null
 
+    private length: number = 0
+    private maxWeight: number = 0
+    private trafficFactor: number = 0.0
     private sourceStation: Station | null = null
     private destinationStation: Station | null = null
+
     private submissions = {
         general: false,
         delete: false
@@ -85,7 +103,10 @@ export default class ConnectionEdit extends Vue {
             },
             body: JSON.stringify({
                 sourceStationId: this.sourceStation!.id,
-                destinationStationId: this.destinationStation!.id
+                destinationStationId: this.destinationStation!.id,
+                length: this.length,
+                maxWeight: this.maxWeight,
+                trafficFactor: this.trafficFactor
             })
         })
 
@@ -97,6 +118,9 @@ export default class ConnectionEdit extends Vue {
 
             connectionCopy.sourceStation = data.sourceStation
             connectionCopy.destinationStation = data.destinationStation
+            connectionCopy.length = data.length
+            connectionCopy.maxWeight = data.maxWeight
+            connectionCopy.trafficFactor = data.trafficFactor
 
             this.connectionCopy  = {...connectionCopy}
         }
@@ -137,6 +161,9 @@ export default class ConnectionEdit extends Vue {
 
             this.sourceStation = this.connection.sourceStation
             this.destinationStation = this.connection.destinationStation
+            this.length = this.connection.length
+            this.maxWeight = this.connection.maxWeight
+            this.trafficFactor = this.connection.trafficFactor
         } else {
             const response = await fetch(`${config.host}/connections/get/${this.$route.params.connectionId}`)
             this.connection = await response.json()
@@ -148,6 +175,9 @@ export default class ConnectionEdit extends Vue {
 
                 this.sourceStation = this.connection.sourceStation
                 this.destinationStation = this.connection.destinationStation
+                this.length = this.connection.length
+                this.maxWeight = this.connection.maxWeight
+                this.trafficFactor = this.connection.trafficFactor
             } else
                 this.$root.$emit('change-level-name', 'connectionView', 'Unbekannte Verbindung')
         }

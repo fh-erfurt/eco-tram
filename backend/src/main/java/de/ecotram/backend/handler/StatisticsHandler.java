@@ -7,8 +7,9 @@ import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
 
-@Component
+@Component("statisticsHandler")
 public final class StatisticsHandler {
+
     @Autowired
     private EntityManager entityManager;
 

@@ -3,9 +3,7 @@ package de.ecotram.backend.controller;
 import de.ecotram.backend.entity.Line;
 import de.ecotram.backend.handler.LineHandler;
 import de.ecotram.backend.pagination.PaginationRequest;
-import de.ecotram.backend.repository.ConnectionRepository;
 import de.ecotram.backend.repository.LineRepository;
-import de.ecotram.backend.repository.StationRepository;
 import de.ecotram.backend.utilities.ErrorResponse;
 import de.ecotram.backend.utilities.ErrorResponseException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,16 +16,12 @@ import java.util.Optional;
 
 @RestController
 public class LineController {
-    private final LineHandler lineHandler = new LineHandler();
+
+    @Autowired
+    private LineHandler lineHandler;
 
     @Autowired
     private LineRepository lineRepository;
-
-    @Autowired
-    private StationRepository stationRepository;
-
-    @Autowired
-    private ConnectionRepository connectionRepository;
 
     @CrossOrigin
     @GetMapping("/lines/list")
@@ -46,7 +40,7 @@ public class LineController {
     @PostMapping(value = "/lines/new", consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> newLine(@RequestBody LineHandler.LineBody lineBody) {
         try {
-            Line line = lineHandler.createLineFromRequest(lineRepository, stationRepository, connectionRepository, lineBody);
+            Line line = lineHandler.createLineFromRequest(lineBody);
             return ResponseEntity.ok().body(line);
         } catch (ErrorResponseException errorResponseException) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponseException.getErrorResponse());
@@ -60,7 +54,7 @@ public class LineController {
 
         if (lineEntry.isPresent())
             try {
-                Line line = lineHandler.updateLineFromRequest(lineEntry.get(), lineRepository, stationRepository, connectionRepository, lineBody);
+                Line line = lineHandler.updateLineFromRequest(lineEntry.get(), lineBody);
                 return ResponseEntity.ok().body(line);
             } catch (ErrorResponseException errorResponseException) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponseException.getErrorResponse());
@@ -71,7 +65,7 @@ public class LineController {
 
     @CrossOrigin
     @PostMapping(value = "/lines/delete/{id}")
-    public ResponseEntity<Object> deleteLine(@RequestBody LineHandler.LineBody lineBody, @PathVariable("id") Long id) {
+    public ResponseEntity<Object> deleteLine(@PathVariable("id") Long id) {
         Optional<Line> lineEntry = lineRepository.findById(id);
 
         if (lineEntry.isPresent()) {

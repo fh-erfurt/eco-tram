@@ -15,22 +15,24 @@
                     </div>
                 </div>
                 <h3 class="title small">Route</h3>
-                <router-link v-for="item in line.route" :key="item.id" :to="item.sourceStation ? { name: 'connectionView', params: { connectionId: item.id, item: item } } : { name: 'stationView', params: { stationId: item.id, item: item } }" class="item-card">
-                    <template v-if="item.sourceStation">
+                <router-link v-for="item in routeOrdered" :key="item.id" :to="item.traversable.sourceStation ? { name: 'connectionView', params: { connectionId: item.traversable.id, item: item.traversable } } : { name: 'stationView', params: { stationId: item.traversable.id, item: item.traversable } }" class="item-card">
+                    <template v-if="item.traversable.sourceStation">
+                        <div class="image"><i class="fa fa-sitemap"></i></div>
                         <div class="name">
-                            <b>Verbindung, ID: {{ item.id }}</b>
-                            <span>{{ `${ item.sourceStation.name } - ${ item.destinationStation.name }` }}</span>
+                            <b>Verbindung, ID: {{ item.traversable.id }}</b>
+                            <span>{{ `${ item.traversable.sourceStation.name } - ${ item.traversable.destinationStation.name }` }}</span>
                         </div>
                         <div class="badges">
-                            <span class="badge good">L: {{ item.length }}</span>
-                            <span class="badge good">TF: {{ item.trafficFactor }}</span>
-                            <span class="badge good">MW: {{ item.maxWeight }}</span>
+                            <span class="badge good">L: {{ item.traversable.length }}</span>
+                            <span class="badge good">TF: {{ item.traversable.trafficFactor }}</span>
+                            <span class="badge good">MW: {{ item.traversable.maxWeight }}</span>
                         </div>
                     </template>
                     <template v-else>
+                        <div class="image"><i class="fas fa-h-square"></i></div>
                         <div class="name">
-                            <b>{{item.name }}</b>
-                            <span>ID: {{ item.id }}</span>
+                            <b>{{item.traversable.name }}</b>
+                            <span>ID: {{ item.traversable.id }}</span>
                         </div>
                     </template>
                 </router-link>
@@ -40,7 +42,7 @@
 </template>
 
 <script lang="ts">
-import { Line } from "@/types";
+import {Line, LineEntry} from "@/types";
 import { Component, Prop, Vue } from "vue-property-decorator";
 import SimpleLoader from "@/components/SimpleLoader.vue"
 import config from "@/config"
@@ -64,6 +66,18 @@ export default class lineView extends Vue {
                 item: line
             }
         })
+    }
+
+    get routeOrdered() {
+        function compare(lineEntry1: LineEntry, lineEntry2: LineEntry) {
+            if (lineEntry1.orderValue > lineEntry2.orderValue)
+                return 1;
+            if (lineEntry2.orderValue > lineEntry1.orderValue)
+                return -1;
+            return 0;
+        }
+
+        return this.line!.route.sort(compare);
     }
 
     async mounted() {

@@ -16,7 +16,9 @@ import java.util.Optional;
 
 @RestController
 public final class PassengerTramController {
-    private final PassengerTramHandler passengerTramHandler = new PassengerTramHandler();
+
+    @Autowired
+    private PassengerTramHandler passengerTramHandler;
 
     @Autowired
     private PassengerTramRepository passengerTramRepository;
@@ -38,7 +40,7 @@ public final class PassengerTramController {
     @PostMapping(value = "/passenger-trams/new", consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> newPassengerTram(@RequestBody PassengerTramHandler.PassengerTramBody passengerTramBody) {
         try {
-            PassengerTram passengerTram = passengerTramHandler.createPassengerTramFromRequest(passengerTramRepository, passengerTramBody);
+            PassengerTram passengerTram = passengerTramHandler.createPassengerTramFromRequest(passengerTramBody);
             return ResponseEntity.ok().body(passengerTram);
         } catch (ErrorResponseException errorResponseException) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponseException.getErrorResponse());
@@ -52,7 +54,7 @@ public final class PassengerTramController {
 
         if (passengerTramEntry.isPresent())
             try {
-                PassengerTram passengerTram = passengerTramHandler.updatePassengerTramFromRequest(passengerTramEntry.get(), passengerTramRepository, passengerTramBody);
+                PassengerTram passengerTram = passengerTramHandler.updatePassengerTramFromRequest(passengerTramEntry.get(), passengerTramBody);
                 return ResponseEntity.ok().body(passengerTram);
             } catch (ErrorResponseException errorResponseException) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponseException.getErrorResponse());
@@ -63,7 +65,7 @@ public final class PassengerTramController {
 
     @CrossOrigin
     @PostMapping(value = "/passenger-trams/delete/{id}")
-    public ResponseEntity<Object> deletePassengerTram(@RequestBody PassengerTramHandler.PassengerTramBody passengerTramBody, @PathVariable("id") Long id) {
+    public ResponseEntity<Object> deletePassengerTram(@PathVariable("id") Long id) {
         Optional<PassengerTram> passengerTramEntry = passengerTramRepository.findById(id);
 
         if (passengerTramEntry.isPresent()) {

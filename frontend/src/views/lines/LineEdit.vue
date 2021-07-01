@@ -19,8 +19,8 @@
                                 <div class="input-item">
                                     <label>Verfügbare Stationen</label>
                                     <div class="select-box">
-                                        <div class="item" v-for="station in stations" :key="station.id" @click="addStationToTraversableItems(station)">
-                                            <i class="fa fa-sitemap"></i> {{ station.name }} ({{ station.id }})
+                                        <div class="item" v-for="station in stationsOrdered" :key="station.id" @click="addStationToTraversableItems(station)">
+                                            <i class="fas fa-h-square"></i> {{ station.name }} ({{ station.id }})
                                         </div>
                                     </div>
                                 </div>
@@ -28,7 +28,7 @@
                                     <label>Verfügbare Linien</label>
                                     <div class="select-box">
                                         <div class="item" v-for="connection in connections" :key="connection.id" @click="addConnectionToTraversableItems(connection)">
-                                            <i class="fas fa-h-square"></i> {{ connection.sourceStation.name }} - {{ connection.destinationStation.name }} ({{ connection.id }})
+                                            <i class="fa fa-sitemap"></i> {{ connection.sourceStation.name }} - {{ connection.destinationStation.name }} ({{ connection.id }})
                                         </div>
                                     </div>
                                 </div>
@@ -37,10 +37,10 @@
                                     <div class="select-box">
                                         <div class="item" v-for="traversableItem in traversableItems" :key="traversableItem.id" @click="removeTraversableItem(traversableItem)">
                                             <template v-if="traversableItem.station">
-                                                <i class="fa fa-sitemap"></i> {{ traversableItem.station.name }} ({{ traversableItem.station.id }})
+                                                <i class="fas fa-h-square"></i> {{ traversableItem.station.name }} ({{ traversableItem.station.id }})
                                             </template>
                                             <template v-else-if="traversableItem.connection">
-                                                <i class="fas fa-h-square"></i> {{ traversableItem.connection.sourceStation.name }} - {{ traversableItem.connection.destinationStation.name }} ({{ traversableItem.connection.id }})
+                                                <i class="fa fa-sitemap"></i> {{ traversableItem.connection.sourceStation.name }} - {{ traversableItem.connection.destinationStation.name }} ({{ traversableItem.connection.id }})
                                             </template>
                                         </div>
                                     </div>
@@ -70,7 +70,7 @@
 </template>
 
 <script lang="ts">
-import {Connection, Line, PaginationResultType, Station} from "@/types";
+import {Connection, Line, LineEntry, PaginationResultType, Station} from "@/types";
 import { Component, Prop, Vue } from "vue-property-decorator";
 import SimpleLoader from "@/components/SimpleLoader.vue"
 import config from "@/config"
@@ -109,8 +109,6 @@ export default class LineEdit extends Vue {
             id: station.id,
             station: station
         })
-
-        this.stations!.splice(this.stations!.indexOf(station), 1)
     }
 
     private addConnectionToTraversableItems(connection: Connection) {
@@ -118,14 +116,9 @@ export default class LineEdit extends Vue {
             id: connection.id,
             connection: connection
         })
-
-        this.connections!.splice(this.connections!.indexOf(connection), 1)
     }
 
     private removeTraversableItem(traversableItem: TraversableItem) {
-        if(traversableItem.station) this.stations!.push(traversableItem.station)
-        if(traversableItem.connection) this.connections!.push(traversableItem.connection)
-
         this.traversableItems.splice(this.traversableItems.indexOf(traversableItem), 1)
     }
 
@@ -189,6 +182,28 @@ export default class LineEdit extends Vue {
         })
     }
 
+    get routeOrdered() {
+        function compare(lineEntry1: LineEntry, lineEntry2: LineEntry) {
+            if (lineEntry1.orderValue > lineEntry2.orderValue)
+                return 1;
+            if (lineEntry2.orderValue > lineEntry1.orderValue)
+                return -1;
+            return 0;
+        }
+
+        return this.lineCopy!.route.sort(compare);
+    }
+
+    get stationsOrdered() {
+        function compare(station1: Station, station2: Station) {
+            if(station1.name < station2.name) return -1;
+            if(station1.name > station2.name) return 1;
+            return 0;
+        }
+
+        return this.stations!.sort(compare);
+    }
+
     async mounted() {
         if(this.line) {
             this.changeLevelData(this.line)
@@ -216,10 +231,9 @@ export default class LineEdit extends Vue {
             const connectionsResponse = await fetch(`${config.host}/connections/list?limit=0`)
             const connections = (await connectionsResponse.json() as PaginationResultType<Connection>).results
 
-            for(const traversable of this.line.route) {
+            for(const lineEntry of this.routeOrdered) {
                 for (const station of stations) {
-                    if (traversable.id === station.id) {
-                        stations.splice(stations.indexOf(station), 1)
+                    if (lineEntry.traversable.id === station.id) {
                         this.traversableItems.push({
                             id: station.id,
                             station: station
@@ -228,8 +242,7 @@ export default class LineEdit extends Vue {
                 }
 
                 for (const connection of connections) {
-                    if (traversable.id === connection.id) {
-                        connections.splice(connections.indexOf(connection), 1)
+                    if (lineEntry.traversable.id === connection.id) {
                         this.traversableItems.push({
                             id: connection.id,
                             connection: connection
@@ -244,3 +257,36 @@ export default class LineEdit extends Vue {
     }
 }
 </script>
+
+<style lang="scss">
+#line-edit {
+    .select-box {
+        background: white;
+        border: solid 1px #e2e2e2;
+        border-radius: 4px;
+        min-height: 150px;
+        width: 100%;
+        color: black;
+        padding: 5px 0;
+
+        .item {
+            display: flex;
+            align-items: center;
+            padding: 5px 10px;
+            font-size: 13px;
+            cursor: pointer;
+            user-select: none;
+            transition: background .2s ease;
+
+            i {
+                width: 40px;
+                text-align: center;
+            }
+
+            &:hover {
+                background: #f1f1f1;
+            }
+        }
+    }
+}
+</style>

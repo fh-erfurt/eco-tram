@@ -16,7 +16,9 @@ import java.util.Optional;
 
 @RestController
 public final class StationController {
-    private final StationHandler stationHandler = new StationHandler();
+
+    @Autowired
+    private StationHandler stationHandler;
 
     @Autowired
     private StationRepository stationRepository;
@@ -38,7 +40,7 @@ public final class StationController {
     @PostMapping(value = "/stations/new", consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> newStation(@RequestBody StationHandler.StationBody stationBody) {
         try {
-            Station station = stationHandler.createStationFromRequest(stationRepository, stationBody);
+            Station station = stationHandler.createStationFromRequest(stationBody);
             return ResponseEntity.ok().body(station);
         } catch (ErrorResponseException errorResponseException) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponseException.getErrorResponse());
@@ -52,7 +54,7 @@ public final class StationController {
 
         if (stationEntry.isPresent())
             try {
-                Station station = stationHandler.updateStationFromRequest(stationEntry.get(), stationRepository, stationBody);
+                Station station = stationHandler.updateStationFromRequest(stationEntry.get(), stationBody);
                 return ResponseEntity.ok().body(station);
             } catch (ErrorResponseException errorResponseException) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponseException.getErrorResponse());
@@ -63,7 +65,7 @@ public final class StationController {
 
     @CrossOrigin
     @PostMapping(value = "/stations/delete/{id}")
-    public ResponseEntity<Object> deleteStation(@RequestBody StationHandler.StationBody stationBody, @PathVariable("id") Long id) {
+    public ResponseEntity<Object> deleteStation(@PathVariable("id") Long id) {
         Optional<Station> stationEntry = stationRepository.findById(id);
 
         if (stationEntry.isPresent()) {

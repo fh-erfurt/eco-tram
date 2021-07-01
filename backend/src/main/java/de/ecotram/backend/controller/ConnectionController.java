@@ -4,7 +4,6 @@ import de.ecotram.backend.entity.network.Connection;
 import de.ecotram.backend.handler.ConnectionHandler;
 import de.ecotram.backend.pagination.PaginationRequest;
 import de.ecotram.backend.repository.ConnectionRepository;
-import de.ecotram.backend.repository.StationRepository;
 import de.ecotram.backend.utilities.ErrorResponse;
 import de.ecotram.backend.utilities.ErrorResponseException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,13 +16,12 @@ import java.util.Optional;
 
 @RestController
 public final class ConnectionController {
-    private final ConnectionHandler connectionHandler = new ConnectionHandler();
 
     @Autowired
     private ConnectionRepository connectionRepository;
 
     @Autowired
-    private StationRepository stationRepository;
+    private ConnectionHandler connectionHandler;
 
     @CrossOrigin
     @GetMapping("/connections/list")
@@ -42,7 +40,7 @@ public final class ConnectionController {
     @PostMapping(value = "/connections/new", consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> newConnection(@RequestBody ConnectionHandler.ConnectionBody connectionBody) {
         try {
-            Connection connection = connectionHandler.createConnectionFromRequest(stationRepository, connectionRepository, connectionBody);
+            Connection connection = connectionHandler.createConnectionFromRequest(connectionBody);
             return ResponseEntity.ok().body(connection);
         } catch (ErrorResponseException errorResponseException) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponseException.getErrorResponse());
@@ -56,7 +54,7 @@ public final class ConnectionController {
 
         if (connectionEntry.isPresent())
             try {
-                Connection connection = connectionHandler.updateConnectionFromRequest(connectionEntry.get(), stationRepository, connectionRepository, connectionBody);
+                Connection connection = connectionHandler.updateConnectionFromRequest(connectionEntry.get(), connectionBody);
                 return ResponseEntity.ok().body(connection);
             } catch (ErrorResponseException errorResponseException) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponseException.getErrorResponse());

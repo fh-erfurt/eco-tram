@@ -50,7 +50,7 @@ import config from "@/config"
         SimpleLoader
     }
 })
-export default class ConnectionEdit extends Vue {
+export default class ConnectionNew extends Vue {
     @Prop() private item?: Connection | null = null
 
     private stations: Station[] | null = null

@@ -34,6 +34,10 @@ public final class LineHandler {
             }
         });
 
+        System.out.println(traversables.get(0));
+        System.out.println(traversables.get(1));
+        System.out.println(traversables.get(2));
+
         if (ids.size() != traversables.size())
             throw new ErrorResponseException("invalid-traversable-ids", "Some id were not found");
 
@@ -47,6 +51,8 @@ public final class LineHandler {
         ArrayList<Long> ids = new ArrayList<>();
 
         Arrays.asList(lineBody.traversableIds.split(",")).forEach(id -> ids.add(Long.parseLong(id)));
+
+        System.out.println(lineBody.traversableIds);
 
         if (ids.size() == 0)
             throw new ErrorResponseException("invalid-ids", "at least one id is required");
@@ -66,11 +72,11 @@ public final class LineHandler {
         traversableList.forEach(traversable -> {
             traversable.getLines().add(line);
 
-            if (traversable instanceof Station)
-                stationRepository.save((Station) traversable);
-
-            if (traversable instanceof Connection)
-                connectionRepository.save((Connection) traversable);
+//            if (traversable instanceof Station)
+//                stationRepository.save((Station) traversable);
+//
+//            if (traversable instanceof Connection)
+//                connectionRepository.save((Connection) traversable);
         });
 
         lineRepository.save(line);

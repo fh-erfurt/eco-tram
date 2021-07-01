@@ -8,7 +8,7 @@
           Verbindungen
         </div>
         <div class="count" v-if="statistics == null"><i class="fas fa-circle-notch fa-spin"></i></div>
-        <div class="count" v-else>{{ statistics.connections }}</div>
+        <div class="count" v-else>{{ statistics.connections.results }}</div>
       </router-link>
       <router-link :to="{ name: 'lines' }" class="option">
         <div class="name">
@@ -40,14 +40,18 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
+import config from "@/config";
 
 interface Statistics {
   connections: number;
+  lines: number;
+  passengerTrams: number;
+  stations: number;
 }
 
 @Component
 export default class Home extends Vue {
-  private statistics?: Statistics;
+  private statistics: Statistics | null = null;
 
   async mounted() {
     const response = await fetch(`${config.host}/statistics`)

@@ -11,6 +11,7 @@ interface EntityBase {
 
 interface Line extends EntityBase {
     name: string
+    route: Line[]|Connection[]
 }
 
 interface Tram extends EntityBase {
@@ -48,4 +49,4 @@ interface PaginationResult<T> {
     total: number
 }
 
-export type { Level, Line, PassengerTram, Station, Connection, PaginationResult as PaginationResultType }
+export type { Level, Line, PassengerTram, Station, Connection, Traversable, PaginationResult as PaginationResultType }

@@ -20,8 +20,8 @@
       <template v-if="stations">
         <router-link :to="{ name: 'stationView', params: { stationId: station.id, item: station } }" class="item-card" v-for="station in stations.results" :key="station.id">
           <div class="name">
-            <b>{{statione.name }}</b>
-            <span>{{ station.id }}</span>
+            <b>{{station.name }}</b>
+            <span>ID: {{ station.id }}</span>
           </div>
         </router-link>
       </template>

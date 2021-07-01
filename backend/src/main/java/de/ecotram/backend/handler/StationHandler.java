@@ -24,8 +24,6 @@ public final class StationHandler {
         if (!ValidationUtilities.isIntegerValid(stationBody.maxPassengers, 0))
             throw new ErrorResponseException("invalid-max-passengers", "maxPassengers is invalid");
 
-        if (!ValidationUtilities.isIntegerValid(stationBody.currentPassengers, 0))
-            throw new ErrorResponseException("invalid-current-passengers", "currentPassengers is invalid");
     }
 
     public Station createStationFromRequest(StationRepository stationRepository, StationBody stationBody) throws ErrorResponseException {
@@ -61,17 +59,12 @@ public final class StationHandler {
         @Getter
         private int maxPassengers;
 
-        @Nullable
-        @Getter
-        private int currentPassengers;
-
         public Station applyToStation(Station station) {
             station.setLength(length);
             station.setMaxWeight(maxWeight);
             station.setTrafficFactor(trafficFactor);
             station.setName(name);
             station.setMaxPassengers(maxPassengers);
-            station.setCurrentPassengers(currentPassengers);
 
             return station;
         }

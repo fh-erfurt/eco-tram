@@ -1,8 +1,11 @@
 package de.ecotram.backend.entity.network;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import de.ecotram.backend.entity.EntityBase;
 import de.ecotram.backend.entity.Line;
+import de.ecotram.backend.entity.LineEntry;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -27,10 +30,13 @@ public abstract class Traversable extends EntityBase {
     protected int maxWeight = DEFAULT_MAX_WEIGHT;
 
     @Setter
-    @Transient
     protected float trafficFactor = DEFAULT_TRAFFIC_FACTOR;
 
-    @ManyToMany(cascade = {CascadeType.ALL})
-    @JsonIgnore
-    private Set<Line> lines = new HashSet<>();
+//    @ManyToMany(cascade = {CascadeType.ALL})
+//    @JsonIgnore
+//    private Set<Line> lines = new HashSet<>();
+
+    @OneToMany(mappedBy = "traversable")
+    @JsonBackReference
+    private Set<LineEntry> lines = new HashSet<>();
 }

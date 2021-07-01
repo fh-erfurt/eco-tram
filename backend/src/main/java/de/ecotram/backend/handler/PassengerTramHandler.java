@@ -2,12 +2,20 @@ package de.ecotram.backend.handler;
 
 import de.ecotram.backend.entity.PassengerTram;
 import de.ecotram.backend.repository.PassengerTramRepository;
+import de.ecotram.backend.repository.StationRepository;
 import de.ecotram.backend.utilities.ErrorResponseException;
 import de.ecotram.backend.utilities.ValidationUtilities;
 import lombok.Getter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
+import org.springframework.stereotype.Component;
 
+@Component("passengerTramHandler")
 public final class PassengerTramHandler {
+
+    @Autowired
+    private PassengerTramRepository passengerTramRepository;
+
     public void validatePassengerTramBody(PassengerTramBody passengerTramBody) throws ErrorResponseException {
         if (!ValidationUtilities.isIntegerValid(passengerTramBody.weight, 0))
             throw new ErrorResponseException("invalid-max-weight", "weight is invalid");
@@ -22,7 +30,7 @@ public final class PassengerTramHandler {
             throw new ErrorResponseException("invalid-current-passengers", "currentPassengers is invalid");
     }
 
-    public PassengerTram createPassengerTramFromRequest(PassengerTramRepository passengerTramRepository, PassengerTramBody passengerTramBody) throws ErrorResponseException {
+    public PassengerTram createPassengerTramFromRequest(PassengerTramBody passengerTramBody) throws ErrorResponseException {
         validatePassengerTramBody(passengerTramBody);
         PassengerTram passengerTram = passengerTramBody.applyToPassengerTram();
         passengerTramRepository.save(passengerTram);
@@ -30,7 +38,7 @@ public final class PassengerTramHandler {
         return passengerTram;
     }
 
-    public PassengerTram updatePassengerTramFromRequest(PassengerTram passengerTram, PassengerTramRepository passengerTramRepository, PassengerTramBody passengerTramBody) throws ErrorResponseException {
+    public PassengerTram updatePassengerTramFromRequest(PassengerTram passengerTram, PassengerTramBody passengerTramBody) throws ErrorResponseException {
         validatePassengerTramBody(passengerTramBody);
         PassengerTram updatedPassengerTram = passengerTramBody.applyToPassengerTram(passengerTram);
         passengerTramRepository.save(updatedPassengerTram);

@@ -1,6 +1,7 @@
 package de.ecotram.backend.entity.network;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -42,20 +43,24 @@ public final class Station extends Traversable {
     private Set<Connection> sourceConnections = new HashSet<>();
 
     @OneToMany(mappedBy = "destinationStation")
+    @JsonBackReference
     private Set<Connection> destinationConnections = new HashSet<>();
 
+    @JsonIgnore
     public Stream<Station> getReachableStations() {
         return this.sourceConnections
                 .stream()
                 .map(Connection::getDestinationStation);
     }
 
+    @JsonIgnore
     public Stream<Station> getReachingStations() {
         return this.destinationConnections
                 .stream()
                 .map(Connection::getSourceStation);
     }
 
+    @JsonIgnore
     public Optional<Connection> getConnectionTo(Station destination) {
         return this.sourceConnections
                 .stream()
@@ -93,6 +98,7 @@ public final class Station extends Traversable {
         return new Connection.Pair(connectionTo, connectionFrom);
     }
 
+    @JsonIgnore
     public Connection.Pair connectToAndFrom(
             Station destination,
             Function<Connection.Builder, Connection.Builder> modifyToBuilder,

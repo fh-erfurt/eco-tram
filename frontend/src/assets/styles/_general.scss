@@ -1,0 +1,40 @@
+$primaryColor: #71bfbc;
+$secondaryColor: #216383;
+
+$gradient: linear-gradient(to right, $primaryColor, $secondaryColor);
+
+@mixin button ($gradientStart: $primaryColor, $gradientEnd: $secondaryColor, $height: 40px, $opacity: 1, $padding: 0 15px, $fontWeight: 400, $fontSize: 15px) {
+    height: $height;
+    background: linear-gradient(to right, $gradientStart, $gradientEnd);
+    padding: $padding;
+    border-radius: $height / 2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: $fontSize;
+    font-weight: $fontWeight;
+    cursor: pointer;
+    opacity: $opacity;
+    text-decoration: none;
+
+    transition: opacity .2s ease;
+
+    i {
+        margin-right: $fontSize / 1.2;
+    }
+
+    span + i {
+        margin-right: 0;
+        margin-left: $fontSize / 1.2;
+    }
+
+    &:not(.disabled):hover {
+        opacity: 1;
+    }
+
+    &.disabled {
+        opacity: .4;
+        pointer-events: none;
+    }
+}

@@ -17,7 +17,7 @@ import java.io.Serializable;
 public class LineEntry {
 
     @EmbeddedId
-    LineEntryKey id = new LineEntryKey();
+    Key id = new Key();
 
     @Getter
     @Setter
@@ -39,20 +39,19 @@ public class LineEntry {
     @JoinColumn
     Traversable traversable;
 
-}
+    @Embeddable
+    @AllArgsConstructor
+    @NoArgsConstructor
+    static class Key implements Serializable {
 
-@Embeddable
-@AllArgsConstructor
-@NoArgsConstructor
-class LineEntryKey implements Serializable {
+        @Getter
+        @Setter
+        @Column
+        Long lineId;
 
-    @Getter
-    @Setter
-    @Column
-    Long lineId;
-
-    @Getter
-    @Setter
-    @Column
-    Long traversableId;
+        @Getter
+        @Setter
+        @Column
+        Long traversableId;
+    }
 }

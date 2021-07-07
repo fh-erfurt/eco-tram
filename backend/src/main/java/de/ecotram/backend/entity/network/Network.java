@@ -1,6 +1,8 @@
 package de.ecotram.backend.entity.network;
 
 import de.ecotram.backend.entity.EntityBase;
+import de.ecotram.backend.entity.Line;
+import de.ecotram.backend.entity.LineEntry;
 import de.ecotram.backend.utilities.NetworkUtilities;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Getter
 @Entity
@@ -60,6 +63,14 @@ public final class Network extends EntityBase {
         }
 
         this.isInitialized = true;
+    }
+
+    public Stream<Line> getLines() {
+        return this.stations.stream()
+                .map(Traversable::getLines)
+                .flatMap(Set::stream)
+                .map(LineEntry::getLine)
+                .distinct();
     }
 
     public List<Station> getPathTo(Station start, Station destination) {

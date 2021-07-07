@@ -20,4 +20,12 @@ public final class Line extends EntityBase {
     @OneToMany(mappedBy = "line")
     @JsonManagedReference
     private Set<LineEntry> route = new HashSet<>();
+
+    public int getTotalLength() {
+        return this.route
+                .stream()
+                .mapToInt(le -> le.getTraversable().getLength())
+                .reduce(Integer::sum)
+                .orElseThrow();
+    }
 }

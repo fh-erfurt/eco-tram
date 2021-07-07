@@ -36,6 +36,11 @@ public final class SimulationRunner {
         this.progressReporter = new ProgressReporter(this);
     }
 
+    // must tbe synchronized on this
+    synchronized long getTicks() {
+        return this.ticks;
+    }
+
     public synchronized ProgressReporter start() {
         if (this.isRunning)
             throw new IllegalStateException("Cannot start runner that is currently running.");
@@ -70,6 +75,12 @@ public final class SimulationRunner {
 
             try {
                 // TODO(erik): actual simulation logic
+                //  * dispatch trams to some tram runner
+                //  * each task should calculate time to send event when it arrives at next station
+                //  * register continuation hook for next task
+                //  maybe use priority blocking queue to add/consume tasks that represent the above idea,
+                //  to avoid mistakes, use ticks to measure new dispatch time so incorrectly dispatched events don't
+                //  influence subsequent events
             } catch (Exception ex) {
                 exception = ex;
                 break;

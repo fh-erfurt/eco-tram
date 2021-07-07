@@ -15,16 +15,16 @@ import java.util.logging.Level;
 public final class ProgressReporter {
     private final Object _lock = new Object();
 
-    @Getter(value = AccessLevel.PROTECTED, onMethod_ = {@Synchronized(value = "_lock")})
+    @Getter(value = AccessLevel.PACKAGE, onMethod_ = {@Synchronized(value = "_lock")})
     private final Event<RunnerStartedArgs> runnerStarted;
 
-    @Getter(value = AccessLevel.PROTECTED, onMethod_ = {@Synchronized(value = "_lock")})
+    @Getter(value = AccessLevel.PACKAGE, onMethod_ = {@Synchronized(value = "_lock")})
     private final Event<RunnerStoppedArgs> runnerStopped;
 
-    @Getter(value = AccessLevel.PROTECTED, onMethod_ = {@Synchronized(value = "_lock")})
+    @Getter(value = AccessLevel.PACKAGE, onMethod_ = {@Synchronized(value = "_lock")})
     private final Event<RunnerStoppedArgs> tramStarted;
 
-    @Getter(value = AccessLevel.PROTECTED, onMethod_ = {@Synchronized(value = "_lock")})
+    @Getter(value = AccessLevel.PACKAGE, onMethod_ = {@Synchronized(value = "_lock")})
     private final Event<RunnerStoppedArgs> tramStopped;
 
     @Getter
@@ -43,11 +43,11 @@ public final class ProgressReporter {
     }
 
     public Event<RunnerStoppedArgs>.Accessor onTramStarted() {
-        return this.runnerStopped.getAccess();
+        return this.tramStarted.getAccess();
     }
 
     public Event<RunnerStoppedArgs>.Accessor onTramStopped() {
-        return this.runnerStopped.getAccess();
+        return this.tramStopped.getAccess();
     }
 
     public ProgressReporter(SimulationRunner runner) {
@@ -59,6 +59,10 @@ public final class ProgressReporter {
 
         this.onRunnerStarted().add(e -> this.setState(State.RUNNING));
         this.onRunnerStopped().add(e -> this.setState(State.STOPPED));
+    }
+
+    public long getElapsedTicks() {
+        return this.runner.getTicks();
     }
 
     public enum State {

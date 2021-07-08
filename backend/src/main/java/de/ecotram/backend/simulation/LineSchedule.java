@@ -24,7 +24,7 @@ public final class LineSchedule {
         return Optional.ofNullable(this.trams.get(tram));
     }
 
-    public static LineSchedule FromWaitingTime(Line line, int waitingTime) {
+    public static LineSchedule fromWaitingTime(Line line, int waitingTime) {
         //        (distance / 1000)      // m => km
         // ----------------------------- == minNumberOfTrams
         // speed * (maxWaitingTime / 60) // s => h
@@ -33,12 +33,13 @@ public final class LineSchedule {
 
         LineSchedule schedule = new LineSchedule(line);
         for (int i = 0; i < minimumNumberOfTrams; i++) {
-            schedule.trams.put(new PassengerTram(), new Entry((i + 1) * waitingTime, 0, -1));
+            PassengerTram tram = new PassengerTram();
+            schedule.trams.put(tram, new Entry((i + 1) * waitingTime, 0, -1, tram));
         }
 
         return schedule;
     }
 
-    public record Entry(int startingTime, int startOrdering, int loopCount) {
+    public record Entry(int startingTime, int startOrdering, int maxTraversionCount, PassengerTram tram) {
     }
 }

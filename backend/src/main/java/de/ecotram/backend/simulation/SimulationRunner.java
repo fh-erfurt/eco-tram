@@ -1,11 +1,16 @@
 package de.ecotram.backend.simulation;
 
+import de.ecotram.backend.entity.Line;
+import de.ecotram.backend.entity.PassengerTram;
 import de.ecotram.backend.entity.network.Network;
 import de.ecotram.backend.simulation.event.RunnerStartedArgs;
 import de.ecotram.backend.simulation.event.RunnerStoppedArgs;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.Map;
 import java.util.Optional;
+import java.util.PriorityQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -65,6 +70,14 @@ public final class SimulationRunner {
     private void runInternal() {
         Exception exception = null;
 
+        final PriorityQueue<PriorityTask> taskQueue = new PriorityQueue<>();
+
+        for (Map.Entry<Line, LineSchedule> lineSchedule : this.schedule.getLineSchedules().entrySet()) {
+            for (Map.Entry<PassengerTram, LineSchedule.Entry> entry : lineSchedule.getValue().getTrams().entrySet()) {
+                taskQueue.add(new PriorityTask(entry.getValue().startingTime(), entry.getValue()));
+            }
+        }
+
         eventExecutor.execute(() -> this.progressReporter.getRunnerStarted().invoke(new RunnerStartedArgs()));
 
         while (true) {
@@ -74,13 +87,20 @@ public final class SimulationRunner {
             }
 
             try {
-                // TODO(erik): actual simulation logic
-                //  * dispatch trams to some tram runner
-                //  * each task should calculate time to send event when it arrives at next station
-                //  * register continuation hook for next task
-                //  maybe use priority blocking queue to add/consume tasks that represent the above idea,
-                //  to avoid mistakes, use ticks to measure new dispatch time so incorrectly dispatched events don't
-                //  influence subsequent events
+                PriorityTask task = taskQueue.poll();
+
+                if (task == null)
+                    continue;
+
+                // use timer instead of while loop to regularize dispatch
+
+                // dispatch timer that re adds task? maybe maybe mmh yes??
+
+                // return next task or null here if finished?
+                task.run();
+
+                // TODO(erik): get time
+                taskQueue.add(new PriorityTask(0, task.entry));
             } catch (Exception ex) {
                 exception = ex;
                 break;
@@ -115,6 +135,21 @@ public final class SimulationRunner {
                     .cause(RunnerStoppedArgs.Cause.FINISHED)
                     .build()
             ));
+        }
+    }
+
+    @AllArgsConstructor
+    private static final class PriorityTask implements Comparable<PriorityTask> {
+        private final long priority;
+        private final LineSchedule.Entry entry;
+
+        @Override
+        public int compareTo(PriorityTask o) {
+            return Long.compare(this.priority, o.priority);
+        }
+
+        public void run() {
+
         }
     }
 }

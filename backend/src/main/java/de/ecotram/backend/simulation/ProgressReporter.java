@@ -3,6 +3,8 @@ package de.ecotram.backend.simulation;
 import de.ecotram.backend.event.Event;
 import de.ecotram.backend.simulation.event.RunnerStartedArgs;
 import de.ecotram.backend.simulation.event.RunnerStoppedArgs;
+import de.ecotram.backend.simulation.event.TramStartedArgs;
+import de.ecotram.backend.simulation.event.TramStoppedArgs;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,10 +24,10 @@ public final class ProgressReporter {
     private final Event<RunnerStoppedArgs> runnerStopped;
 
     @Getter(value = AccessLevel.PACKAGE, onMethod_ = {@Synchronized(value = "_lock")})
-    private final Event<RunnerStoppedArgs> tramStarted;
+    private final Event<TramStartedArgs> tramStarted;
 
     @Getter(value = AccessLevel.PACKAGE, onMethod_ = {@Synchronized(value = "_lock")})
-    private final Event<RunnerStoppedArgs> tramStopped;
+    private final Event<TramStoppedArgs> tramStopped;
 
     @Getter
     private final SimulationRunner runner;
@@ -42,11 +44,11 @@ public final class ProgressReporter {
         return this.runnerStopped.getAccess();
     }
 
-    public Event<RunnerStoppedArgs>.Accessor onTramStarted() {
+    public Event<TramStartedArgs>.Accessor onTramStarted() {
         return this.tramStarted.getAccess();
     }
 
-    public Event<RunnerStoppedArgs>.Accessor onTramStopped() {
+    public Event<TramStoppedArgs>.Accessor onTramStopped() {
         return this.tramStopped.getAccess();
     }
 

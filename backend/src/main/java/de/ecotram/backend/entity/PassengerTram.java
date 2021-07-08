@@ -1,6 +1,5 @@
 package de.ecotram.backend.entity;
 
-import de.ecotram.backend.simulation.LineSchedule;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -26,4 +25,16 @@ public final class PassengerTram extends EntityBase {
 
     @Transient
     private int currentPassengers;
+
+    @Transient
+    private Line currentLine;
+
+    @Transient
+    private LineEntry currentLineEntry;
+
+    public int advance() {
+        // TODO(erik): return time it takes to traverse to next station
+        // TODO: make line entries only stations?
+        return 60; // s
+    }
 }

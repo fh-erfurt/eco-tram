@@ -4,9 +4,11 @@ import com.corundumstudio.socketio.HandshakeData;
 import com.corundumstudio.socketio.SocketIOServer;
 import com.corundumstudio.socketio.listener.ConnectListener;
 import com.corundumstudio.socketio.listener.DisconnectListener;
+import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+@Log(topic = "simulation socket")
 @Component("socketHandler")
 public class SimulationSocketHandler {
 
@@ -19,13 +21,13 @@ public class SimulationSocketHandler {
 
     private ConnectListener onConnected() {
         return client -> {
-            System.out.println("Client[" + client.getSessionId().toString() + "] - Connected to simulation socket");
+            this.log.info("Client[" + client.getSessionId().toString() + "] - Connected to simulation socket");
         };
     }
 
     private DisconnectListener onDisconnected() {
         return client -> {
-            System.out.println("Client[" + client.getSessionId().toString() + "] - disconnected from simulation socket");
+            this.log.info("Client[" + client.getSessionId().toString() + "] - disconnected from simulation socket");
         };
     }
 }

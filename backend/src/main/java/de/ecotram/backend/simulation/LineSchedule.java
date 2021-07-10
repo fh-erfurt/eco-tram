@@ -34,12 +34,12 @@ public final class LineSchedule {
         LineSchedule schedule = new LineSchedule(line);
         for (int i = 0; i < minimumNumberOfTrams; i++) {
             PassengerTram tram = new PassengerTram();
-            schedule.trams.put(tram, new Entry((i + 1) * waitingTime, 0, -1, tram));
+            schedule.trams.put(tram, new Entry((i + 1) * waitingTime, 0, -1, tram, line));
         }
 
         return schedule;
     }
 
-    public record Entry(int startingTime, int startOrdering, int maxTraversionCount, PassengerTram tram) {
+    public record Entry(int startingTime, int startOrdering, int maxCount, PassengerTram tram, Line line) {
     }
 }

@@ -2,6 +2,7 @@ package de.ecotram.backend.simulation;
 
 import de.ecotram.backend.entity.Line;
 import de.ecotram.backend.entity.PassengerTram;
+import de.ecotram.backend.entity.network.Connection;
 import de.ecotram.backend.entity.network.Network;
 import de.ecotram.backend.simulation.event.RunnerStartedArgs;
 import de.ecotram.backend.simulation.event.RunnerStoppedArgs;
@@ -10,16 +11,22 @@ import lombok.Getter;
 
 import java.util.Map;
 import java.util.Optional;
-import java.util.PriorityQueue;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.PriorityBlockingQueue;
 
 public final class SimulationRunner {
-    private final ExecutorService executor;
     private final ExecutorService eventExecutor;
+    private final Timer timer = new Timer();
+    private final PriorityBlockingQueue<OrderedTask> taskQueue = new PriorityBlockingQueue<>();
 
-    private boolean runInternal;
+    private boolean internalStopped;
     private long ticks;
+
+    @Getter
+    private final int timerInterval;
 
     @Getter
     private final Network network;
@@ -34,8 +41,12 @@ public final class SimulationRunner {
     private boolean isRunning;
 
     public SimulationRunner(Schedule schedule) {
-        this.executor = Executors.newFixedThreadPool(1);
-        this.eventExecutor = Executors.newFixedThreadPool(1);
+        this(schedule, 100, 1);
+    }
+
+    public SimulationRunner(Schedule schedule, int timerInterval, int eventThreadPoolCount) {
+        this.eventExecutor = Executors.newFixedThreadPool(eventThreadPoolCount);
+        this.timerInterval = timerInterval;
         this.network = schedule.getNetwork();
         this.schedule = schedule;
         this.progressReporter = new ProgressReporter(this);
@@ -53,10 +64,8 @@ public final class SimulationRunner {
         if (this.ticks != 0)
             throw new IllegalStateException("Runner was stopped and not reset before starting.");
 
-        this.isRunning = true;
-        this.runInternal = true;
+        timer.schedule(new RunnerStartUpTask(this), 0);
 
-        this.executor.execute(this::runInternal);
         return this.progressReporter;
     }
 
@@ -64,92 +73,144 @@ public final class SimulationRunner {
         if (!this.isRunning)
             throw new IllegalStateException("Cannot stop runner that is not currently running.");
 
-        this.runInternal = false;
+        this.timer.schedule(new RunnerStoppingTask(this, null, true), 0);
     }
 
-    private void runInternal() {
-        Exception exception = null;
+    private void runInternalIteration() {
+        OrderedTask task;
 
-        final PriorityQueue<PriorityTask> taskQueue = new PriorityQueue<>();
+        do {
+            task = this.taskQueue.poll();
 
-        for (Map.Entry<Line, LineSchedule> lineSchedule : this.schedule.getLineSchedules().entrySet()) {
-            for (Map.Entry<PassengerTram, LineSchedule.Entry> entry : lineSchedule.getValue().getTrams().entrySet()) {
-                taskQueue.add(new PriorityTask(entry.getValue().startingTime(), entry.getValue()));
-            }
-        }
-
-        eventExecutor.execute(() -> this.progressReporter.getRunnerStarted().invoke(new RunnerStartedArgs()));
-
-        while (true) {
-            synchronized (this) {
-                if (!this.runInternal)
-                    break;
-            }
-
-            try {
-                PriorityTask task = taskQueue.poll();
-
-                if (task == null)
-                    continue;
-
-                // use timer instead of while loop to regularize dispatch
-
-                // dispatch timer that re adds task? maybe maybe mmh yes??
-
-                // return next task or null here if finished?
-                task.run();
-
-                // TODO(erik): get time
-                taskQueue.add(new PriorityTask(0, task.entry));
-            } catch (Exception ex) {
-                exception = ex;
+            if (task == null) {
+                this.internalStopped = true;
                 break;
             }
 
-            synchronized (this) {
-                this.ticks++;
-            }
-        }
+            task.getNextDispatch().ifPresent(this.taskQueue::add);
+        } while (task.dispatchTick <= this.ticks);
 
-        synchronized (this) {
-            this.isRunning = false;
-        }
-
-        if (exception != null) {
-            final Exception ex = exception;
-            eventExecutor.execute(() -> this.progressReporter.getRunnerStopped().invoke(RunnerStoppedArgs.builder()
-                    .reason("An exception was thrown.")
-                    .exception(Optional.of(ex))
-                    .cause(RunnerStoppedArgs.Cause.EXCEPTION)
-                    .build()
-            ));
-        } else if (!this.runInternal) {
-            eventExecutor.execute(() -> this.progressReporter.getRunnerStopped().invoke(RunnerStoppedArgs.builder()
-                    .reason("The runner was stopped externally.")
-                    .cause(RunnerStoppedArgs.Cause.STOP_CALLED)
-                    .build()
-            ));
-        } else {
-            eventExecutor.execute(() -> this.progressReporter.getRunnerStopped().invoke(RunnerStoppedArgs.builder()
-                    .reason("Runner finished.")
-                    .cause(RunnerStoppedArgs.Cause.FINISHED)
-                    .build()
-            ));
-        }
+        this.ticks++;
     }
 
     @AllArgsConstructor
-    private static final class PriorityTask implements Comparable<PriorityTask> {
-        private final long priority;
+    private static final class OrderedTask implements Comparable<OrderedTask> {
+        private final long dispatchTick;
+        private final int tickInterval;
+        private final int currentCount;
         private final LineSchedule.Entry entry;
+        private final Connection connection;
 
         @Override
-        public int compareTo(PriorityTask o) {
-            return Long.compare(this.priority, o.priority);
+        public int compareTo(OrderedTask o) {
+            return Long.compare(this.dispatchTick, o.dispatchTick);
         }
 
-        public void run() {
+        public Optional<OrderedTask> getNextDispatch() {
+            int speed = this.entry.tram().getSpeed();
+            int length = connection.getLength();
+            float time = (float) length * 60 / 1000 * speed; // s
 
+            // TODO: get next connection
+
+            return currentCount - 1 != 0
+                    ? Optional.of(new OrderedTask(dispatchTick + (int) time / tickInterval, tickInterval, currentCount - 1, entry, null))
+                    : Optional.empty();
+        }
+    }
+
+    private static final class RunnerTimerTask extends TimerTask {
+        private final SimulationRunner runner;
+
+        private RunnerTimerTask(SimulationRunner runner) {
+            this.runner = runner;
+        }
+
+        @Override
+        public void run() {
+            synchronized (this.runner) {
+                try {
+                    this.runner.runInternalIteration();
+
+                    if (!this.runner.internalStopped)
+                        this.runner.timer.schedule(new RunnerTimerTask(this.runner), this.runner.timerInterval);
+                    else
+                        this.runner.timer.schedule(new RunnerStoppingTask(this.runner, null, false), 0);
+                } catch (Exception ex) {
+                    this.runner.timer.schedule(new RunnerStoppingTask(this.runner, ex, false), 0);
+                }
+            }
+        }
+    }
+
+    private static final class RunnerStartUpTask extends TimerTask {
+        private final SimulationRunner runner;
+
+        private RunnerStartUpTask(SimulationRunner runner) {
+            this.runner = runner;
+        }
+
+        @Override
+        public void run() {
+            synchronized (this.runner) {
+                for (Map.Entry<Line, LineSchedule> lineSchedule : this.runner.schedule.getLineSchedules().entrySet()) {
+                    for (Map.Entry<PassengerTram, LineSchedule.Entry> entry : lineSchedule.getValue().getTrams().entrySet()) {
+                        this.runner.taskQueue.add(new OrderedTask(entry.getValue().startingTime(), this.runner.timerInterval, entry.getValue().maxCount(), entry.getValue(), null));
+                        // TODO: get first connection ->
+                    }
+                }
+
+                this.runner.eventExecutor.execute(() -> runner.progressReporter.getRunnerStarted().invoke(new RunnerStartedArgs()));
+                this.runner.timer.schedule(new RunnerTimerTask(this.runner), this.runner.timerInterval);
+
+                this.runner.isRunning = true;
+            }
+        }
+    }
+
+    private static final class RunnerStoppingTask extends TimerTask {
+        private final SimulationRunner runner;
+        private final Exception exception;
+        private boolean external;
+
+        private RunnerStoppingTask(SimulationRunner runner, Exception exception, boolean external) {
+            this.runner = runner;
+            this.exception = exception;
+            this.external = external;
+        }
+
+        @Override
+        public void run() {
+            synchronized (this.runner) {
+                this.runner.isRunning = false;
+
+                if (this.exception != null) {
+                    this.runner.eventExecutor.execute(() -> this.runner.progressReporter
+                            .getRunnerStopped()
+                            .invoke(RunnerStoppedArgs.builder()
+                                    .reason("An exception was thrown.")
+                                    .exception(Optional.of(this.exception))
+                                    .cause(RunnerStoppedArgs.Cause.EXCEPTION)
+                                    .build()
+                            ));
+                } else if (!this.external) {
+                    this.runner.eventExecutor.execute(() -> this.runner.progressReporter
+                            .getRunnerStopped()
+                            .invoke(RunnerStoppedArgs.builder()
+                                    .reason("The runner was stopped externally.")
+                                    .cause(RunnerStoppedArgs.Cause.STOP_CALLED)
+                                    .build()
+                            ));
+                } else {
+                    this.runner.eventExecutor.execute(() -> this.runner.progressReporter
+                            .getRunnerStopped()
+                            .invoke(RunnerStoppedArgs.builder()
+                                    .reason("Runner finished.")
+                                    .cause(RunnerStoppedArgs.Cause.FINISHED)
+                                    .build()
+                            ));
+                }
+            }
         }
     }
 }

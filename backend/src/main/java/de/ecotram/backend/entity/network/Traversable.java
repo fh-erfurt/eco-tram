@@ -1,8 +1,6 @@
 package de.ecotram.backend.entity.network;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import de.ecotram.backend.entity.EntityBase;
-import de.ecotram.backend.entity.LineEntry;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -10,9 +8,6 @@ import lombok.Setter;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.OneToMany;
-import java.util.HashSet;
-import java.util.Set;
 
 @Getter
 @Entity

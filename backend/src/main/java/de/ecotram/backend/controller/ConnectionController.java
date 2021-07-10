@@ -2,6 +2,7 @@ package de.ecotram.backend.controller;
 
 import de.ecotram.backend.entity.network.Connection;
 import de.ecotram.backend.handler.ConnectionHandler;
+import de.ecotram.backend.handler.SimulationHandler;
 import de.ecotram.backend.pagination.PaginationRequest;
 import de.ecotram.backend.repository.ConnectionRepository;
 import de.ecotram.backend.utilities.ErrorResponse;
@@ -22,6 +23,16 @@ public final class ConnectionController {
 
     @Autowired
     private ConnectionHandler connectionHandler;
+
+    @Autowired
+    private SimulationHandler simulationHandler;
+
+    @CrossOrigin
+    @GetMapping("/test")
+    public ResponseEntity<String> list() {
+        simulationHandler.createNetwork();
+        return ResponseEntity.ok().body("OK");
+    }
 
     @CrossOrigin
     @GetMapping("/connections/list")

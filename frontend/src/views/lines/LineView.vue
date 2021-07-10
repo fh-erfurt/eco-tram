@@ -15,26 +15,12 @@
                     </div>
                 </div>
                 <h3 class="title small">Route</h3>
-                <router-link v-for="item in routeOrdered" :key="item.id" :to="item.traversable.sourceStation ? { name: 'connectionView', params: { connectionId: item.traversable.id, item: item.traversable } } : { name: 'stationView', params: { stationId: item.traversable.id, item: item.traversable } }" class="item-card">
-                    <template v-if="item.traversable.sourceStation">
-                        <div class="image"><i class="fa fa-sitemap"></i></div>
-                        <div class="name">
-                            <b>Verbindung, ID: {{ item.traversable.id }}</b>
-                            <span>{{ `${ item.traversable.sourceStation.name } - ${ item.traversable.destinationStation.name }` }}</span>
-                        </div>
-                        <div class="badges">
-                            <span class="badge good">L: {{ item.traversable.length }}</span>
-                            <span class="badge good">TF: {{ item.traversable.trafficFactor }}</span>
-                            <span class="badge good">MW: {{ item.traversable.maxWeight }}</span>
-                        </div>
-                    </template>
-                    <template v-else>
-                        <div class="image"><i class="fas fa-h-square"></i></div>
-                        <div class="name">
-                            <b>{{item.traversable.name }}</b>
-                            <span>ID: {{ item.traversable.id }}</span>
-                        </div>
-                    </template>
+                <router-link v-for="item in routeOrdered" :key="item.id" :to="{ name: 'stationView', params: { stationId: item.station.id, item: item.station } }" class="item-card">
+                    <div class="image"><i class="fas fa-h-square"></i></div>
+                    <div class="name">
+                        <b>{{item.station.name }}</b>
+                        <span>ID: {{ item.station.id }}</span>
+                    </div>
                 </router-link>
             </template>
         </simple-loader>

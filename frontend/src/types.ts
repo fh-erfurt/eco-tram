@@ -41,7 +41,7 @@ interface Connection extends Traversable {
 }
 
 interface LineEntry extends EntityBase {
-    traversable: Station | Connection
+    station: Station
     orderValue: number
 }
 

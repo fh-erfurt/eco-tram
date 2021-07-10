@@ -31,8 +31,4 @@ public abstract class Traversable extends EntityBase {
 
     @Setter
     protected float trafficFactor = DEFAULT_TRAFFIC_FACTOR;
-
-    @OneToMany(mappedBy = "traversable")
-    @JsonBackReference
-    private Set<LineEntry> lines = new HashSet<>();
 }

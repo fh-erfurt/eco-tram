@@ -2,6 +2,7 @@ package de.ecotram.backend.entity.network;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import de.ecotram.backend.entity.LineEntry;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,6 +35,10 @@ public final class Station extends Traversable {
     @Setter
     @Transient
     private int currentPassengers = DEFAULT_CURRENT_PASSENGERS;
+
+    @OneToMany(mappedBy = "station")
+    @JsonBackReference
+    private Set<LineEntry> lines = new HashSet<>();
 
     @ManyToOne
     private Network network;

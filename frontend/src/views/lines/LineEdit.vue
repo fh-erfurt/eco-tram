@@ -1,7 +1,7 @@
 <template>
     <div id="line-edit" class="item-cards">
-        <simple-loader :data="line && stations && connections" error-message="Die gesuchte Linie existiert nicht">
-            <template v-if="stations && connections && line && line.id">
+        <simple-loader :data="line && stations" error-message="Die gesuchte Linie existiert nicht">
+            <template v-if="stations && line && line.id">
                 <div class="title-frame">
                     <div class="titles">
                         <h1 class="title">Linie, ID: {{ line.id }} bearbeiten</h1>
@@ -19,29 +19,16 @@
                                 <div class="input-item">
                                     <label>Verfügbare Stationen</label>
                                     <div class="select-box">
-                                        <div class="item" v-for="station in stationsOrdered" :key="station.id" @click="addStationToTraversableItems(station)">
+                                        <div class="item" v-for="station in stationsOrdered" :key="station.id" @click="addStation(station)">
                                             <i class="fas fa-h-square"></i> {{ station.name }} ({{ station.id }})
                                         </div>
                                     </div>
                                 </div>
                                 <div class="input-item">
-                                    <label>Verfügbare Linien</label>
+                                    <label>Ausgewählte Stationen</label>
                                     <div class="select-box">
-                                        <div class="item" v-for="connection in connections" :key="connection.id" @click="addConnectionToTraversableItems(connection)">
-                                            <i class="fa fa-sitemap"></i> {{ connection.sourceStation.name }} - {{ connection.destinationStation.name }} ({{ connection.id }})
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="input-item">
-                                    <label>Ausgewählte Streckenabschnitte</label>
-                                    <div class="select-box">
-                                        <div class="item" v-for="traversableItem in traversableItems" :key="traversableItem.id" @click="removeTraversableItem(traversableItem)">
-                                            <template v-if="traversableItem.station">
-                                                <i class="fas fa-h-square"></i> {{ traversableItem.station.name }} ({{ traversableItem.station.id }})
-                                            </template>
-                                            <template v-else-if="traversableItem.connection">
-                                                <i class="fa fa-sitemap"></i> {{ traversableItem.connection.sourceStation.name }} - {{ traversableItem.connection.destinationStation.name }} ({{ traversableItem.connection.id }})
-                                            </template>
+                                        <div class="item" v-for="(station, index) in selectedStations" :key="index" @click="removeStation(station)">
+                                            <i class="fas fa-h-square"></i> {{ station.name }} ({{ station.id }})
                                         </div>
                                     </div>
                                 </div>
@@ -70,16 +57,10 @@
 </template>
 
 <script lang="ts">
-import {Connection, Line, LineEntry, PaginationResultType, Station} from "@/types";
+import { Line, LineEntry, PaginationResultType, Station} from "@/types";
 import { Component, Prop, Vue } from "vue-property-decorator";
 import SimpleLoader from "@/components/SimpleLoader.vue"
 import config from "@/config"
-
-interface TraversableItem {
-    id: number
-    station?: Station
-    connection?: Connection
-}
 
 @Component({
     components: {
@@ -93,43 +74,32 @@ export default class LineEdit extends Vue {
     private lineCopy: Line | null = this.item || null
 
     private stations: Station[] | null = null
-    private connections: Connection[] | null = null
 
     private name: String = ""
 
-    private traversableItems: TraversableItem[] = []
+    private selectedStations: Station[] = []
 
     private submissions = {
         general: false,
         delete: false
     }
 
-    private addStationToTraversableItems(station: Station) {
-        this.traversableItems.push({
-            id: station.id,
-            station: station
-        })
+    private addStation(station: Station) {
+        this.selectedStations.push(station)
     }
 
-    private addConnectionToTraversableItems(connection: Connection) {
-        this.traversableItems.push({
-            id: connection.id,
-            connection: connection
-        })
-    }
-
-    private removeTraversableItem(traversableItem: TraversableItem) {
-        this.traversableItems.splice(this.traversableItems.indexOf(traversableItem), 1)
+    private removeStation(station: Station) {
+        this.selectedStations.splice(this.selectedStations.indexOf(station), 1)
     }
 
     private async submitGeneral() {
         if(this.submissions.general) return
         this.submissions.general = true
 
-        let traversableIds = [];
+        let stationIds = [];
 
-        for(const traversableItem of this.traversableItems)
-            traversableIds.push(traversableItem.id)
+        for(const station of this.selectedStations)
+          stationIds.push(station.id)
 
         const response = await fetch(`${config.host}/lines/update/${this.$route.params.lineId}`, {
             method: 'POST',
@@ -138,7 +108,7 @@ export default class LineEdit extends Vue {
             },
             body: JSON.stringify({
                 name: this.name,
-                traversableIds: traversableIds.join(',')
+              stationIds: stationIds.join(',')
             })
         })
 
@@ -228,31 +198,15 @@ export default class LineEdit extends Vue {
             const stationsResponse = await fetch(`${config.host}/stations/list?limit=0`)
             const stations = (await stationsResponse.json() as PaginationResultType<Station>).results
 
-            const connectionsResponse = await fetch(`${config.host}/connections/list?limit=0`)
-            const connections = (await connectionsResponse.json() as PaginationResultType<Connection>).results
-
             for(const lineEntry of this.routeOrdered) {
                 for (const station of stations) {
-                    if (lineEntry.traversable.id === station.id) {
-                        this.traversableItems.push({
-                            id: station.id,
-                            station: station
-                        })
-                    }
-                }
-
-                for (const connection of connections) {
-                    if (lineEntry.traversable.id === connection.id) {
-                        this.traversableItems.push({
-                            id: connection.id,
-                            connection: connection
-                        })
+                    if (lineEntry.station.id === station.id) {
+                        this.selectedStations.push(station)
                     }
                 }
             }
 
             this.stations = [...stations]
-            this.connections = [...connections]
         }
     }
 }

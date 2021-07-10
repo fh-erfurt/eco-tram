@@ -11,15 +11,18 @@ import de.ecotram.backend.repository.LineRepository;
 import de.ecotram.backend.repository.StationRepository;
 import de.ecotram.backend.utilities.ErrorResponseException;
 import de.ecotram.backend.utilities.ValidationUtilities;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 @Component("lineHandler")
 public final class LineHandler {
@@ -36,56 +39,34 @@ public final class LineHandler {
     @Autowired
     private LineEntryRepository lineEntryRepository;
 
-    public List<Traversable> validateTraversableIds(List<Long> ids) {
+    public ValidationResult validateStationIds(ArrayList<Long> ids) {
         List<Station> stations = stationRepository.findAllById(ids);
-        List<Connection> connections = connectionRepository.findAllById(ids);
 
-        List<Traversable> traversables = new ArrayList<>();
-        final Traversable[] previousItem = {null};
+        ArrayList<Station> addedStations = new ArrayList<>();
+        ArrayList<Connection> addedConnections = new ArrayList<>();
+
+        AtomicReference<Station> priorStation = new AtomicReference<>();
 
         ids.forEach(id -> {
-            Optional<Station> station = stations.stream().filter(filterStation -> filterStation.getId() == id).findFirst();
-            if (station.isPresent()) {
-                if (previousItem[0] == null) previousItem[0] = station.get();
-                else if (previousItem[0] instanceof Station) {
-                    traversables.add(getConnectionInBetween((Station) previousItem[0], station.get()));
-                    previousItem[0] = station.get();
-                }
-
-                traversables.add(station.get());
-            } else {
-                Optional<Connection> connection = connections.stream().filter(filterConnection -> filterConnection.getId() == id).findFirst();
-
-                if (connection.isPresent()) {
-                    traversables.add(connection.get());
-                    if (previousItem[0] == null) previousItem[0] = connection.get();
-                }
+            var optionalStation = stations.stream().filter(station -> station.getId() == id).findFirst();
+            if(optionalStation.isPresent()) {
+                addedStations.add(optionalStation.get());
+                if(priorStation.get() != null)
+                    addedConnections.add(priorStation.get().connectTo(optionalStation.get(), c -> c));
+                priorStation.set(optionalStation.get());
             }
         });
 
-        return traversables;
+        return new ValidationResult(addedStations, addedConnections);
     }
 
-    public Connection getConnectionInBetween(Station station1, Station station2) {
-        Connection connection = connectionRepository.findByLineAndTraversable(station1, station2);
-        if (connection != null) return connection;
-
-        connection = new Connection();
-        connection.setSourceStation(station1);
-        connection.setDestinationStation(station2);
-
-        connectionRepository.save(connection);
-
-        return connection;
-    }
-
-    public List<Long> validateLineBody(LineBody lineBody) throws ErrorResponseException {
+    public ArrayList<Long> validateLineBody(LineBody lineBody) throws ErrorResponseException {
         if (!ValidationUtilities.isStringValid(lineBody.name, 1, 100))
             throw new ErrorResponseException("invalid-name", "name is invalid");
 
         ArrayList<Long> ids = new ArrayList<>();
 
-        Arrays.asList(lineBody.traversableIds.split(",")).forEach(id -> ids.add(Long.parseLong(id)));
+        Arrays.asList(lineBody.stationIds.split(",")).forEach(id -> ids.add(Long.parseLong(id)));
 
         if (ids.size() == 0)
             throw new ErrorResponseException("invalid-ids", "at least one id is required");
@@ -94,18 +75,20 @@ public final class LineHandler {
     }
 
     public Line createLineFromRequest(LineBody lineBody) throws ErrorResponseException {
-        List<Long> ids = validateLineBody(lineBody);
+        ArrayList<Long> ids = validateLineBody(lineBody);
+
+        System.out.println(ids.size());
 
         Line line = lineBody.applyToLine();
-        List<Traversable> traversableList = validateTraversableIds(ids);
+        ValidationResult validationResult = validateStationIds(ids);
 
         List<LineEntry> lineEntries = new ArrayList<>();
         AtomicInteger index = new AtomicInteger();
 
-        traversableList.forEach(traversable -> {
+        validationResult.stations.forEach(station -> {
             LineEntry lineEntry = new LineEntry();
             lineEntry.setLine(line);
-            lineEntry.setTraversable(traversable);
+            lineEntry.setStation(station);
             lineEntry.setOrderValue(index.intValue());
 
             lineEntries.add(lineEntry);
@@ -117,44 +100,77 @@ public final class LineHandler {
         line.getRoute().addAll(lineEntries);
 
         lineRepository.save(line);
-
-        lineEntries.forEach(lineEntry -> lineEntryRepository.save(lineEntry));
+        lineEntryRepository.saveAll(lineEntries);
+        connectionRepository.saveAll(validationResult.connections);
 
         return line;
     }
 
     public Line updateLineFromRequest(Line line, LineBody lineBody) throws ErrorResponseException {
-        List<Long> ids = validateLineBody(lineBody);
+        ArrayList<Long> ids = validateLineBody(lineBody);
         Line updatedLine = lineBody.applyToLine(line);
-        List<Traversable> traversableList = validateTraversableIds(ids);
+        ValidationResult validationResult = validateStationIds(ids);
+
+        var sortedRoute = line.getRoute().stream().sorted(Comparator.comparing(LineEntry::getOrderValue)).collect(Collectors.toList());
+
+        AtomicBoolean changesFound = new AtomicBoolean(sortedRoute.size() != validationResult.stations.size());
 
         List<LineEntry> lineEntries = new ArrayList<>();
-        AtomicInteger index = new AtomicInteger();
 
-        traversableList.forEach(traversable -> {
-            LineEntry lineEntry = lineEntryRepository.findByLineAndTraversable(line, traversable);
+        if(!changesFound.get()) {
+            AtomicInteger index = new AtomicInteger();
 
-            if (lineEntry == null) {
-                lineEntry = new LineEntry();
+            validationResult.stations.forEach(station -> {
+                if(changesFound.get()) return;
 
+                if(station != sortedRoute.get(index.get()).getStation())
+                    changesFound.set(true);
+
+                index.getAndIncrement();
+            });
+        }
+
+        if(changesFound.get()) {
+            lineEntryRepository.deleteAll(sortedRoute);
+            connectionRepository.deleteAll(sortedRoute.stream().map(LineEntry::getStation).map(Station::getDestinationConnections).flatMap(Set::stream).collect(Collectors.toList()));
+            connectionRepository.deleteAll(sortedRoute.stream().map(LineEntry::getStation).map(Station::getSourceConnections).flatMap(Set::stream).collect(Collectors.toList()));
+
+            AtomicInteger index = new AtomicInteger();
+
+            validationResult.stations.forEach(station -> {
+                LineEntry lineEntry = new LineEntry();
                 lineEntry.setLine(line);
-                lineEntry.setTraversable(traversable);
-            }
+                lineEntry.setStation(station);
+                lineEntry.setOrderValue(index.intValue());
 
-            lineEntry.setOrderValue(index.intValue());
+                lineEntries.add(lineEntry);
 
-            lineEntries.add(lineEntry);
+                index.getAndIncrement();
+            });
+        }
 
-            index.getAndIncrement();
-        });
-
-        line.getRoute().clear();
-        line.getRoute().addAll(lineEntries);
+        if(changesFound.get()) {
+            line.getRoute().clear();
+            line.getRoute().addAll(lineEntries);
+        }
 
         lineRepository.save(updatedLine);
-        lineEntries.forEach(lineEntryRepository::save);
+
+        if(changesFound.get()) {
+            lineEntryRepository.saveAll(lineEntries);
+            connectionRepository.saveAll(validationResult.connections);
+        }
 
         return updatedLine;
+    }
+
+    public void deleteLine(Line line) {
+        var route = line.getRoute();
+
+        lineEntryRepository.deleteAll(route);
+        connectionRepository.deleteAll(route.stream().map(LineEntry::getStation).map(Station::getDestinationConnections).flatMap(Set::stream).collect(Collectors.toList()));
+        connectionRepository.deleteAll(route.stream().map(LineEntry::getStation).map(Station::getSourceConnections).flatMap(Set::stream).collect(Collectors.toList()));
+        lineRepository.delete(line);
     }
 
     public static class LineBody {
@@ -162,7 +178,7 @@ public final class LineHandler {
         private String name;
 
         @Getter
-        private String traversableIds;
+        private String stationIds;
 
         public Line applyToLine(Line line) {
             line.setName(name);
@@ -173,5 +189,12 @@ public final class LineHandler {
         public Line applyToLine() {
             return applyToLine(new Line());
         }
+    }
+
+    @Data
+    @AllArgsConstructor
+    private final class ValidationResult {
+        private ArrayList<Station> stations;
+        private ArrayList<Connection> connections;
     }
 }

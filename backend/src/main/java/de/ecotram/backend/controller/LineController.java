@@ -66,10 +66,10 @@ public class LineController {
     @CrossOrigin
     @PostMapping(value = "/lines/delete/{id}")
     public ResponseEntity<Object> deleteLine(@PathVariable("id") Long id) {
-        Optional<Line> lineEntry = lineRepository.findById(id);
+        Optional<Line> line = lineRepository.findById(id);
 
-        if (lineEntry.isPresent()) {
-            lineRepository.delete(lineEntry.get());
+        if (line.isPresent()) {
+            lineHandler.deleteLine(line.get());
             return ResponseEntity.ok().body("OK");
         } else
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("invalid-line", "No line with id found"));

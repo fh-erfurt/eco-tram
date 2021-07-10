@@ -1,10 +1,12 @@
 package de.ecotram.backend.simulation;
 
 import de.ecotram.backend.entity.Line;
+import de.ecotram.backend.entity.LineEntry;
 import de.ecotram.backend.entity.PassengerTram;
 import lombok.AccessLevel;
 import lombok.Getter;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -33,7 +35,7 @@ public final class LineSchedule {
 
         LineSchedule schedule = new LineSchedule(line);
         for (int i = 0; i < minimumNumberOfTrams; i++) {
-            PassengerTram tram = new PassengerTram();
+            PassengerTram tram = new PassengerTram(line.getRoute().stream().sorted(Comparator.comparingInt(LineEntry::getOrderValue)).toList());
             schedule.trams.put(tram, new Entry((i + 1) * waitingTime, 0, -1, tram, line));
         }
 

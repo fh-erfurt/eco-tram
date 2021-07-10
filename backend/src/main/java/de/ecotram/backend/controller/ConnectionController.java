@@ -30,7 +30,7 @@ public final class ConnectionController {
     @CrossOrigin
     @GetMapping("/test")
     public ResponseEntity<String> list() {
-        simulationHandler.createNetwork();
+        simulationHandler.startSimulation();
         return ResponseEntity.ok().body("OK");
     }
 

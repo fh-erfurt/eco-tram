@@ -11,6 +11,7 @@ import de.ecotram.backend.entity.network.Network;
 import de.ecotram.backend.entity.network.Station;
 import de.ecotram.backend.repository.LineRepository;
 import de.ecotram.backend.repository.StationRepository;
+import de.ecotram.backend.simulation.LineSchedule;
 import de.ecotram.backend.simulation.Schedule;
 import de.ecotram.backend.simulation.SimulationRunner;
 import de.ecotram.backend.simulation.event.TramStartedArgs;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -50,10 +52,18 @@ public class SimulationHandler {
         socketIOServer.addDisconnectListener(onDisconnected());
     }
 
-    private void startSimulation() {
+    public void startSimulation() {
         if(simulationRunner != null) return;
 
-        simulationRunner = new SimulationRunner(Schedule.forNetwork(NetworkUtilities.getTestingNetwork()).build());
+        var lines = this.lineRepository.findAll();
+        var stations = lines.stream().map(Line::getRoute).flatMap(Set::stream).map(LineEntry::getStation).collect(Collectors.toSet());
+        var network = Network.fromStations(stations);
+
+        var builder = Schedule.forNetwork(network);
+
+        lines.forEach(l -> builder.withLineSchedule(LineSchedule.fromWaitingTime(l, 500)));
+
+        simulationRunner = new SimulationRunner(builder.build());
 
         var progressReporter = simulationRunner.start();
 
@@ -61,44 +71,12 @@ public class SimulationHandler {
         progressReporter.onTramStopped().add(this::onTramStopped);
     }
 
-    public void createNetwork() {
-        System.out.println("creating network");
-        try {
-            var lines = this.lineRepository.findAll();
-            var stations = new HashSet<Station>();
-
-            lines.forEach(l -> {
-                l.getRoute().forEach(e -> {
-                    stations.add(e.getStation());
-                });
-            });
-
-            var network = Network.fromStations(stations);
-
-            var ringelberg = this.stationRepository.findByName("Ringelberg");
-            var europaplatz = this.stationRepository.findByName("Europaplatz");
-
-            var stations1 = ringelberg.getDestinationConnections()
-                    .stream()
-                    .map(Connection::getDestinationStation)
-                    .collect(Collectors.toSet());
-
-            System.out.println(stations1.size());
-
-            var map = network.getAdjacencyMap();
-
-            map.keySet().forEach(s -> map.get(s).forEach(s1 -> System.out.println(s.getName() + " - " + s1.getName())));
-        } catch(Exception exception) {
-            exception.printStackTrace();
-        }
-    }
-
     private void onTramStarted(TramStartedArgs consumer) {
-
+        this.log.info("Tram[" + consumer.tram + "] - started " + consumer.connection);
     }
 
     private void onTramStopped(TramStoppedArgs consumer) {
-
+        this.log.info("Tram[" + consumer.tram + "] - stopped " + consumer.connection);
     }
 
     private ConnectListener onConnected() {

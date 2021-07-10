@@ -111,10 +111,13 @@ public final class SimulationRunner {
             int length = connection.getLength();
             float time = (float) length * 60 / 1000 * speed; // s
 
-            // TODO: get next connection
-
-            return currentCount - 1 != 0
-                    ? Optional.of(new OrderedTask(dispatchTick + (int) time / tickInterval, tickInterval, currentCount - 1, entry, null))
+            return this.currentCount >= this.entry.maxCount()
+                    ? Optional.of(new OrderedTask(
+                    this.dispatchTick + (int) time / this.tickInterval,
+                    this.tickInterval,
+                    this.currentCount + 1,
+                    this.entry,
+                    this.entry.tram().nextStation()))
                     : Optional.empty();
         }
     }
@@ -155,8 +158,13 @@ public final class SimulationRunner {
             synchronized (this.runner) {
                 for (Map.Entry<Line, LineSchedule> lineSchedule : this.runner.schedule.getLineSchedules().entrySet()) {
                     for (Map.Entry<PassengerTram, LineSchedule.Entry> entry : lineSchedule.getValue().getTrams().entrySet()) {
-                        this.runner.taskQueue.add(new OrderedTask(entry.getValue().startingTime(), this.runner.timerInterval, entry.getValue().maxCount(), entry.getValue(), null));
-                        // TODO: get first connection ->
+                        this.runner.taskQueue.add(new OrderedTask(
+                                entry.getValue().startingTime(),
+                                this.runner.timerInterval,
+                                entry.getValue().maxCount(),
+                                entry.getValue(),
+                                entry.getValue().tram().nextStation())
+                        );
                     }
                 }
 
@@ -171,7 +179,7 @@ public final class SimulationRunner {
     private static final class RunnerStoppingTask extends TimerTask {
         private final SimulationRunner runner;
         private final Exception exception;
-        private boolean external;
+        private final boolean external;
 
         private RunnerStoppingTask(SimulationRunner runner, Exception exception, boolean external) {
             this.runner = runner;

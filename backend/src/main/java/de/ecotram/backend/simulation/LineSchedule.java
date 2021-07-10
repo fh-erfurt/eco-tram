@@ -6,10 +6,7 @@ import de.ecotram.backend.entity.PassengerTram;
 import lombok.AccessLevel;
 import lombok.Getter;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public final class LineSchedule {
     @Getter
@@ -33,9 +30,11 @@ public final class LineSchedule {
         // simplified to reduce to one division
         int minimumNumberOfTrams = (int) (((float) line.getTotalLength() * 60) / (PassengerTram.DEFAULT_MAX_SPEED * waitingTime * 1000));
 
+        List<LineEntry> route = line.getRoute().stream().sorted(Comparator.comparingInt(LineEntry::getOrderValue)).toList();
         LineSchedule schedule = new LineSchedule(line);
+
         for (int i = 0; i < minimumNumberOfTrams; i++) {
-            PassengerTram tram = new PassengerTram(line.getRoute().stream().sorted(Comparator.comparingInt(LineEntry::getOrderValue)).toList());
+            PassengerTram tram = new PassengerTram(route);
             schedule.trams.put(tram, new Entry((i + 1) * waitingTime, 0, -1, tram, line));
         }
 

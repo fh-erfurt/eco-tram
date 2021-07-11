@@ -34,6 +34,12 @@
         <div class="count" v-if="statistics == null"><i class="fas fa-circle-notch fa-spin"></i></div>
         <div class="count" v-else>{{ statistics.stations.results }}</div>
       </router-link>
+      <router-link :to="{ name: 'simulation' }" class="option" style="margin-top: 40px">
+        <div class="name">
+          <i class="fas fa-play"></i>
+          Simulation
+        </div>
+      </router-link>
     </div>
   </div>
 </template>

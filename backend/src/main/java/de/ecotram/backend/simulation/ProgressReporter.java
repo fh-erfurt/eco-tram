@@ -1,10 +1,7 @@
 package de.ecotram.backend.simulation;
 
 import de.ecotram.backend.event.Event;
-import de.ecotram.backend.simulation.event.RunnerStartedArgs;
-import de.ecotram.backend.simulation.event.RunnerStoppedArgs;
-import de.ecotram.backend.simulation.event.TramStartedArgs;
-import de.ecotram.backend.simulation.event.TramStoppedArgs;
+import de.ecotram.backend.simulation.event.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,6 +19,9 @@ public final class ProgressReporter {
 
     @Getter(value = AccessLevel.PACKAGE, onMethod_ = {@Synchronized(value = "_lock")})
     private final Event<RunnerStoppedArgs> runnerStopped;
+
+    @Getter(value = AccessLevel.PACKAGE, onMethod_ = {@Synchronized(value = "_lock")})
+    private final Event<RunnerTicksArgs> runnerTicks;
 
     @Getter(value = AccessLevel.PACKAGE, onMethod_ = {@Synchronized(value = "_lock")})
     private final Event<TramStartedArgs> tramStarted;
@@ -44,6 +44,10 @@ public final class ProgressReporter {
         return this.runnerStopped.getAccess();
     }
 
+    public Event<RunnerTicksArgs>.Accessor onRunnerTicks() {
+        return this.runnerTicks.getAccess();
+    }
+
     public Event<TramStartedArgs>.Accessor onTramStarted() {
         return this.tramStarted.getAccess();
     }
@@ -56,6 +60,7 @@ public final class ProgressReporter {
         this.runner = runner;
         this.runnerStarted = new Event<>(ex -> this.log.log(Level.WARNING, "Exception while executing runnerStarted.", ex));
         this.runnerStopped = new Event<>(ex -> this.log.log(Level.WARNING, "Exception while executing runnerStopped.", ex));
+        this.runnerTicks = new Event<>(ex -> this.log.log(Level.WARNING, "Exception while executing runnerTicks.", ex));
         this.tramStarted = new Event<>(ex -> this.log.log(Level.WARNING, "Exception while executing tramStarted.", ex));
         this.tramStopped = new Event<>(ex -> this.log.log(Level.WARNING, "Exception while executing tramStopped.", ex));
 

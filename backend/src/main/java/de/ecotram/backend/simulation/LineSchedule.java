@@ -1,5 +1,7 @@
 package de.ecotram.backend.simulation;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.ecotram.backend.entity.Line;
 import de.ecotram.backend.entity.LineEntry;
 import de.ecotram.backend.entity.PassengerTram;
@@ -12,7 +14,7 @@ public final class LineSchedule {
     @Getter
     private final Line line;
 
-    @Getter(value = AccessLevel.PACKAGE)
+    @Getter
     private final Map<PassengerTram, Entry> trams = new HashMap<>();
 
     private LineSchedule(Line line) {
@@ -30,6 +32,8 @@ public final class LineSchedule {
         // simplified to reduce to one division
         int minimumNumberOfTrams = (int) (((float) line.getTotalLength() * 60) / (PassengerTram.DEFAULT_MAX_SPEED * waitingTime * 1000));
 
+        minimumNumberOfTrams = 10;
+
         List<LineEntry> route = line.getRoute().stream().sorted(Comparator.comparingInt(LineEntry::getOrderValue)).toList();
         LineSchedule schedule = new LineSchedule(line);
 
@@ -41,6 +45,7 @@ public final class LineSchedule {
         return schedule;
     }
 
-    public record Entry(int startingTime, int startOrdering, int maxCount, PassengerTram tram, Line line) {
+    @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+    public record Entry(int startingTime, int startOrdering, int maxCount, @JsonIgnore PassengerTram tram, @JsonIgnore Line line) {
     }
 }

@@ -17,7 +17,7 @@ public final class Schedule {
     @Getter
     private final Network network;
 
-    @Getter(value = AccessLevel.PACKAGE)
+    @Getter
     private final Map<Line, LineSchedule> lineSchedules;
 
     private Schedule(Builder builder) {
@@ -49,7 +49,7 @@ public final class Schedule {
             if (isBuilt)
                 throw new IllegalStateException("The builder was already built and can only be used once.");
 
-            if (cachedLines.contains(lineSchedule.getLine()))
+            if (!cachedLines.contains(lineSchedule.getLine()))
                 throw new IllegalStateException("The given line schedule does not correspond to a line for this builders network.");
 
             this.lineSchedules.put(lineSchedule.getLine(), lineSchedule);

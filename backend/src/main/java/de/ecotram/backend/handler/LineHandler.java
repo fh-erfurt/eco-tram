@@ -77,8 +77,6 @@ public final class LineHandler {
     public Line createLineFromRequest(LineBody lineBody) throws ErrorResponseException {
         ArrayList<Long> ids = validateLineBody(lineBody);
 
-        System.out.println(ids.size());
-
         Line line = lineBody.applyToLine();
         ValidationResult validationResult = validateStationIds(ids);
 

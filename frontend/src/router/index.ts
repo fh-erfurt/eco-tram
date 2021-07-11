@@ -20,6 +20,7 @@ import LineNew from "@/views/lines/LineNew.vue";
 import PassengerTramEdit from "@/views/passengerTrams/PassengerTramEdit.vue";
 import PassengerTramView from "@/views/passengerTrams/PassengerTramView.vue";
 import PassengerTramNew from "@/views/passengerTrams/PassengerTramNew.vue";
+import Simulation from "@/views/Simulation.vue";
 
 Vue.use(VueRouter)
 
@@ -36,6 +37,7 @@ const routeMeta = Object.freeze({
 	lines: { displayName: "Linien", name: "lines", icon: 'fas fa-code-branch' } as RouteMeta,
 	passengerTrams: { displayName: "Straßenbahnen", name: "passengerTrams", icon: 'fa fa-subway' } as RouteMeta,
 	stations: { displayName: "Stationen", name: "stations", icon: 'fas fa-h-square' } as RouteMeta,
+	simulation: { displayName: "Simulation", name: "simulation", icon: 'fas fa-play' } as RouteMeta,
 })
 
 const routes: Array<RouteConfig> = [
@@ -211,6 +213,12 @@ const routes: Array<RouteConfig> = [
 			]
 		},
 		props: route => ({ item: route.params.item })
+	},
+	{
+		path: "/simulation",
+		name: "simulation",
+		component: Simulation,
+		meta: routeMeta.simulation
 	},
 ]
 

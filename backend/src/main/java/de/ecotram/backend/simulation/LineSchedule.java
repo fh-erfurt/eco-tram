@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.ecotram.backend.entity.Line;
 import de.ecotram.backend.entity.LineEntry;
 import de.ecotram.backend.entity.PassengerTram;
-import lombok.AccessLevel;
 import lombok.Getter;
 
 import java.util.*;
@@ -26,6 +25,8 @@ public final class LineSchedule {
     }
 
     public static LineSchedule fromWaitingTime(Line line, int waitingTime) {
+        // TODO(erik): fix this, currently evaluates to 0, probably incorrect denominator
+
         //        (distance / 1000)      // m => km
         // ----------------------------- == minNumberOfTrams
         // speed * (maxWaitingTime / 60) // s => h
@@ -46,6 +47,11 @@ public final class LineSchedule {
     }
 
     @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
-    public record Entry(int startingTime, int startOrdering, int maxCount, @JsonIgnore PassengerTram tram, @JsonIgnore Line line) {
+    public record Entry(
+            int startingTime,
+            int startOrdering,
+            int maxCount,
+            @JsonIgnore PassengerTram tram,
+            @JsonIgnore Line line) {
     }
 }

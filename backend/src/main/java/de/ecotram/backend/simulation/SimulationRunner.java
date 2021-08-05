@@ -4,26 +4,28 @@ import de.ecotram.backend.entity.Line;
 import de.ecotram.backend.entity.PassengerTram;
 import de.ecotram.backend.entity.network.Connection;
 import de.ecotram.backend.entity.network.Network;
-import de.ecotram.backend.simulation.event.RunnerStartedArgs;
-import de.ecotram.backend.simulation.event.RunnerStoppedArgs;
+import de.ecotram.backend.simulation.event.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import java.util.Map;
-import java.util.Optional;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.io.IOException;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.PriorityBlockingQueue;
+import java.util.stream.Collectors;
 
 public final class SimulationRunner {
     private final ExecutorService eventExecutor;
     private final Timer timer = new Timer();
-    private final PriorityBlockingQueue<OrderedTask> taskQueue = new PriorityBlockingQueue<>();
+    private final List<OrderedTask> taskQueue = new ArrayList<>();
 
     private boolean internalStopped;
+
     private long ticks;
+
+    private int emitTicksAfter = 5;
+    private long nextEmit = -1;
 
     @Getter
     private final int timerInterval;
@@ -53,7 +55,7 @@ public final class SimulationRunner {
     }
 
     // must tbe synchronized on this
-    synchronized long getTicks() {
+    public synchronized long getTicks() {
         return this.ticks;
     }
 
@@ -77,18 +79,20 @@ public final class SimulationRunner {
     }
 
     private void runInternalIteration() {
-        OrderedTask task;
+        if(this.taskQueue.isEmpty()) {
+            this.internalStopped = true;
+            return;
+        }
 
-        do {
-            task = this.taskQueue.poll();
+        var relevantTasks = this.taskQueue.stream().filter(task -> task.dispatchTick <= this.ticks).collect(Collectors.toList());
+        this.taskQueue.removeAll(relevantTasks);
 
-            if (task == null) {
-                this.internalStopped = true;
-                break;
-            }
+        relevantTasks.forEach(task -> task.getNextDispatch(progressReporter).ifPresent(this.taskQueue::add));
 
-            task.getNextDispatch().ifPresent(this.taskQueue::add);
-        } while (task.dispatchTick <= this.ticks);
+        if(this.ticks >= this.nextEmit) {
+            eventExecutor.execute(() -> progressReporter.getRunnerTicks().invoke(RunnerTicksArgs.builder().currentTicks(this.ticks).build()));
+            this.nextEmit = this.ticks + this.emitTicksAfter;
+        }
 
         this.ticks++;
     }
@@ -106,19 +110,24 @@ public final class SimulationRunner {
             return Long.compare(this.dispatchTick, o.dispatchTick);
         }
 
-        public Optional<OrderedTask> getNextDispatch() {
+        public Optional<OrderedTask> getNextDispatch(ProgressReporter progressReporter) {
             int speed = this.entry.tram().getSpeed();
             int length = connection.getLength();
-            float time = (float) length * 60 / 1000 * speed; // s
 
-            return this.currentCount >= this.entry.maxCount()
+            progressReporter.getRunner().eventExecutor.execute(() -> progressReporter.getTramStopped().invoke(TramStoppedArgs.builder().tram(this.entry.tram()).connection(connection).build()));
+
+            Optional<OrderedTask> output = this.currentCount >= this.entry.maxCount()
                     ? Optional.of(new OrderedTask(
-                    this.dispatchTick + (int) time / this.tickInterval,
+                    this.dispatchTick + this.tickInterval,
                     this.tickInterval,
                     this.currentCount + 1,
                     this.entry,
                     this.entry.tram().nextStation()))
                     : Optional.empty();
+
+            output.ifPresent(orderedTask -> progressReporter.getRunner().eventExecutor.execute(() -> progressReporter.getTramStarted().invoke(TramStartedArgs.builder().tram(this.entry.tram()).connection(orderedTask.connection).build())));
+
+            return output;
         }
     }
 

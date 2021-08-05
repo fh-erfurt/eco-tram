@@ -24,7 +24,7 @@ public final class PaginationRequestHelperImpl<T> implements PaginationRequestHe
                 .createQuery("select count(*) from " + tClass.getSimpleName() + " t")
                 .getSingleResult();
 
-        boolean moreAvailable = results.size() > total;
+        boolean moreAvailable = limit > 0 && results.size() > limit;
 
         paginationRequest.setResults(moreAvailable ? results.subList(0, limit) : results);
         paginationRequest.setLimit(limit);

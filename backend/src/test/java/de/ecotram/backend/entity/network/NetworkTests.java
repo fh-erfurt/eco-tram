@@ -63,7 +63,7 @@ public final class NetworkTests {
     }
 
     @Test
-    public void minimalSpanningTree_distances() {
+    public void minimalDistanceTree_distances() {
         Assertions.assertEquals(0, network.getDistance(stationA, stationA), "StationA's distance to StationA should be 0.");
         Assertions.assertEquals(4, network.getDistance(stationA, stationB), "StationA's distance to StationB should be 4.");
         Assertions.assertEquals(6, network.getDistance(stationA, stationC), "StationA's distance to StationC should be 6.");
@@ -74,7 +74,7 @@ public final class NetworkTests {
     }
 
     @Test
-    public void minimalSpanningTree_hops() {
+    public void minimalDistanceTree_hops() {
         Assertions.assertEquals(0, network.getHops(stationA, stationA), "StationA's hops to stationA should be 0.");
         Assertions.assertEquals(1, network.getHops(stationA, stationB), "StationA's hops to stationB should be 1.");
         Assertions.assertEquals(2, network.getHops(stationA, stationC), "StationA's hops to stationC should be 2.");
@@ -85,7 +85,7 @@ public final class NetworkTests {
     }
 
     @Test
-    public void minimalSpanningTree_previous() {
+    public void minimalDistanceTree_previous() {
         Assertions.assertNull(network.getPrevious(stationA, stationA), "StationA's previous should be null.");
         Assertions.assertEquals(stationA, network.getPrevious(stationA, stationB), "StationB's previous should be StationA.");
         Assertions.assertEquals(stationG, network.getPrevious(stationA, stationC), "StationC's previous should be StationG.");
@@ -96,10 +96,10 @@ public final class NetworkTests {
     }
 
     @Test
-    public void minimalSpanningTree_path() {
+    public void minimalDistanceTree_path() {
         Assertions.assertArrayEquals(
                 new Station[]{stationA, stationG, stationF, stationE, stationD},
-                network.getMinimalSpanningTrees().get(stationA).getPathTo(stationD).toArray()
+                network.getMinimalDistanceTree().get(stationA).getPathTo(stationD).toArray()
         );
     }
 }

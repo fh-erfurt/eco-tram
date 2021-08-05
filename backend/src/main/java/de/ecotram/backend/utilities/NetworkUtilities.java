@@ -322,7 +322,7 @@ public final class NetworkUtilities {
     }
 
     // TODO(erik): optimize
-    public static SpanningTree dijkstra(Station start, Map<Station, Set<Station>> adjacencyMap) {
+    public static DistanceTree dijkstra(Station start, Map<Station, Set<Station>> adjacencyMap) {
         if (!adjacencyMap.containsKey(start))
             throw new InvalidParameterException("The start station does not exist in this network.");
 
@@ -388,7 +388,7 @@ public final class NetworkUtilities {
             nodeQueue.remove(currentMinimum);
         }
 
-        return new SpanningTree(start, distanceMap);
+        return new DistanceTree(start, distanceMap);
     }
 
     @Data
@@ -399,7 +399,7 @@ public final class NetworkUtilities {
         private Station previous;
     }
 
-    public static final record SpanningTree(Station root, Map<Station, DijkstraTuple> paths) {
+    public static final record DistanceTree(Station root, Map<Station, DijkstraTuple> paths) {
         public List<Station> getPathTo(Station destination) {
             LinkedList<Station> list = new LinkedList<>();
 

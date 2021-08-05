@@ -31,7 +31,7 @@ public final class Network extends EntityBase {
     private Map<Station, Set<Station>> adjacencyMap = new HashMap<>();
 
     @Transient
-    private Map<Station, NetworkUtilities.SpanningTree> minimalSpanningTrees = new HashMap<>();
+    private Map<Station, NetworkUtilities.DistanceTree> minimalDistanceTree = new HashMap<>();
 
     private Network(Set<Station> stations) {
         this.stations = stations;
@@ -59,7 +59,7 @@ public final class Network extends EntityBase {
 
         // create the minimal spanning trees for each station
         for (Station station : this.stations) {
-            this.minimalSpanningTrees.put(station, NetworkUtilities.dijkstra(station, this.adjacencyMap));
+            this.minimalDistanceTree.put(station, NetworkUtilities.dijkstra(station, this.adjacencyMap));
         }
 
         this.isInitialized = true;
@@ -83,7 +83,7 @@ public final class Network extends EntityBase {
         if (!this.isInitialized)
             throw new IllegalStateException("This network was not initialized.");
 
-        return this.minimalSpanningTrees.get(start).getPathTo(destination);
+        return this.minimalDistanceTree.get(start).getPathTo(destination);
     }
 
     public int getDistance(Station start, Station destination) {
@@ -96,7 +96,7 @@ public final class Network extends EntityBase {
         if (!isInitialized)
             throw new IllegalStateException("This network was not initialized.");
 
-        return this.minimalSpanningTrees.get(start).getDistanceTo(destination);
+        return this.minimalDistanceTree.get(start).getDistanceTo(destination);
     }
 
     public int getHops(Station start, Station destination) {
@@ -109,7 +109,7 @@ public final class Network extends EntityBase {
         if (!this.isInitialized)
             throw new IllegalStateException("This network was not initialized.");
 
-        return this.minimalSpanningTrees.get(start).getHopsTo(destination);
+        return this.minimalDistanceTree.get(start).getHopsTo(destination);
     }
 
     public Station getPrevious(Station start, Station destination) {
@@ -119,6 +119,6 @@ public final class Network extends EntityBase {
         if (!this.adjacencyMap.containsKey(destination))
             throw new IllegalArgumentException("The destination was not part of this network.");
 
-        return this.minimalSpanningTrees.get(start).getPreviousOf(destination);
+        return this.minimalDistanceTree.get(start).getPreviousOf(destination);
     }
 }

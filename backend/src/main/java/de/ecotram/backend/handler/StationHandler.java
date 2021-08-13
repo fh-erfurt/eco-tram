@@ -4,7 +4,9 @@ import de.ecotram.backend.entity.network.Station;
 import de.ecotram.backend.repository.StationRepository;
 import de.ecotram.backend.utilities.ErrorResponseException;
 import de.ecotram.backend.utilities.ValidationUtilities;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
@@ -49,6 +51,8 @@ public final class StationHandler {
         return updatedStation;
     }
 
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class StationBody {
         @Getter
         private int length;

@@ -7,6 +7,7 @@ import de.ecotram.backend.repository.StationRepository;
 import de.ecotram.backend.utilities.ErrorResponseException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -66,6 +67,8 @@ public final class ConnectionHandler {
         return connection;
     }
 
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class ConnectionBody {
         @Getter
         private long sourceStationId;
@@ -75,7 +78,7 @@ public final class ConnectionHandler {
     }
 
     @AllArgsConstructor
-    class ConnectionStations {
+    public static class ConnectionStations {
         @Getter
         private final Station sourceStation;
 

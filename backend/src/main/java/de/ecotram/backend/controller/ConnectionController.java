@@ -29,14 +29,6 @@ public final class ConnectionController {
     private SimulationHandler simulationHandler;
 
     @CrossOrigin
-    @Transient
-    @GetMapping("/test")
-    public ResponseEntity<String> list() {
-        simulationHandler.startSimulation();
-        return ResponseEntity.ok().body("OK");
-    }
-
-    @CrossOrigin
     @GetMapping("/connections/list")
     public ResponseEntity<PaginationRequest<Connection>> list(@RequestParam(defaultValue = "20") int limit, @RequestParam(defaultValue = "0") int page) {
         return ResponseEntity.ok().body(connectionRepository.getAsPaginationRequest(Connection.class, limit, page));

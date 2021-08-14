@@ -3,14 +3,13 @@ package de.ecotram.backend;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-// TODO: export example network + add random distances (erik)
-// TODO: code cleanup (luca)
-// TODO: documentation (erik, luca, andre)
-// TODO: unit tests (luca, andre)
+// TODO(luca): frontend cleanup
+// TODO(erik): backend cleanup
+// TODO(erik, andre): documentation
+// TODO(erik, luca, andre): unit tests
 
 @SpringBootApplication
 public class BackendServerNewApplication {
-
     public static void main(String[] args) {
         SpringApplication.run(BackendServerNewApplication.class, args);
     }

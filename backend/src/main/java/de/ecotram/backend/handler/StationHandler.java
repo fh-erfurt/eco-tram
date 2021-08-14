@@ -18,15 +18,6 @@ public final class StationHandler {
     private StationRepository stationRepository;
 
     public void validateStationBody(StationBody stationBody) throws ErrorResponseException {
-        if (!ValidationUtilities.isFloatValid(stationBody.length, 0))
-            throw new ErrorResponseException("invalid-length", "length is invalid");
-
-        if (!ValidationUtilities.isIntegerValid(stationBody.maxWeight, 0))
-            throw new ErrorResponseException("invalid-max-weight", "maxWeight is invalid");
-
-        if (!ValidationUtilities.isFloatValid(stationBody.trafficFactor, 0))
-            throw new ErrorResponseException("invalid-traffic-factor", "trafficFactor is invalid");
-
         if (!ValidationUtilities.isStringValid(stationBody.name, 1, 100))
             throw new ErrorResponseException("invalid-name", "name is invalid");
 
@@ -54,15 +45,6 @@ public final class StationHandler {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class StationBody {
-        @Getter
-        private int length;
-
-        @Getter
-        private int maxWeight;
-
-        @Getter
-        private float trafficFactor;
-
         @Getter
         private String name;
 

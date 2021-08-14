@@ -9,24 +9,10 @@
             <form class="section" @submit.prevent="submitGeneral">
                 <h4 class="section-title">Neue Station</h4>
                 <div class="inner-section">
-                    <div class="input-item">
-                        <label for="name">Name</label>
-                        <input type="text" v-model="name" id="name">
-                    </div>
                     <div class="input-group">
                         <div class="input-item">
-                            <label for="length">Länge</label>
-                            <input type="number" v-model="length" id="length">
-                        </div>
-                        <div class="input-item">
-                            <label for="trafficFactor">Traffic Factor</label>
-                            <input type="number" v-model="trafficFactor" id="trafficFactor">
-                        </div>
-                    </div>
-                    <div class="input-group">
-                        <div class="input-item">
-                            <label for="maxWeight">Maximales Gewicht</label>
-                            <input type="number" v-model="maxWeight" id="maxWeight">
+                            <label for="name">Name</label>
+                            <input type="text" v-model="name" id="name">
                         </div>
                         <div class="input-item">
                             <label for="maxPassengers">Maximale Passagiere</label>
@@ -59,9 +45,6 @@ import config from "@/config"
 export default class StationNew extends Vue {
     @Prop() private item?: Station | null = null
 
-    private length: number = 0
-    private maxWeight: number = 0
-    private trafficFactor: number = 0.0
     private name: String = ""
     private maxPassengers: number = 0
 
@@ -77,9 +60,6 @@ export default class StationNew extends Vue {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                length: this.length,
-                maxWeight: this.maxWeight,
-                trafficFactor: this.trafficFactor,
                 name: this.name,
                 maxPassengers: this.maxPassengers
             })

@@ -13,6 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.beans.Transient;
 import java.util.Optional;
 
 @RestController
@@ -28,6 +29,7 @@ public final class ConnectionController {
     private SimulationHandler simulationHandler;
 
     @CrossOrigin
+    @Transient
     @GetMapping("/test")
     public ResponseEntity<String> list() {
         simulationHandler.startSimulation();

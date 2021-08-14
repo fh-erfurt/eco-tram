@@ -107,16 +107,10 @@ public class StationControllerTests {
     public void testStationsNew() throws JSONException {
         addStations();
 
-        int testLengthValue = random.nextInt(150) + 10;
-        int testMaxWeightValue = random.nextInt(150) + 10;
-        float testTrafficFactorValue = random.nextFloat();
         String testNameValue = "Random" + random.nextInt(150) + 10;
         int testMaxPassengersValue = random.nextInt(150) + 10;
 
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("length", testLengthValue);
-        jsonObject.put("maxWeight", testMaxWeightValue);
-        jsonObject.put("trafficFactor", testTrafficFactorValue);
         jsonObject.put("name", testNameValue);
         jsonObject.put("maxPassengers", testMaxPassengersValue);
 
@@ -132,9 +126,9 @@ public class StationControllerTests {
         JSONObject stationObject = new JSONObject(response.getBody());
 
         assertTrue(stationObject.has("name"));
-        assertTrue(stationObject.has("length"));
+        assertTrue(stationObject.has("maxPassengers"));
         assertEquals(testNameValue, stationObject.getString("name"));
-        assertEquals(testLengthValue, stationObject.getInt("length"));
+        assertEquals(testMaxPassengersValue, stationObject.getInt("maxPassengers"));
     }
 
     @Test
@@ -147,16 +141,10 @@ public class StationControllerTests {
         randomStation.setName("Random" + random.nextInt(150) + 10);
         stationRepository.save(randomStation);
 
-        int testLengthValue = random.nextInt(150) + 10;
-        int testMaxWeightValue = random.nextInt(150) + 10;
-        float testTrafficFactorValue = random.nextFloat();
         String testNameValue = "Random" + random.nextInt(150) + 10;
         int testMaxPassengersValue = random.nextInt(150) + 10;
 
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("length", testLengthValue);
-        jsonObject.put("maxWeight", testMaxWeightValue);
-        jsonObject.put("trafficFactor", testTrafficFactorValue);
         jsonObject.put("name", testNameValue);
         jsonObject.put("maxPassengers", testMaxPassengersValue);
 
@@ -174,9 +162,9 @@ public class StationControllerTests {
         assertEquals(randomStation.getId(), stationObject.getInt("id"));
 
         assertTrue(stationObject.has("name"));
-        assertTrue(stationObject.has("length"));
+        assertTrue(stationObject.has("maxPassengers"));
         assertEquals(testNameValue, stationObject.getString("name"));
-        assertEquals(testLengthValue, stationObject.getInt("length"));
+        assertEquals(testMaxPassengersValue, stationObject.getInt("maxPassengers"));
     }
 
     @Test

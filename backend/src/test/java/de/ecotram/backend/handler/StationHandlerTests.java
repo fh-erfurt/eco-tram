@@ -26,14 +26,11 @@ public class StationHandlerTests {
     @Test
     public void testValidateStationBody() {
         StationHandler.StationBody successfulStationBody = new StationHandler.StationBody(
-                random.nextInt(100) + 100,
-                random.nextInt(100) + 100,
-                random.nextFloat(),
                 "Random" + random.nextInt(150) + 10,
-                0
+                random.nextInt(100) + 100
         );
 
-        StationHandler.StationBody failedStationBody = new StationHandler.StationBody(-1, -1, -1, "", -1);
+        StationHandler.StationBody failedStationBody = new StationHandler.StationBody("", -1);
 
         assertDoesNotThrow(() -> stationHandler.validateStationBody(successfulStationBody));
         assertThrows(ErrorResponseException.class, () -> stationHandler.validateStationBody(failedStationBody));
@@ -43,11 +40,8 @@ public class StationHandlerTests {
     @Transactional
     public void testCreateStationFromRequest() {
         StationHandler.StationBody stationBody = new StationHandler.StationBody(
-                random.nextInt(100) + 100,
-                random.nextInt(100) + 100,
-                random.nextFloat(),
                 "Random" + random.nextInt(150) + 10,
-                0
+                random.nextInt(100) + 100
         );
 
         try {
@@ -61,38 +55,32 @@ public class StationHandlerTests {
     @Test
     @Transactional
     public void testUpdateStationFromRequest() {
-        int originalLength = random.nextInt(100) + 100;
+        int originalMaxPassengers = random.nextInt(100) + 100;
         String originalName = "Originalstation";
 
         StationHandler.StationBody previousStationBody = new StationHandler.StationBody(
-                originalLength,
-                random.nextInt(100) + 100,
-                random.nextFloat(),
                 originalName,
-                0
+                originalMaxPassengers
         );
 
         try {
             Station station = stationHandler.createStationFromRequest(previousStationBody);
 
             assertEquals(originalName, station.getName());
-            assertEquals(originalLength, station.getLength());
+            assertEquals(originalMaxPassengers, station.getMaxPassengers());
 
-            int newLength = random.nextInt(100) + 100;
             String newName = "Neustation";
+            int newMaxPassengers = random.nextInt(100) + 100;
 
             StationHandler.StationBody newStationBody = new StationHandler.StationBody(
-                    newLength,
-                    random.nextInt(100) + 100,
-                    random.nextFloat(),
                     newName,
-                    0
+                    newMaxPassengers
             );
 
             stationHandler.updateStationFromRequest(station, newStationBody);
 
             assertEquals(newName, station.getName());
-            assertEquals(newLength, station.getLength());
+            assertEquals(newMaxPassengers, station.getMaxPassengers());
             assertTrue(stationRepository.existsById(station.getId()));
         } catch (ErrorResponseException exception) {
             fail("Did not expect exception " + exception.getErrorResponse().getMessage());

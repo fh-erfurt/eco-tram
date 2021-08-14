@@ -11,24 +11,10 @@
                     <form class="section" @submit.prevent="submitGeneral">
                         <h4 class="section-title">Allgemeine Informationen</h4>
                         <div class="inner-section">
-                            <div class="input-item">
-                                <label for="name">Name</label>
-                                <input type="text" v-model="name" id="name">
-                            </div>
                             <div class="input-group">
                                 <div class="input-item">
-                                    <label for="length">Länge</label>
-                                    <input type="number" v-model="length" id="length">
-                                </div>
-                                <div class="input-item">
-                                    <label for="trafficFactor">Traffic Factor</label>
-                                    <input type="number" v-model="trafficFactor" id="trafficFactor">
-                                </div>
-                            </div>
-                            <div class="input-group">
-                                <div class="input-item">
-                                    <label for="maxWeight">Maximales Gewicht</label>
-                                    <input type="number" v-model="maxWeight" id="maxWeight">
+                                    <label for="name">Name</label>
+                                    <input type="text" v-model="name" id="name">
                                 </div>
                                 <div class="input-item">
                                     <label for="maxPassengers">Maximale Passagiere</label>
@@ -75,9 +61,6 @@ export default class StationEdit extends Vue {
     private station: Station | null = this.item || null
     private stationCopy: Station | null = this.item || null
 
-    private length: number = 0
-    private maxWeight: number = 0
-    private trafficFactor: number = 0.0
     private name: String = ""
     private maxPassengers: number = 0
 
@@ -96,9 +79,6 @@ export default class StationEdit extends Vue {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                length: this.length,
-                maxWeight: this.maxWeight,
-                trafficFactor: this.trafficFactor,
                 name: this.name,
                 maxPassengers: this.maxPassengers
             })
@@ -110,9 +90,6 @@ export default class StationEdit extends Vue {
             this.station = data
             const stationCopy = this.stationCopy!
 
-            stationCopy.length = data.length
-            stationCopy.maxWeight = data.maxWeight
-            stationCopy.trafficFactor = data.trafficFactor
             stationCopy.name = data.name
             stationCopy.maxPassengers = data.maxPassengers
 
@@ -153,9 +130,6 @@ export default class StationEdit extends Vue {
             this.changeLevelData(this.station)
             this.stationCopy = JSON.parse(JSON.stringify(this.station))
 
-            this.length = this.station.length
-            this.maxWeight = this.station.maxWeight
-            this.trafficFactor = this.station.trafficFactor
             this.name = this.station.name
             this.maxPassengers = this.station.maxPassengers
         } else {
@@ -167,9 +141,6 @@ export default class StationEdit extends Vue {
                 
                 this.stationCopy = JSON.parse(JSON.stringify(this.station))
 
-                this.length = this.station.length
-                this.maxWeight = this.station.maxWeight
-                this.trafficFactor = this.station.trafficFactor
                 this.name = this.station.name
                 this.maxPassengers = this.station.maxPassengers
             } else

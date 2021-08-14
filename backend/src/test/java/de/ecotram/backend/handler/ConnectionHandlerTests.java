@@ -1,76 +1,44 @@
 package de.ecotram.backend.handler;
 
-import de.ecotram.backend.BackendServerNewApplication;
 import de.ecotram.backend.entity.network.Connection;
 import de.ecotram.backend.entity.network.Station;
 import de.ecotram.backend.repository.ConnectionRepository;
 import de.ecotram.backend.repository.StationRepository;
 import de.ecotram.backend.utilities.ErrorResponseException;
-import org.junit.Rule;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver;
+
+import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @SpringBootTest(properties = "spring.profiles.active = test")
-@AutoConfigureMockMvc
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class ConnectionHandlerTests {
-
-    @Autowired
-    public ConnectionHandler connectionHandler;
-
-    @Autowired
-    public StationRepository stationRepository;
-
-    @Autowired
-    public ConnectionRepository connectionRepository;
-
-    @Autowired
-    private MockMvc mvc;
 
     public final Station station1 = new Station();
     public final Station station2 = new Station();
     public final Station station3 = new Station();
     public final Station station4 = new Station();
-    public final Station station5 = new Station();
 
     public final Connection connection1 = new Connection();
-    public final Connection connection2 = new Connection();
-    public final Connection connection3 = new Connection();
-
-    @Test
-    public void testRepository() {
-        stationRepository.save(station1);
-        stationRepository.save(station2);
-        stationRepository.save(station3);
-        stationRepository.save(station4);
-        stationRepository.save(station5);
-
-        assertEquals(5, stationRepository.findAll().size(), "Test if 5 stations has been stored in repository");
-    }
+    private final Random random = new Random();
+    @Autowired
+    public ConnectionHandler connectionHandler;
+    @Autowired
+    public StationRepository stationRepository;
+    @Autowired
+    public ConnectionRepository connectionRepository;
 
     @Test
     public void testValidateConnectionBody() {
-        System.out.println("Adding two valid stations");
-
         stationRepository.save(station1);
         stationRepository.save(station2);
 
-        ConnectionHandler.ConnectionBody successfulConnectionBody = new ConnectionHandler.ConnectionBody(1, 2);
-        ConnectionHandler.ConnectionBody failedConnectionBody = new ConnectionHandler.ConnectionBody(22, 42);
+        ConnectionHandler.ConnectionBody successfulConnectionBody = new ConnectionHandler.ConnectionBody(station1.getId(), station2.getId());
+        ConnectionHandler.ConnectionBody failedConnectionBody = new ConnectionHandler.ConnectionBody(random.nextInt(1000) + 1000, random.nextInt(1000) + 1000);
 
         assertDoesNotThrow(() -> connectionHandler.validateConnectionBody(successfulConnectionBody));
         assertThrows(ErrorResponseException.class, () -> connectionHandler.validateConnectionBody(failedConnectionBody));
@@ -82,52 +50,48 @@ public class ConnectionHandlerTests {
 
         connectionHandler.appendSourceAndDestinationStation(connection1, connectionStations);
 
-        assertEquals(connection1.getSourceStation(), station1);
-        assertEquals(connection1.getDestinationStation(), station2);
+        assertEquals(station1, connection1.getSourceStation());
+        assertEquals(station2, connection1.getDestinationStation());
     }
 
     @Test
     public void testCreateConnectionFromRequest() {
-        System.out.println("Adding two valid stations");
-
         stationRepository.save(station1);
         stationRepository.save(station2);
 
-        ConnectionHandler.ConnectionBody connectionBody = new ConnectionHandler.ConnectionBody(1, 2);
+        ConnectionHandler.ConnectionBody connectionBody = new ConnectionHandler.ConnectionBody(station1.getId(), station2.getId());
 
         try {
             Connection connection = connectionHandler.createConnectionFromRequest(connectionBody);
             assertTrue(connectionRepository.existsById(connection.getId()));
-        } catch(ErrorResponseException exception) {
+        } catch (ErrorResponseException exception) {
             fail("Did not expect exception " + exception.getErrorResponse().getMessage());
         }
     }
 
     @Test
     public void testUpdateConnectionFromRequest() {
-        System.out.println("Adding four valid stations");
-
         stationRepository.save(station1);
         stationRepository.save(station2);
         stationRepository.save(station3);
         stationRepository.save(station4);
 
-        ConnectionHandler.ConnectionBody previousConnectionBody = new ConnectionHandler.ConnectionBody(1, 2);
+        ConnectionHandler.ConnectionBody previousConnectionBody = new ConnectionHandler.ConnectionBody(station1.getId(), station2.getId());
 
         try {
             Connection connection = connectionHandler.createConnectionFromRequest(previousConnectionBody);
 
-            assertEquals(connection.getSourceStation().getId(), station1.getId());
-            assertEquals(connection.getDestinationStation().getId(), station2.getId());
+            assertEquals(station1.getId(), connection.getSourceStation().getId());
+            assertEquals(station2.getId(), connection.getDestinationStation().getId());
 
-            ConnectionHandler.ConnectionBody newConnectionBody = new ConnectionHandler.ConnectionBody(3, 4);
+            ConnectionHandler.ConnectionBody newConnectionBody = new ConnectionHandler.ConnectionBody(station3.getId(), station4.getId());
 
             connectionHandler.updateConnectionFromRequest(connection, newConnectionBody);
 
             assertTrue(connectionRepository.existsById(connection.getId()));
-            assertEquals(connection.getSourceStation().getId(), station3.getId());
-            assertEquals(connection.getDestinationStation().getId(), station4.getId());
-        } catch(ErrorResponseException exception) {
+            assertEquals(station3.getId(), connection.getSourceStation().getId());
+            assertEquals(station4.getId(), connection.getDestinationStation().getId());
+        } catch (ErrorResponseException exception) {
             fail("Did not expect exception " + exception.getErrorResponse().getMessage());
         }
     }

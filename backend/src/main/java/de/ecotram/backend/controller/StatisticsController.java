@@ -33,7 +33,7 @@ public final class StatisticsController {
     @CrossOrigin
     @GetMapping("/statistics/station")
     public ResponseEntity<StatisticsHandler.StatisticsCountResult> getStationStatistics() {
-        return ResponseEntity.ok(statisticsHandler.getStationsCount());
+        return ResponseEntity.ok(statisticsHandler.getStationCount());
     }
 
     @CrossOrigin
@@ -43,7 +43,7 @@ public final class StatisticsController {
                 statisticsHandler.getConnectionCount(),
                 statisticsHandler.getLineCount(),
                 statisticsHandler.getPassengerTramCount(),
-                statisticsHandler.getStationsCount()
+                statisticsHandler.getStationCount()
         ));
     }
 }

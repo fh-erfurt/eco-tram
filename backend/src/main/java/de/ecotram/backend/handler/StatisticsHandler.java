@@ -31,7 +31,7 @@ public final class StatisticsHandler {
         return new StatisticsCountResult("passengerTram", this.countEntries("PassengerTram"));
     }
 
-    public StatisticsCountResult getStationsCount() {
+    public StatisticsCountResult getStationCount() {
         return new StatisticsCountResult("station", this.countEntries("Station"));
     }
 

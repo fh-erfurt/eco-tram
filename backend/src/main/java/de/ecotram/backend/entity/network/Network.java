@@ -1,5 +1,6 @@
 package de.ecotram.backend.entity.network;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import de.ecotram.backend.entity.EntityBase;
 import de.ecotram.backend.entity.Line;
 import de.ecotram.backend.entity.LineEntry;
@@ -22,6 +23,7 @@ import java.util.stream.Stream;
 @NoArgsConstructor
 public final class Network extends EntityBase {
     @OneToMany(mappedBy = "network")
+    @JsonManagedReference
     private Set<Station> stations;
 
     @Transient
@@ -39,6 +41,7 @@ public final class Network extends EntityBase {
 
     public static Network fromStations(Set<Station> stations) {
         Network network = new Network(stations);
+        stations.forEach(s ->  s.setNetwork(network)); // trash orm requirement
         network.initialize();
 
         return network;

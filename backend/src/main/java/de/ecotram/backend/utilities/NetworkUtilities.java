@@ -108,8 +108,8 @@ public final class NetworkUtilities {
         Station riethStr = Station.builder().name("Riethstraße").build();
         Station klinikum = Station.builder().name("Klinikum").build();
         Station universitaet = Station.builder().name("Universitaet").build();
-        Station baumStr = Station.builder().name("BaumStr").build();
-        Station bergStr = Station.builder().name("BergStr").build();
+        Station baumStr = Station.builder().name("Baumstraße").build();
+        Station bergStr = Station.builder().name("Bergstraße").build();
         Station weberGasse = Station.builder().name("Webergasse").build();
         Station domplatzNord = Station.builder().name("Domplatz Nord").build();
         Station melchendorf = Station.builder().name("Melchendorf").build();
@@ -138,7 +138,7 @@ public final class NetworkUtilities {
         Station bindersleben = Station.builder().name("Bindersleben").build();
         Station bueroPark = Station.builder().name("Büropark").build();
         Station orionStr = Station.builder().name("Orionstraße").build();
-        Station volkenroderWeg = Station.builder().name("VolkenroderWeg").build();
+        Station volkenroderWeg = Station.builder().name("Volkenroder Weg").build();
         Station amKreuzchen = Station.builder().name("Am Kreuzchen").build();
         Station hauptfriedhof = Station.builder().name("Hauptfriedhof").build();
         Station walterGropiusStr = Station.builder().name("Walter-Gropius-Straße").build();
@@ -315,8 +315,9 @@ public final class NetworkUtilities {
             add(pushkinStr);
         }};
 
+        var rand = new Random(1787634526);
+        stations.forEach(s -> s.getSourceConnections().forEach(c -> c.setLength(rand.nextInt(1500) + 500)));
         network = Network.fromStations(stations);
-        network.initialize();
 
         return network;
     }

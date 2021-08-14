@@ -67,9 +67,6 @@ public final class StationHandler {
         private int maxPassengers;
 
         public Station applyToStation(Station station) {
-            station.setLength(length);
-            station.setMaxWeight(maxWeight);
-            station.setTrafficFactor(trafficFactor);
             station.setName(name);
             station.setMaxPassengers(maxPassengers);
 

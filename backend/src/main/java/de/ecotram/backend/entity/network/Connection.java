@@ -1,6 +1,7 @@
 package de.ecotram.backend.entity.network;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import de.ecotram.backend.entity.EntityBase;
 import lombok.*;
 
 import javax.persistence.Entity;
@@ -10,7 +11,12 @@ import javax.persistence.ManyToOne;
 @Setter
 @Entity
 @NoArgsConstructor
-public final class Connection extends Traversable {
+public final class Connection extends EntityBase {
+    public static final int DEFAULT_LENGTH = 500; // m
+
+    @Setter
+    private int length = DEFAULT_LENGTH;
+
     @ManyToOne
     @JsonManagedReference
     private Station sourceStation;
@@ -21,8 +27,6 @@ public final class Connection extends Traversable {
 
     private Connection(Builder builder) {
         this.length = builder.length;
-        this.maxWeight = builder.maxWeight;
-        this.trafficFactor = builder.trafficFactor;
         this.sourceStation = builder.sourceStation;
         this.destinationStation = builder.destinationStation;
     }
@@ -33,9 +37,7 @@ public final class Connection extends Traversable {
 
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static final class Builder {
-        private int length = Traversable.DEFAULT_LENGTH;
-        private int maxWeight = Traversable.DEFAULT_MAX_WEIGHT;
-        private float trafficFactor = Traversable.DEFAULT_TRAFFIC_FACTOR;
+        private int length = DEFAULT_LENGTH;
         private Station sourceStation;
         private Station destinationStation;
 
@@ -51,16 +53,6 @@ public final class Connection extends Traversable {
 
         public Builder length(int length) {
             this.length = length;
-            return this;
-        }
-
-        public Builder maxWeight(int maxWeight) {
-            this.maxWeight = maxWeight;
-            return this;
-        }
-
-        public Builder trafficFactor(float trafficFactor) {
-            this.trafficFactor = trafficFactor;
             return this;
         }
 

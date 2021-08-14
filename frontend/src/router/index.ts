@@ -8,7 +8,6 @@ import Connections from "../views/Connections.vue"
 import ConnectionView from "../views/connections/ConnectionView.vue"
 import ConnectionEdit from "../views/connections/ConnectionEdit.vue"
 import ConnectionNew from "../views/connections/ConnectionNew.vue"
-import PassengerTrams from "@/views/PassengerTrams.vue";
 import Stations from "@/views/Stations.vue";
 import Lines from "@/views/Lines.vue";
 import StationNew from "@/views/stations/StationNew.vue";
@@ -17,9 +16,6 @@ import StationEdit from "@/views/stations/StationEdit.vue";
 import LineEdit from "@/views/lines/LineEdit.vue";
 import LineView from "@/views/lines/LineView.vue";
 import LineNew from "@/views/lines/LineNew.vue";
-import PassengerTramEdit from "@/views/passengerTrams/PassengerTramEdit.vue";
-import PassengerTramView from "@/views/passengerTrams/PassengerTramView.vue";
-import PassengerTramNew from "@/views/passengerTrams/PassengerTramNew.vue";
 import Simulation from "@/views/Simulation.vue";
 
 Vue.use(VueRouter)
@@ -35,7 +31,6 @@ const routeMeta = Object.freeze({
 	root: { displayName: "Administration", name: "index" } as RouteMeta,
 	connections: { displayName: "Verbindungen", name: "connections", icon: 'fa fa-sitemap' } as RouteMeta,
 	lines: { displayName: "Linien", name: "lines", icon: 'fas fa-code-branch' } as RouteMeta,
-	passengerTrams: { displayName: "Straßenbahnen", name: "passengerTrams", icon: 'fa fa-subway' } as RouteMeta,
 	stations: { displayName: "Stationen", name: "stations", icon: 'fas fa-h-square' } as RouteMeta,
 	simulation: { displayName: "Simulation", name: "simulation", icon: 'fas fa-play' } as RouteMeta,
 })
@@ -124,48 +119,6 @@ const routes: Array<RouteConfig> = [
 				routeMeta.lines,
 				{
 					name: 'lineView',
-					displayName: '...'
-				},
-			]
-		},
-		props: route => ({ item: route.params.item })
-	},
-	{
-		path: "/passenger-trams",
-		name: "passengerTrams",
-		component: PassengerTrams,
-		meta: routeMeta.passengerTrams
-	},
-	{
-		path: "/passenger-trams/new",
-		name: "passengerTramNew",
-		component: PassengerTramNew,
-		meta: {
-			displayName: 'Neue Straßenbahn',
-			customParents: [routeMeta.passengerTrams]
-		},
-		props: route => ({ item: route.params.item })
-	},
-	{
-		path: "/passenger-trams/:passengerTramId",
-		name: "passengerTramView",
-		component: PassengerTramView,
-		meta: {
-			displayName: '...',
-			customParents: [routeMeta.passengerTrams]
-		},
-		props: route => ({ item: route.params.item })
-	},
-	{
-		path: "/passenger-trams/:passengerTramId/edit",
-		name: "passengerTramEdit",
-		component: PassengerTramEdit,
-		meta: {
-			displayName: 'Bearbeiten',
-			customParents: [
-				routeMeta.passengerTrams,
-				{
-					name: 'passengerTramView',
 					displayName: '...'
 				},
 			]

@@ -45,10 +45,11 @@ export default class PaginationResult extends Vue {
     .search-box {
         height: 40px;
         display: flex;
-        border: solid 1px #e2e2e2;
+        border: solid 1px #393E46;
         margin-bottom: 15px;
         border-radius: 4px;
         overflow: hidden;
+        color: white;
 
         input {
             height: 100%;
@@ -90,13 +91,13 @@ export default class PaginationResult extends Vue {
         padding: 20px 10px;
 
         .load-more-button {
-            background: white;
-            border: solid 1px #e2e2e2;
+            background: #393E46;
+            border: solid 1px #3b4047;
             font-size: 15px;
             min-height: 40px;
             padding: 0 15px;
             border-radius: 4px;
-            color: #3c3c3c;
+            color: #ffffff;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -108,7 +109,7 @@ export default class PaginationResult extends Vue {
             }
 
             &:hover {
-                background: #f1f1f1;
+                background: #484e56;
             }
         }
     }

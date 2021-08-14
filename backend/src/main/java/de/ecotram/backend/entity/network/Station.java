@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -36,7 +37,7 @@ public final class Station extends EntityBase {
     private Set<LineEntry> lines = new HashSet<>();
 
     @Setter
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.ALL})
     @JsonBackReference
     private Network network;
 

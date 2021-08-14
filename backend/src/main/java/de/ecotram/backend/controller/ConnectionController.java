@@ -29,7 +29,6 @@ public final class ConnectionController {
     private SimulationHandler simulationHandler;
 
     @CrossOrigin
-    @Transient
     @GetMapping("/test")
     public ResponseEntity<String> list() {
         simulationHandler.startSimulation();

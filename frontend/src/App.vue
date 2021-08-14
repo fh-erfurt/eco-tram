@@ -100,7 +100,7 @@ export default class App extends Vue {
                 padding: 5px 10px;
                 border-radius: 4px;
                 min-height: 34px;
-                color: #3c3c3c;
+                color: #a7a7a7;
                 font-size: 15px;
                 position: relative;
                 text-decoration: none;

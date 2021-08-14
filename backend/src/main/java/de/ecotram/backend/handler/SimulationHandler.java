@@ -14,6 +14,7 @@ import de.ecotram.backend.entity.network.Network;
 import de.ecotram.backend.entity.network.Station;
 import de.ecotram.backend.handler.socketEntity.*;
 import de.ecotram.backend.repository.LineRepository;
+import de.ecotram.backend.repository.NetworkRepository;
 import de.ecotram.backend.repository.StationRepository;
 import de.ecotram.backend.simulation.LineSchedule;
 import de.ecotram.backend.simulation.Schedule;
@@ -36,6 +37,7 @@ import java.util.stream.Collectors;
 public class SimulationHandler {
 
     private final LineRepository lineRepository;
+    private final NetworkRepository networkRepository;
     private final StationRepository stationRepository;
 
     private SimulationRunner simulationRunner;
@@ -43,9 +45,10 @@ public class SimulationHandler {
     private final SimpMessageSendingOperations messagingTemplate;
 
     @Autowired
-    public SimulationHandler(SimpMessageSendingOperations messagingTemplate, LineRepository lineRepository, StationRepository stationRepository) {
+    public SimulationHandler(SimpMessageSendingOperations messagingTemplate, LineRepository lineRepository, NetworkRepository networkRepository, StationRepository stationRepository) {
         this.messagingTemplate = messagingTemplate;
         this.lineRepository = lineRepository;
+        this.networkRepository = networkRepository;
         this.stationRepository = stationRepository;
     }
 
@@ -57,6 +60,8 @@ public class SimulationHandler {
         var lines = this.lineRepository.findAll();
         var stations = lines.stream().map(Line::getRoute).flatMap(Set::stream).map(LineEntry::getStation).collect(Collectors.toSet());
         var network = Network.fromStations(stations);
+        
+        networkRepository.save(network);
 
         var builder = Schedule.forNetwork(network);
 

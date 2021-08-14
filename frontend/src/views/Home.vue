@@ -18,14 +18,6 @@
         <div class="count" v-if="statistics == null"><i class="fas fa-circle-notch fa-spin"></i></div>
         <div class="count" v-else>{{ statistics.lines.results }}</div>
       </router-link>
-      <router-link :to="{ name: 'passengerTrams' }" class="option">
-        <div class="name">
-          <i class="fa fa-subway"></i>
-          Straßenbahnen
-        </div>
-        <div class="count" v-if="statistics == null"><i class="fas fa-circle-notch fa-spin"></i></div>
-        <div class="count" v-else>{{ statistics.passengerTrams.results }}</div>
-      </router-link>
       <router-link :to="{ name: 'stations' }" class="option">
         <div class="name">
           <i class="fas fa-h-square"></i>
@@ -71,19 +63,19 @@ export default class Home extends Vue {
   margin: 10px 0;
 
   .option {
-    background: white;
-    border: solid 1px #e2e2e2;
+    background: #393E46;
+    border: solid 1px #3e444c;
     border-radius: 4px;
     display: flex;
     height: 60px;
     padding: 8px;
     align-items: center;
     text-decoration: none;
-    color: #3c3c3c;
+    color: #a7a7a7;
     transition: background 0.2s ease;
 
     &:hover {
-      background: #f1f1f1;
+      background: #41474f;
     }
 
     .name {
@@ -96,7 +88,7 @@ export default class Home extends Vue {
         width: 40px;
         text-align: center;
         font-size: 20px;
-        color: #216383;
+        color: #3a89b0;
         margin-right: 10px;
       }
     }

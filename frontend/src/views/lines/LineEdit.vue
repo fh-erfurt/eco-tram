@@ -215,12 +215,12 @@ export default class LineEdit extends Vue {
 <style lang="scss">
 #line-edit {
     .select-box {
-        background: white;
-        border: solid 1px #e2e2e2;
+        background: #222831;
+        border: solid 1px #444951;
         border-radius: 4px;
         min-height: 150px;
         width: 100%;
-        color: black;
+        color: #ffffff;
         padding: 5px 0;
 
         .item {

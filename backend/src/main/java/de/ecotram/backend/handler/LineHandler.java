@@ -10,9 +10,7 @@ import de.ecotram.backend.repository.LineRepository;
 import de.ecotram.backend.repository.StationRepository;
 import de.ecotram.backend.utilities.ErrorResponseException;
 import de.ecotram.backend.utilities.ValidationUtilities;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
+import lombok.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -169,6 +167,8 @@ public final class LineHandler {
         lineRepository.delete(line);
     }
 
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class LineBody {
         @Getter
         private String name;
@@ -189,7 +189,7 @@ public final class LineHandler {
 
     @Data
     @AllArgsConstructor
-    private final class ValidationResult {
+    public final class ValidationResult {
         private ArrayList<Station> stations;
         private ArrayList<Connection> connections;
     }

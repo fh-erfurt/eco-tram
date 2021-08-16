@@ -60,7 +60,7 @@ public final class Station extends EntityBase {
     public Optional<Connection> getConnectionTo(Station destination) {
         return this.sourceConnections
                 .stream()
-                .filter(c -> c.getDestinationStation().getId() == destination.getId())
+                .filter(c -> c.getDestinationStation().equals(destination))
                 .findFirst();
     }
 
@@ -137,5 +137,10 @@ public final class Station extends EntityBase {
         destination.sourceConnections.add(connectionFrom);
 
         return new Connection.Pair(connectionTo, connectionFrom);
+    }
+
+    @Override
+    public String toString() {
+        return "Station{name='" + name + "'}";
     }
 }

@@ -99,7 +99,8 @@ public final class NetworkTests {
     public void minimalDistanceTree_path() {
         Assertions.assertArrayEquals(
                 new Station[]{stationA, stationG, stationF, stationE, stationD},
-                network.getMinimalDistanceTree().get(stationA).getPathTo(stationD).toArray()
+                network.getMinimalDistanceTree().get(stationA).getPathTo(stationD).toArray(),
+                "The Path from A to D should be: [A, G, F, E, D]"
         );
     }
 }

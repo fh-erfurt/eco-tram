@@ -24,7 +24,7 @@ public final class NetworkUtilities {
         // initialize
         Station currentMinimum = start;
         Set<Station> traversed = new HashSet<>(adjacencyMap.size());
-        Set<Station> nodeQueue = new HashSet<>() {{
+        Set<Station> nodeQueue = new HashSet<>(adjacencyMap.size()) {{
             add(start);
         }};
         Map<Station, NetworkUtilities.DijkstraTuple> distanceMap = new HashMap<>(adjacencyMap.keySet()
@@ -41,6 +41,7 @@ public final class NetworkUtilities {
         Set<Map.Entry<Station, NetworkUtilities.DijkstraTuple>> distanceEntrySet = distanceMap.entrySet();
 
         while (!nodeQueue.isEmpty()) {
+            // TODO(erik): get connected stations from current minimum directly to avoid loop
             // compute distances and previous
             for (Map.Entry<Station, NetworkUtilities.DijkstraTuple> entry : distanceEntrySet) {
                 Station key = entry.getKey();
@@ -54,16 +55,13 @@ public final class NetworkUtilities {
                             ? minimumToCurrent.get().getLength()
                             : distanceMap.get(currentMinimum).distance + minimumToCurrent.get().getLength();
 
-                    // hops from start to current
-                    int hops = key == start ? 0
-                            : currentMinimum == start ? 1
-                            : distanceMap.get(currentMinimum).hops + 1;
-
                     // if smaller assign as new previous etc
                     if (value.distance > distance) {
                         value.distance = distance;
-                        value.hops = hops;
                         value.previous = currentMinimum;
+                        value.hops = key == start ? 0
+                                : currentMinimum == start ? 1 // is this necessary?
+                                : distanceMap.get(currentMinimum).hops + 1;
 
                         // add to queue
                         if (!traversed.contains(key))
@@ -76,7 +74,7 @@ public final class NetworkUtilities {
             currentMinimum = nodeQueue
                     .stream()
                     .min(Comparator.comparingInt(entry -> distanceMap.get(entry).distance))
-                    .get();
+                    .orElseThrow();
 
             // mark traversed
             traversed.add(currentMinimum);

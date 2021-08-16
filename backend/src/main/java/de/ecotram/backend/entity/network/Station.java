@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.ecotram.backend.entity.EntityBase;
 import de.ecotram.backend.entity.LineEntry;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,13 +16,12 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
-import java.util.stream.Stream;
 
 @Getter
 @Entity
 @NoArgsConstructor
 public final class Station extends EntityBase {
-    public static final String DEFAULT_NAME = "Station";
+    public static final String DEFAULT_NAME = "Unnamed Station";
     public static final int DEFAULT_MAX_PASSENGERS = 50;
 
     @Setter
@@ -34,34 +32,26 @@ public final class Station extends EntityBase {
 
     @OneToMany(mappedBy = "station")
     @JsonBackReference
-    private Set<LineEntry> lines = new HashSet<>();
+    private Set<LineEntry> lineEntries = new HashSet<>();
 
     @Setter
     @ManyToOne(cascade = {CascadeType.ALL})
     @JsonBackReference
     private Network network;
 
+    /**
+     * The connections leading of from this station.
+     */
     @OneToMany(mappedBy = "sourceStation")
     @JsonBackReference
     private Set<Connection> sourceConnections = new HashSet<>();
 
+    /**
+     * The connections leading to this station.
+     */
     @OneToMany(mappedBy = "destinationStation")
     @JsonBackReference
     private Set<Connection> destinationConnections = new HashSet<>();
-
-    @JsonIgnore
-    public Stream<Station> getReachableStations() {
-        return this.sourceConnections
-                .stream()
-                .map(Connection::getDestinationStation);
-    }
-
-    @JsonIgnore
-    public Stream<Station> getReachingStations() {
-        return this.destinationConnections
-                .stream()
-                .map(Connection::getSourceStation);
-    }
 
     @JsonIgnore
     public Optional<Connection> getConnectionTo(Station destination) {
@@ -71,6 +61,12 @@ public final class Station extends EntityBase {
                 .findFirst();
     }
 
+    /**
+     * Creates a connection from this station to the given destination and sets up all internal references.
+     *
+     * @param modifyBuilder a function to set properties of the connection that is created.
+     * @return The connection that was created.
+     */
     public Connection connectTo(Station destination, Function<Connection.Builder, Connection.Builder> modifyBuilder) {
         Connection connection = modifyBuilder.apply(Connection.builder())
                 .sourceStation(this)
@@ -82,6 +78,12 @@ public final class Station extends EntityBase {
         return connection;
     }
 
+    /**
+     * Creates a connection from this station to the given destination and back and sets up all internal references.
+     *
+     * @param modifyBuilder a function to set properties of the connections that is created.
+     * @return The pair of connections that was created.
+     */
     public Connection.Pair connectToAndFrom(Station destination, Function<Connection.Builder, Connection.Builder> modifyBuilder) {
         Connection connectionTo = modifyBuilder.apply(Connection.builder())
                 .sourceStation(this)
@@ -101,6 +103,14 @@ public final class Station extends EntityBase {
         return new Connection.Pair(connectionTo, connectionFrom);
     }
 
+    /**
+     * Creates a pair of connections from this station to the given destination and back and sets up all internal
+     * references.
+     *
+     * @param modifyToBuilder   a function to set properties of the forward connection that is created.
+     * @param modifyFromBuilder a function to set properties of the backward connection that is created.
+     * @return The pair of connections that was created.
+     */
     @JsonIgnore
     public Connection.Pair connectToAndFrom(
             Station destination,
@@ -124,39 +134,5 @@ public final class Station extends EntityBase {
         destination.sourceConnections.add(connectionFrom);
 
         return new Connection.Pair(connectionTo, connectionFrom);
-    }
-
-    private Station(Builder builder) {
-        this.name = builder.name;
-        this.maxPassengers = builder.maxPassengers;
-    }
-
-    public static Builder builder() {
-        return new Builder();
-    }
-
-    @NoArgsConstructor(access = AccessLevel.PROTECTED)
-    public static final class Builder {
-        private String name = Station.DEFAULT_NAME;
-        private int maxPassengers = Station.DEFAULT_MAX_PASSENGERS;
-
-        public Builder name(String name) {
-            this.name = name;
-            return this;
-        }
-
-        public Builder maxPassengers(int maxPassengers) {
-            this.maxPassengers = maxPassengers;
-            return this;
-        }
-
-        public Station build() {
-            return new Station(this);
-        }
-
-        @FunctionalInterface
-        public interface ModifyDelegate {
-            Builder Modify(Builder a);
-        }
     }
 }

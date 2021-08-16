@@ -80,7 +80,7 @@ public final class Network extends EntityBase {
 
     public Stream<Line> getLines() {
         return this.stations.stream()
-                .map(Station::getLines)
+                .map(Station::getLineEntries)
                 .flatMap(Set::stream)
                 .map(LineEntry::getLine)
                 .distinct();

@@ -2,7 +2,6 @@ package de.ecotram.backend.simulation;
 
 import de.ecotram.backend.entity.Line;
 import de.ecotram.backend.entity.network.Network;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.java.Log;
 

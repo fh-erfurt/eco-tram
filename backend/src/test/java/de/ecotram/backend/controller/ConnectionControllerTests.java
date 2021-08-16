@@ -23,7 +23,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(properties = "spring.profiles.active = test", webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class ConnectionControllerTests {
-
     public final Connection connection1 = new Connection();
     public final Connection connection2 = new Connection();
     public final Connection connection3 = new Connection();
@@ -35,12 +34,16 @@ public class ConnectionControllerTests {
     public final Station station4 = new Station();
     public final Station station5 = new Station();
     private final Random random = new Random();
+
     @Autowired
     public ConnectionRepository connectionRepository;
+
     @Autowired
     public StationRepository stationRepository;
+
     @LocalServerPort
     private int port;
+
     @Autowired
     private TestRestTemplate restTemplate;
 
@@ -102,7 +105,12 @@ public class ConnectionControllerTests {
         List<Connection> connections = connectionRepository.findAll();
         Connection randomConnection = connections.get(random.nextInt(connections.size()));
 
-        ResponseEntity<String> response = restTemplate.exchange(getHostnameWithPort() + "/connections/get/" + randomConnection.getId(), HttpMethod.GET, null, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(
+                getHostnameWithPort() + "/connections/get/" + randomConnection.getId(),
+                HttpMethod.GET,
+                null,
+                String.class);
+
         assertEquals(200, response.getStatusCodeValue());
 
         JSONObject jsonObject = new JSONObject(response.getBody());
@@ -113,7 +121,12 @@ public class ConnectionControllerTests {
         assertEquals(id, randomConnection.getId());
         assertEquals(length, randomConnection.getLength());
 
-        ResponseEntity<String> response404 = restTemplate.exchange(getHostnameWithPort() + "/connections/get/" + random.nextInt(1000) + 1000, HttpMethod.GET, null, String.class);
+        ResponseEntity<String> response404 = restTemplate.exchange(
+                getHostnameWithPort() + "/connections/get/" + random.nextInt(1000) + 1000,
+                HttpMethod.GET,
+                null,
+                String.class);
+
         assertEquals(404, response404.getStatusCodeValue(), "Check if invalid value returns 404");
     }
 
@@ -134,7 +147,10 @@ public class ConnectionControllerTests {
 
         HttpEntity<String> entity = new HttpEntity<>(jsonObject.toString(), headers);
 
-        ResponseEntity<String> response = restTemplate.exchange(getHostnameWithPort() + "/connections/new", HttpMethod.POST, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(
+                getHostnameWithPort() + "/connections/new",
+                HttpMethod.POST,
+                entity, String.class);
 
         assertEquals(200, response.getStatusCodeValue());
 
@@ -172,7 +188,10 @@ public class ConnectionControllerTests {
 
         HttpEntity<String> entity = new HttpEntity<>(jsonObject.toString(), headers);
 
-        ResponseEntity<String> response = restTemplate.exchange(getHostnameWithPort() + "/connections/update/" + connection1.getId(), HttpMethod.POST, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(
+                getHostnameWithPort() + "/connections/update/" + connection1.getId(),
+                HttpMethod.POST, entity,
+                String.class);
 
         assertEquals(200, response.getStatusCodeValue());
 
@@ -194,11 +213,14 @@ public class ConnectionControllerTests {
         List<Connection> connections = connectionRepository.findAll();
         Connection randomConnection = connections.get(random.nextInt(connections.size()));
 
-        ResponseEntity<String> response = restTemplate.exchange(getHostnameWithPort() + "/connections/delete/" + randomConnection.getId(), HttpMethod.POST, null, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(
+                getHostnameWithPort() + "/connections/delete/" + randomConnection.getId(),
+                HttpMethod.POST,
+                null,
+                String.class);
 
         assertEquals(200, response.getStatusCodeValue());
         assertEquals("OK", response.getBody());
         assertFalse(connectionRepository.existsById(randomConnection.getId()));
     }
-
 }

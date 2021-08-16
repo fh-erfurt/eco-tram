@@ -15,7 +15,6 @@ import java.util.Optional;
 
 @Component("connectionHandler")
 public final class ConnectionHandler {
-
     @Autowired
     private StationRepository stationRepository;
 

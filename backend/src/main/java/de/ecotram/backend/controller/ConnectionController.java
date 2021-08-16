@@ -2,7 +2,6 @@ package de.ecotram.backend.controller;
 
 import de.ecotram.backend.entity.network.Connection;
 import de.ecotram.backend.handler.ConnectionHandler;
-import de.ecotram.backend.handler.SimulationHandler;
 import de.ecotram.backend.pagination.PaginationRequest;
 import de.ecotram.backend.repository.ConnectionRepository;
 import de.ecotram.backend.utilities.ErrorResponse;
@@ -13,24 +12,21 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.beans.Transient;
 import java.util.Optional;
 
 @RestController
 public final class ConnectionController {
-
     @Autowired
     private ConnectionRepository connectionRepository;
 
     @Autowired
     private ConnectionHandler connectionHandler;
 
-    @Autowired
-    private SimulationHandler simulationHandler;
-
     @CrossOrigin
     @GetMapping("/connections/list")
-    public ResponseEntity<PaginationRequest<Connection>> list(@RequestParam(defaultValue = "20") int limit, @RequestParam(defaultValue = "0") int page) {
+    public ResponseEntity<PaginationRequest<Connection>> list(
+            @RequestParam(defaultValue = "20") int limit,
+            @RequestParam(defaultValue = "0") int page) {
         return ResponseEntity.ok().body(connectionRepository.getAsPaginationRequest(Connection.class, limit, page));
     }
 
@@ -38,7 +34,8 @@ public final class ConnectionController {
     @GetMapping(value = "/connections/get/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> list(@PathVariable("id") Long id) {
         Optional<Connection> connection = connectionRepository.findById(id);
-        return connection.<ResponseEntity<Object>>map(value -> ResponseEntity.ok().body(value)).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("invalid-connection", "No connection with id found")));
+        return connection.<ResponseEntity<Object>>map(value -> ResponseEntity.ok().body(value))
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("invalid-connection", "No connection with id found")));
     }
 
     @CrossOrigin
@@ -54,7 +51,9 @@ public final class ConnectionController {
 
     @CrossOrigin
     @PostMapping(value = "/connections/update/{id}", consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> updateConnection(@RequestBody ConnectionHandler.ConnectionBody connectionBody, @PathVariable("id") Long id) {
+    public ResponseEntity<Object> updateConnection(
+            @RequestBody ConnectionHandler.ConnectionBody connectionBody,
+            @PathVariable("id") Long id) {
         Optional<Connection> connectionEntry = connectionRepository.findById(id);
 
         if (connectionEntry.isPresent())

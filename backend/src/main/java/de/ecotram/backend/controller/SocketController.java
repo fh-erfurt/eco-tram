@@ -7,7 +7,6 @@ import de.ecotram.backend.handler.socketEntity.SocketStation;
 import de.ecotram.backend.handler.socketEntity.SocketStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.stereotype.Controller;
 
@@ -15,13 +14,8 @@ import java.util.List;
 
 @Controller
 public class SocketController {
-
-    private final SimulationHandler simulationHandler;
-
     @Autowired
-    public SocketController(SimulationHandler simulationHandler) {
-        this.simulationHandler = simulationHandler;
-    }
+    private SimulationHandler simulationHandler;
 
     @MessageMapping("/simulation/start")
     public void simulationStart() {
@@ -56,5 +50,4 @@ public class SocketController {
     public List<SocketLineSchedule> simulationLineSchedules() {
         return this.simulationHandler.getLinesSchedulesFromSimulation();
     }
-
 }

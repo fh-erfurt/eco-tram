@@ -10,7 +10,10 @@ import de.ecotram.backend.repository.LineRepository;
 import de.ecotram.backend.repository.StationRepository;
 import de.ecotram.backend.utilities.ErrorResponseException;
 import de.ecotram.backend.utilities.ValidationUtilities;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -22,7 +25,6 @@ import java.util.stream.Collectors;
 
 @Component("lineHandler")
 public final class LineHandler {
-
     @Autowired
     private LineRepository lineRepository;
 
@@ -44,10 +46,13 @@ public final class LineHandler {
         AtomicReference<Station> priorStation = new AtomicReference<>();
 
         ids.forEach(id -> {
-            var optionalStation = stations.stream().filter(station -> station.getId() == id).findFirst();
-            if(optionalStation.isPresent()) {
+            var optionalStation = stations.stream()
+                    .filter(station -> station.getId() == id)
+                    .findFirst();
+
+            if (optionalStation.isPresent()) {
                 addedStations.add(optionalStation.get());
-                if(priorStation.get() != null)
+                if (priorStation.get() != null)
                     addedConnections.add(priorStation.get().connectTo(optionalStation.get(), c -> c));
                 priorStation.set(optionalStation.get());
             }
@@ -105,29 +110,37 @@ public final class LineHandler {
         Line updatedLine = lineBody.applyToLine(line);
         ValidationResult validationResult = validateStationIds(ids);
 
-        var sortedRoute = line.getRoute().stream().sorted(Comparator.comparing(LineEntry::getOrderValue)).collect(Collectors.toList());
+        var sortedRoute = line.getRoute().stream()
+                .sorted(Comparator.comparing(LineEntry::getOrderValue))
+                .collect(Collectors.toList());
 
         AtomicBoolean changesFound = new AtomicBoolean(sortedRoute.size() != validationResult.stations.size());
 
         List<LineEntry> lineEntries = new ArrayList<>();
 
-        if(!changesFound.get()) {
+        if (!changesFound.get()) {
             AtomicInteger index = new AtomicInteger();
 
             validationResult.stations.forEach(station -> {
-                if(changesFound.get()) return;
+                if (changesFound.get()) return;
 
-                if(station != sortedRoute.get(index.get()).getStation())
+                if (station != sortedRoute.get(index.get()).getStation())
                     changesFound.set(true);
 
                 index.getAndIncrement();
             });
         }
 
-        if(changesFound.get()) {
+        if (changesFound.get()) {
             lineEntryRepository.deleteAll(sortedRoute);
-            connectionRepository.deleteAll(sortedRoute.stream().map(LineEntry::getStation).map(Station::getDestinationConnections).flatMap(Set::stream).collect(Collectors.toList()));
-            connectionRepository.deleteAll(sortedRoute.stream().map(LineEntry::getStation).map(Station::getSourceConnections).flatMap(Set::stream).collect(Collectors.toList()));
+
+            connectionRepository.deleteAll(sortedRoute.stream()
+                    .map(LineEntry::getStation).map(Station::getDestinationConnections)
+                    .flatMap(Set::stream).collect(Collectors.toList()));
+
+            connectionRepository.deleteAll(sortedRoute.stream()
+                    .map(LineEntry::getStation).map(Station::getSourceConnections)
+                    .flatMap(Set::stream).collect(Collectors.toList()));
 
             AtomicInteger index = new AtomicInteger();
 
@@ -143,14 +156,14 @@ public final class LineHandler {
             });
         }
 
-        if(changesFound.get()) {
+        if (changesFound.get()) {
             line.getRoute().clear();
             line.getRoute().addAll(lineEntries);
         }
 
         lineRepository.save(updatedLine);
 
-        if(changesFound.get()) {
+        if (changesFound.get()) {
             lineEntryRepository.saveAll(lineEntries);
             connectionRepository.saveAll(validationResult.connections);
         }
@@ -162,8 +175,17 @@ public final class LineHandler {
         var route = line.getRoute();
 
         lineEntryRepository.deleteAll(route);
-        connectionRepository.deleteAll(route.stream().map(LineEntry::getStation).map(Station::getDestinationConnections).flatMap(Set::stream).collect(Collectors.toList()));
-        connectionRepository.deleteAll(route.stream().map(LineEntry::getStation).map(Station::getSourceConnections).flatMap(Set::stream).collect(Collectors.toList()));
+
+        connectionRepository.deleteAll(route.stream()
+                .map(LineEntry::getStation)
+                .map(Station::getDestinationConnections)
+                .flatMap(Set::stream).collect(Collectors.toList()));
+
+        connectionRepository.deleteAll(route.stream()
+                .map(LineEntry::getStation)
+                .map(Station::getSourceConnections)
+                .flatMap(Set::stream).collect(Collectors.toList()));
+
         lineRepository.delete(line);
     }
 

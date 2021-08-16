@@ -21,19 +21,19 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(properties = "spring.profiles.active = test")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class LineHandlerTests {
-
     public final Station station1 = new Station();
     public final Station station2 = new Station();
     public final Station station3 = new Station();
     public final Station station4 = new Station();
     public final Station station5 = new Station();
     private final Random random = new Random();
+
     @Autowired
     private LineRepository lineRepository;
+
     @Autowired
     private StationRepository stationRepository;
-    @Autowired
-    private ConnectionRepository connectionRepository;
+
     @Autowired
     private LineHandler lineHandler;
 

@@ -41,7 +41,7 @@ public final class Network extends EntityBase {
 
     public static Network fromStations(Set<Station> stations) {
         Network network = new Network(stations);
-        stations.forEach(s ->  s.setNetwork(network)); // trash orm requirement
+        stations.forEach(s -> s.setNetwork(network)); // trash orm requirement
 
         network.initialize();
 

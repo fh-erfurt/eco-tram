@@ -9,7 +9,6 @@ import javax.persistence.EntityManager;
 
 @Component("statisticsHandler")
 public final class StatisticsHandler {
-
     @Autowired
     private EntityManager entityManager;
 
@@ -42,7 +41,6 @@ public final class StatisticsHandler {
 
         @Getter
         private final long results;
-
     }
 
     @AllArgsConstructor

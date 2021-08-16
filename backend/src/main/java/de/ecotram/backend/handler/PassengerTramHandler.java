@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 
 @Component("passengerTramHandler")
 public final class PassengerTramHandler {
-
     @Autowired
     private PassengerTramRepository passengerTramRepository;
 

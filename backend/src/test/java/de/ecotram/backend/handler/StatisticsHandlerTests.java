@@ -18,7 +18,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest(properties = "spring.profiles.active = test")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class StatisticsHandlerTests {
-
     private final Connection connection1 = new Connection();
     private final Connection connection2 = new Connection();
     private final Line line1 = new Line();
@@ -33,14 +32,19 @@ public class StatisticsHandlerTests {
     private final Station station3 = new Station();
     private final Station station4 = new Station();
     private final Station station5 = new Station();
+
     @Autowired
     private ConnectionRepository connectionRepository;
+
     @Autowired
     private LineRepository lineRepository;
+
     @Autowired
     private PassengerTramRepository passengerTramRepository;
+
     @Autowired
     private StationRepository stationRepository;
+
     @Autowired
     private StatisticsHandler statisticsHandler;
 
@@ -81,5 +85,4 @@ public class StatisticsHandlerTests {
 
         assertEquals(5, statisticsHandler.getStationCount().getResults());
     }
-
 }

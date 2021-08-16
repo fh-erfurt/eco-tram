@@ -16,7 +16,6 @@ import java.util.Optional;
 
 @RestController
 public final class StationController {
-
     @Autowired
     private StationHandler stationHandler;
 
@@ -33,7 +32,8 @@ public final class StationController {
     @GetMapping(value = "/stations/get/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> list(@PathVariable("id") Long id) {
         Optional<Station> station = stationRepository.findById(id);
-        return station.<ResponseEntity<Object>>map(value -> ResponseEntity.ok().body(value)).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("invalid-station", "No station with id found")));
+        return station.<ResponseEntity<Object>>map(value -> ResponseEntity.ok().body(value))
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("invalid-station", "No station with id found")));
     }
 
     @CrossOrigin

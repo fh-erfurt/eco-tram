@@ -7,5 +7,4 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface NetworkRepository extends JpaRepository<Network, Long>, PaginationRequestHelper<Network> {
-
 }

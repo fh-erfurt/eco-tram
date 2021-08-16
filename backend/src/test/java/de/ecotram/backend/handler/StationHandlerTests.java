@@ -16,10 +16,11 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(properties = "spring.profiles.active = test")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class StationHandlerTests {
-
     private final Random random = new Random();
+
     @Autowired
     private StationRepository stationRepository;
+
     @Autowired
     private StationHandler stationHandler;
 
@@ -86,5 +87,4 @@ public class StationHandlerTests {
             fail("Did not expect exception " + exception.getErrorResponse().getMessage());
         }
     }
-
 }

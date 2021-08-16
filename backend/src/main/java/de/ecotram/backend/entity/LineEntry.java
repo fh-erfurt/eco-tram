@@ -8,13 +8,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
 
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 public class LineEntry extends EntityBase {
-
     @Getter
     @Setter
     int orderValue = 0;
@@ -30,5 +30,4 @@ public class LineEntry extends EntityBase {
     @ManyToOne
     @JsonManagedReference
     Station station;
-
 }

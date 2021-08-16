@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component;
 
 @Component("stationHandler")
 public final class StationHandler {
-
     @Autowired
     private StationRepository stationRepository;
 

@@ -16,7 +16,6 @@ import java.util.Optional;
 
 @RestController
 public class LineController {
-
     @Autowired
     private LineHandler lineHandler;
 
@@ -33,7 +32,8 @@ public class LineController {
     @GetMapping(value = "/lines/get/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> list(@PathVariable("id") Long id) {
         Optional<Line> line = lineRepository.findById(id);
-        return line.<ResponseEntity<Object>>map(value -> ResponseEntity.ok().body(value)).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("invalid-line", "No line with id found")));
+        return line.<ResponseEntity<Object>>map(value -> ResponseEntity.ok().body(value))
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("invalid-line", "No line with id found")));
     }
 
     @CrossOrigin

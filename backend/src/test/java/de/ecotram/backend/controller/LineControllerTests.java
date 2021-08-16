@@ -23,7 +23,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(properties = "spring.profiles.active = test", webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class LineControllerTests {
-
     public final Line line1 = new Line();
     public final Line line2 = new Line();
     public final Line line3 = new Line();
@@ -35,12 +34,16 @@ public class LineControllerTests {
     public final Station station4 = new Station();
     public final Station station5 = new Station();
     private final Random random = new Random();
+
     @Autowired
     public LineRepository lineRepository;
+
     @Autowired
     public StationRepository stationRepository;
+
     @LocalServerPort
     private int port;
+
     @Autowired
     private TestRestTemplate restTemplate;
 
@@ -105,7 +108,12 @@ public class LineControllerTests {
         randomLine.setName("Random" + random.nextInt(150) + 10);
         lineRepository.save(randomLine);
 
-        ResponseEntity<String> response = restTemplate.exchange(getHostnameWithPort() + "/lines/get/" + randomLine.getId(), HttpMethod.GET, null, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(
+                getHostnameWithPort() + "/lines/get/" + randomLine.getId(),
+                HttpMethod.GET,
+                null,
+                String.class);
+
         assertEquals(200, response.getStatusCodeValue());
 
         JSONObject jsonObject = new JSONObject(response.getBody());
@@ -116,7 +124,12 @@ public class LineControllerTests {
         assertEquals(id, randomLine.getId());
         assertEquals(name, randomLine.getName());
 
-        ResponseEntity<String> response404 = restTemplate.exchange(getHostnameWithPort() + "/lines/get/" + random.nextInt(1000) + 1000, HttpMethod.GET, null, String.class);
+        ResponseEntity<String> response404 = restTemplate.exchange(
+                getHostnameWithPort() + "/lines/get/" + random.nextInt(1000) + 1000,
+                HttpMethod.GET,
+                null,
+                String.class);
+
         assertEquals(404, response404.getStatusCodeValue(), "Check if invalid value returns 404");
     }
 
@@ -135,7 +148,11 @@ public class LineControllerTests {
 
         HttpEntity<String> entity = new HttpEntity<>(jsonObject.toString(), headers);
 
-        ResponseEntity<String> response = restTemplate.exchange(getHostnameWithPort() + "/lines/new", HttpMethod.POST, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(
+                getHostnameWithPort() + "/lines/new",
+                HttpMethod.POST,
+                entity,
+                String.class);
 
         assertEquals(200, response.getStatusCodeValue());
 
@@ -169,7 +186,11 @@ public class LineControllerTests {
 
         HttpEntity<String> entity = new HttpEntity<>(jsonObject.toString(), headers);
 
-        ResponseEntity<String> response = restTemplate.exchange(getHostnameWithPort() + "/lines/update/" + randomLine.getId(), HttpMethod.POST, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(
+                getHostnameWithPort() + "/lines/update/" + randomLine.getId(),
+                HttpMethod.POST,
+                entity,
+                String.class);
 
         assertEquals(200, response.getStatusCodeValue());
 
@@ -190,7 +211,11 @@ public class LineControllerTests {
         List<Line> lines = lineRepository.findAll();
         Line randomLine = lines.get(random.nextInt(lines.size()));
 
-        ResponseEntity<String> response = restTemplate.exchange(getHostnameWithPort() + "/lines/delete/" + randomLine.getId(), HttpMethod.POST, null, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(
+                getHostnameWithPort() + "/lines/delete/" + randomLine.getId(),
+                HttpMethod.POST,
+                null,
+                String.class);
 
         assertEquals(200, response.getStatusCodeValue());
         assertEquals("OK", response.getBody());

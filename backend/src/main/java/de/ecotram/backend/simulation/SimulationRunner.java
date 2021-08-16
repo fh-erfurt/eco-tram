@@ -8,14 +8,14 @@ import de.ecotram.backend.simulation.event.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.PriorityBlockingQueue;
 import java.util.stream.Collectors;
 
 public final class SimulationRunner {
+    private static final int EMIT_TICKS_AFTER = 5;
+
     private final ExecutorService eventExecutor;
     private final Timer timer = new Timer();
     private final List<OrderedTask> taskQueue = new ArrayList<>();
@@ -24,7 +24,6 @@ public final class SimulationRunner {
 
     private long ticks;
 
-    private int emitTicksAfter = 5;
     private long nextEmit = -1;
 
     @Getter
@@ -79,7 +78,7 @@ public final class SimulationRunner {
     }
 
     private void runInternalIteration() {
-        if(this.taskQueue.isEmpty()) {
+        if (this.taskQueue.isEmpty()) {
             this.internalStopped = true;
             return;
         }
@@ -89,9 +88,9 @@ public final class SimulationRunner {
 
         relevantTasks.forEach(task -> task.getNextDispatch(progressReporter).ifPresent(this.taskQueue::add));
 
-        if(this.ticks >= this.nextEmit) {
+        if (this.ticks >= this.nextEmit) {
             eventExecutor.execute(() -> progressReporter.getRunnerTicks().invoke(RunnerTicksArgs.builder().currentTicks(this.ticks).build()));
-            this.nextEmit = this.ticks + this.emitTicksAfter;
+            this.nextEmit = this.ticks + this.EMIT_TICKS_AFTER;
         }
 
         this.ticks++;
@@ -114,7 +113,8 @@ public final class SimulationRunner {
             int speed = this.entry.tram().getSpeed();
             int length = connection.getLength();
 
-            progressReporter.getRunner().eventExecutor.execute(() -> progressReporter.getTramStopped().invoke(TramStoppedArgs.builder().tram(this.entry.tram()).connection(connection).build()));
+            progressReporter.getRunner().eventExecutor.execute(() -> progressReporter.getTramStopped()
+                    .invoke(TramStoppedArgs.builder().tram(this.entry.tram()).connection(connection).build()));
 
             Optional<OrderedTask> output = this.currentCount >= this.entry.maxCount()
                     ? Optional.of(new OrderedTask(
@@ -125,7 +125,8 @@ public final class SimulationRunner {
                     this.entry.tram().nextStation()))
                     : Optional.empty();
 
-            output.ifPresent(orderedTask -> progressReporter.getRunner().eventExecutor.execute(() -> progressReporter.getTramStarted().invoke(TramStartedArgs.builder().tram(this.entry.tram()).connection(orderedTask.connection).build())));
+            output.ifPresent(orderedTask -> progressReporter.getRunner().eventExecutor.execute(() -> progressReporter.getTramStarted()
+                    .invoke(TramStartedArgs.builder().tram(this.entry.tram()).connection(orderedTask.connection).build())));
 
             return output;
         }

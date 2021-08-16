@@ -16,7 +16,6 @@ import java.util.Optional;
 
 @RestController
 public final class PassengerTramController {
-
     @Autowired
     private PassengerTramHandler passengerTramHandler;
 
@@ -33,7 +32,8 @@ public final class PassengerTramController {
     @GetMapping(value = "/passenger-trams/get/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> list(@PathVariable("id") Long id) {
         Optional<PassengerTram> passengerTram = passengerTramRepository.findById(id);
-        return passengerTram.<ResponseEntity<Object>>map(value -> ResponseEntity.ok().body(value)).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("invalid-passenger-tram", "No passenger tram with id found")));
+        return passengerTram.<ResponseEntity<Object>>map(value -> ResponseEntity.ok().body(value))
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("invalid-passenger-tram", "No passenger tram with id found")));
     }
 
     @CrossOrigin

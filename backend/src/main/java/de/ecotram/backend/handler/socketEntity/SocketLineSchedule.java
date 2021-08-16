@@ -6,7 +6,6 @@ import de.ecotram.backend.simulation.LineSchedule;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public record SocketLineSchedule(SocketLine socketLine, Set<SocketLineScheduleEntry> entries) {
@@ -32,7 +31,5 @@ public record SocketLineSchedule(SocketLine socketLine, Set<SocketLineScheduleEn
                     entry.maxCount()
             );
         }
-
     }
-
 }

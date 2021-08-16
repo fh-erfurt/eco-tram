@@ -21,17 +21,19 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(properties = "spring.profiles.active = test", webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class StationControllerTests {
-
     public final Station station1 = new Station();
     public final Station station2 = new Station();
     public final Station station3 = new Station();
     public final Station station4 = new Station();
     public final Station station5 = new Station();
     private final Random random = new Random();
+
     @Autowired
     public StationRepository stationRepository;
+
     @LocalServerPort
     private int port;
+
     @Autowired
     private TestRestTemplate restTemplate;
 
@@ -88,7 +90,12 @@ public class StationControllerTests {
         randomStation.setName("Random" + random.nextInt(150) + 10);
         stationRepository.save(randomStation);
 
-        ResponseEntity<String> response = restTemplate.exchange(getHostnameWithPort() + "/stations/get/" + randomStation.getId(), HttpMethod.GET, null, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(
+                getHostnameWithPort() + "/stations/get/" + randomStation.getId(),
+                HttpMethod.GET,
+                null,
+                String.class);
+
         assertEquals(200, response.getStatusCodeValue());
 
         JSONObject jsonObject = new JSONObject(response.getBody());
@@ -99,7 +106,12 @@ public class StationControllerTests {
         assertEquals(id, randomStation.getId());
         assertEquals(name, randomStation.getName());
 
-        ResponseEntity<String> response404 = restTemplate.exchange(getHostnameWithPort() + "/stations/get/" + random.nextInt(1000) + 1000, HttpMethod.GET, null, String.class);
+        ResponseEntity<String> response404 = restTemplate.exchange(
+                getHostnameWithPort() + "/stations/get/" + random.nextInt(1000) + 1000,
+                HttpMethod.GET,
+                null,
+                String.class);
+
         assertEquals(404, response404.getStatusCodeValue(), "Check if invalid value returns 404");
     }
 
@@ -119,7 +131,11 @@ public class StationControllerTests {
 
         HttpEntity<String> entity = new HttpEntity<>(jsonObject.toString(), headers);
 
-        ResponseEntity<String> response = restTemplate.exchange(getHostnameWithPort() + "/stations/new", HttpMethod.POST, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(
+                getHostnameWithPort() + "/stations/new",
+                HttpMethod.POST,
+                entity,
+                String.class);
 
         assertEquals(200, response.getStatusCodeValue());
 
@@ -153,7 +169,11 @@ public class StationControllerTests {
 
         HttpEntity<String> entity = new HttpEntity<>(jsonObject.toString(), headers);
 
-        ResponseEntity<String> response = restTemplate.exchange(getHostnameWithPort() + "/stations/update/" + randomStation.getId(), HttpMethod.POST, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(
+                getHostnameWithPort() + "/stations/update/" + randomStation.getId(),
+                HttpMethod.POST,
+                entity,
+                String.class);
 
         assertEquals(200, response.getStatusCodeValue());
 
@@ -174,7 +194,11 @@ public class StationControllerTests {
         List<Station> stations = stationRepository.findAll();
         Station randomStation = stations.get(random.nextInt(stations.size()));
 
-        ResponseEntity<String> response = restTemplate.exchange(getHostnameWithPort() + "/stations/delete/" + randomStation.getId(), HttpMethod.POST, null, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(
+                getHostnameWithPort() + "/stations/delete/" + randomStation.getId(),
+                HttpMethod.POST,
+                null,
+                String.class);
 
         assertEquals(200, response.getStatusCodeValue());
         assertEquals("OK", response.getBody());

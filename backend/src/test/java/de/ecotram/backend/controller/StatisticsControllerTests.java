@@ -23,7 +23,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @SpringBootTest(properties = "spring.profiles.active = test", webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class StatisticsControllerTests {
-
     private final Connection connection1 = new Connection();
     private final Connection connection2 = new Connection();
     private final Line line1 = new Line();
@@ -38,16 +37,22 @@ public class StatisticsControllerTests {
     private final Station station3 = new Station();
     private final Station station4 = new Station();
     private final Station station5 = new Station();
+
     @LocalServerPort
     private int port;
+
     @Autowired
     private TestRestTemplate restTemplate;
+
     @Autowired
     private ConnectionRepository connectionRepository;
+
     @Autowired
     private LineRepository lineRepository;
+
     @Autowired
     private PassengerTramRepository passengerTramRepository;
+
     @Autowired
     private StationRepository stationRepository;
 
@@ -93,7 +98,10 @@ public class StatisticsControllerTests {
         passengerTramRepository.save(passengerTram3);
         passengerTramRepository.save(passengerTram4);
 
-        String response = restTemplate.getForObject(getHostnameWithPort() + "/statistics/passenger-tram", String.class);
+        String response = restTemplate.getForObject(
+                getHostnameWithPort() + "/statistics/passenger-tram",
+                String.class);
+
         JSONObject jsonObject = new JSONObject(response);
 
         assertTrue(jsonObject.has("type"));

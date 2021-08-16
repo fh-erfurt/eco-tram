@@ -36,7 +36,7 @@ public final class Network extends EntityBase {
     private final Map<Station, Set<Station>> adjacencyMap = new HashMap<>();
 
     @Transient
-    private final Map<Station, NetworkUtilities.DistanceTree> minimalDistanceTree = new HashMap<>();
+    private final Map<Station, NetworkUtilities.MinimalDistanceTree> minimalDistanceTree = new HashMap<>();
 
     private Network(Set<Station> stations) {
         this.stations = stations;

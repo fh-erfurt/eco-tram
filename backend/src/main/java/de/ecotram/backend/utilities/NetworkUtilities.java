@@ -10,8 +10,14 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public final class NetworkUtilities {
-    // TODO(erik): optimize
-    public static DistanceTree dijkstra(Station start, Map<Station, Set<Station>> adjacencyMap) {
+    /**
+     * Creates new minimal distance tree for the given start station spanning to each other station across the adjacency
+     * map. This method is ripe for optimization.
+     *
+     * @param adjacencyMap The adjacency map of the graph to build the tree for.
+     * @return A new minimal distance tree for the given start station.
+     */
+    public static MinimalDistanceTree dijkstra(Station start, Map<Station, Set<Station>> adjacencyMap) {
         if (!adjacencyMap.containsKey(start))
             throw new InvalidParameterException("The start station does not exist in this network.");
 
@@ -77,9 +83,12 @@ public final class NetworkUtilities {
             nodeQueue.remove(currentMinimum);
         }
 
-        return new DistanceTree(start, distanceMap);
+        return new MinimalDistanceTree(start, distanceMap);
     }
 
+    /**
+     * A tuple used for a value for a MinimalDistanceTree of a Network.
+     */
     @Data
     @AllArgsConstructor
     public static final class DijkstraTuple {
@@ -88,7 +97,10 @@ public final class NetworkUtilities {
         private Station previous;
     }
 
-    public static final record DistanceTree(Station root, Map<Station, DijkstraTuple> paths) {
+    /**
+     * A tree across a graph with minimal distance paths for a given start station.
+     */
+    public static final record MinimalDistanceTree(Station root, Map<Station, DijkstraTuple> paths) {
         public List<Station> getPathTo(Station destination) {
             LinkedList<Station> list = new LinkedList<>();
 

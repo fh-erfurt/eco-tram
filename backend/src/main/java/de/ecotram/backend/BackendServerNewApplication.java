@@ -3,10 +3,8 @@ package de.ecotram.backend;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-// TODO(luca): frontend cleanup
-// TODO(erik): backend cleanup
-// TODO(erik, andre): documentation
-// TODO(erik, luca, andre): unit tests
+// TODO: add sql script + update documentation to include in installation steps
+// TODO(erik): unit tests
 
 @SpringBootApplication
 public class BackendServerNewApplication {

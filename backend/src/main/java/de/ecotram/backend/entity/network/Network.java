@@ -30,25 +30,34 @@ public final class Network extends EntityBase {
     private boolean isInitialized;
 
     @Transient
-    private Map<Station, Set<Station>> adjacencyMap = new HashMap<>();
+    private final Map<Station, Set<Station>> adjacencyMap = new HashMap<>();
 
     @Transient
-    private Map<Station, NetworkUtilities.DistanceTree> minimalDistanceTree = new HashMap<>();
+    private final Map<Station, NetworkUtilities.DistanceTree> minimalDistanceTree = new HashMap<>();
 
     private Network(Set<Station> stations) {
         this.stations = stations;
     }
 
+    /**
+     * Returns a new initialized network, that is, a network with a minimal distance tree for each station.
+     *
+     * @return A new network ready to be used for path finding.
+     */
     public static Network fromStations(Set<Station> stations) {
         Network network = new Network(stations);
-        stations.forEach(s -> s.setNetwork(network)); // trash orm requirement
+        stations.forEach(s -> s.setNetwork(network)); // wired up for correct jpa insertion
 
         network.initialize();
 
         return network;
     }
 
-    public void initialize() {
+    /**
+     * Initializes this network for use, that is, creating a minimal distance tree for each station of this network.
+     * The algorithm used for finding the shortest paths is an implementation of Dijkstra's Algorithm.
+     */
+    private void initialize() {
         if (this.isInitialized)
             return;
 
@@ -77,6 +86,12 @@ public final class Network extends EntityBase {
                 .distinct();
     }
 
+    /**
+     * Returns an ordered list of stations with the shortest path (measured by distance, not hops) from the start to the
+     * destination station.
+     *
+     * @return The shortest path between 2 stations.
+     */
     public List<Station> getPathTo(Station start, Station destination) {
         if (!this.adjacencyMap.containsKey(start))
             throw new IllegalArgumentException("The destination was not part of this network.");
@@ -90,6 +105,11 @@ public final class Network extends EntityBase {
         return this.minimalDistanceTree.get(start).getPathTo(destination);
     }
 
+    /**
+     * Gets the total distance in meters from the start station to the destination station.
+     *
+     * @return The distance in meters.
+     */
     public int getDistance(Station start, Station destination) {
         if (!this.adjacencyMap.containsKey(start))
             throw new IllegalArgumentException("The destination was not part of this network.");
@@ -103,6 +123,11 @@ public final class Network extends EntityBase {
         return this.minimalDistanceTree.get(start).getDistanceTo(destination);
     }
 
+    /**
+     * Returns the amount of connections between the start station and the destination station.
+     *
+     * @return The number of connections.
+     */
     public int getHops(Station start, Station destination) {
         if (!this.adjacencyMap.containsKey(start))
             throw new IllegalArgumentException("The destination was not part of this network.");
@@ -116,6 +141,13 @@ public final class Network extends EntityBase {
         return this.minimalDistanceTree.get(start).getHopsTo(destination);
     }
 
+
+    /**
+     * Returns the previous station in the minimal path form the start station to the destination station, that is, the
+     * station that comes before the destination station.
+     *
+     * @return The second to last station in the minimal path.
+     */
     public Station getPrevious(Station start, Station destination) {
         if (!this.adjacencyMap.containsKey(start))
             throw new IllegalArgumentException("The destination was not part of this network.");

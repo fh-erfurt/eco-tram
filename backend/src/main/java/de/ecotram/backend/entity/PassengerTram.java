@@ -9,6 +9,9 @@ import javax.persistence.Entity;
 import javax.persistence.Transient;
 import java.util.List;
 
+/**
+ * A tram for passenger transport, used for simulation.
+ */
 @Getter
 @Entity
 public final class PassengerTram extends EntityBase {

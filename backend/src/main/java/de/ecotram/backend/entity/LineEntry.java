@@ -11,6 +11,10 @@ import lombok.Setter;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 
+/**
+ * A Line-Station reference, with it's associated order value, the point at which the station appears in the line's
+ * route.
+ */
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor

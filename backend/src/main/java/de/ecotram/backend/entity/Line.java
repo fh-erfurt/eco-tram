@@ -14,6 +14,9 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
+/**
+ * A named recurring route of stations in a network.
+ */
 @Getter
 @Entity
 @NoArgsConstructor

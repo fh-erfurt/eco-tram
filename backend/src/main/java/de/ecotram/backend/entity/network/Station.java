@@ -17,6 +17,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 
+/**
+ * A single node inside a city's tram network.
+ */
 @Getter
 @Entity
 @NoArgsConstructor

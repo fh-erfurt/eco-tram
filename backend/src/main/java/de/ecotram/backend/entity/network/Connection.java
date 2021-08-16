@@ -7,6 +7,9 @@ import lombok.*;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 
+/**
+ * A directed connection between 2 stations.
+ */
 @Getter
 @Setter
 @Entity

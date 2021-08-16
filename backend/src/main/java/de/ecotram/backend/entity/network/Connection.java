@@ -10,17 +10,27 @@ import javax.persistence.ManyToOne;
 @Getter
 @Setter
 @Entity
+@Builder
 @NoArgsConstructor
 public final class Connection extends EntityBase {
-    public static final int DEFAULT_LENGTH = 500; // m
+    public static final int DEFAULT_LENGTH = 500; // in meters
 
+    /**
+     * The length of this connection in meters.
+     */
     @Setter
     private int length = DEFAULT_LENGTH;
 
+    /**
+     * The station this connection leads off from.
+     */
     @ManyToOne
     @JsonManagedReference
     private Station sourceStation;
 
+    /**
+     * The station this connection leads to.
+     */
     @ManyToOne
     @JsonManagedReference
     private Station destinationStation;
@@ -35,6 +45,7 @@ public final class Connection extends EntityBase {
         return new Builder();
     }
 
+    // a non-lombok builder was consciously chosen here to avoid some ctor problems
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static final class Builder {
         private int length = DEFAULT_LENGTH;
@@ -61,6 +72,9 @@ public final class Connection extends EntityBase {
         }
     }
 
+    /**
+     * A pair of connections for stations that are connected in both directions.
+     */
     @Data
     @AllArgsConstructor(access = AccessLevel.PROTECTED)
     public static final class Pair {

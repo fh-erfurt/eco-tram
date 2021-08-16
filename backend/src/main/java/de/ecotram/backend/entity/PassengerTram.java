@@ -12,19 +12,28 @@ import java.util.List;
 @Getter
 @Entity
 public final class PassengerTram extends EntityBase {
-    public static final int DEFAULT_WEIGHT = 5000; // kg
-    public static final int DEFAULT_MAX_SPEED = 50; // km/h
-    public static final int DEFAULT_SPEED = 50; // km/h
+    public static final int DEFAULT_WEIGHT = 5000; // in kilogram
+    public static final int DEFAULT_MAX_SPEED = 50; // in kilometers per hour
+    public static final int DEFAULT_SPEED = 50; // in kilometers per hour
 
+    /**
+     * The weight of this tram in kilogram.
+     */
     @Setter
     private int weight = DEFAULT_WEIGHT;
 
+    /**
+     * The maximum speed of this tram in kilometers per hour.
+     */
     @Setter
     private int maxSpeed = DEFAULT_MAX_SPEED;
 
     @Setter
     private int maxPassengers;
 
+    /**
+     * The current speed of this tram in kilometers per hour.
+     */
     @Setter
     @Transient
     private int speed = DEFAULT_SPEED;
@@ -47,10 +56,14 @@ public final class PassengerTram extends EntityBase {
         this.route = route;
     }
 
-    // returns next connection
+    /**
+     * Advances the tram along it's route in the simulation.
+     *
+     * @return The connection the tram moved to.
+     */
     public Connection nextStation() {
         if (route == null)
-            throw new IllegalStateException("Tram without cannot advance without route.");
+            throw new IllegalStateException("Tram cannot advance without route.");
 
         if (currentIndex + 1 >= route.size())
             currentIndex = 0;

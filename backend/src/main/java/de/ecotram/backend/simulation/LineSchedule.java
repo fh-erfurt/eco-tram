@@ -9,6 +9,9 @@ import lombok.Getter;
 
 import java.util.*;
 
+/**
+ * Represents a schedule for starting all trams for a given line.
+ */
 public final class LineSchedule {
     @Getter
     private final Line line;
@@ -35,12 +38,15 @@ public final class LineSchedule {
 
         minimumNumberOfTrams = 10;
 
-        List<LineEntry> route = line.getRoute().stream().sorted(Comparator.comparingInt(LineEntry::getOrderValue)).toList();
+        List<LineEntry> route = line.getRoute().stream()
+                .sorted(Comparator.comparingInt(LineEntry::getOrderValue))
+                .toList();
+
         LineSchedule schedule = new LineSchedule(line);
 
-        for (int i = 0; i < minimumNumberOfTrams; i++) {
+        for (int i = 1; i < minimumNumberOfTrams + 1; i++) {
             PassengerTram tram = new PassengerTram(route);
-            schedule.trams.put(tram, new Entry((i + 1) * waitingTime, 0, -1, tram, line));
+            schedule.trams.put(tram, new Entry(i * waitingTime, 0, -1, tram, line));
         }
 
         return schedule;

@@ -12,6 +12,9 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
+/**
+ * Represents a schedule for all lines of a given network.
+ */
 public final class Schedule {
     @Getter
     private final Network network;
@@ -59,6 +62,7 @@ public final class Schedule {
             if (isBuilt)
                 throw new IllegalStateException("The builder was already built and can only be used once.");
 
+            // this check may be destructive on the set of lines, which is why this builder can only be used once
             if (cachedLines.retainAll(this.lineSchedules.keySet())) {
                 this.log.log(Level.WARNING, "Not all lines have a schedule set up.");
             }

@@ -6,6 +6,6 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public final class RunnerTicksArgs extends EventArgs {
+public final class RunnerTicksUpdatedArgs extends EventArgs {
     public long currentTicks;
 }

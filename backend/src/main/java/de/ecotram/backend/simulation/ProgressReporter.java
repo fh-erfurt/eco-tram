@@ -10,6 +10,9 @@ import lombok.extern.java.Log;
 
 import java.util.logging.Level;
 
+/**
+ * A reporter that is tied to a simulation, used to emit events and get progress of a simulation.
+ */
 @Log
 public final class ProgressReporter {
     private final Object _lock = new Object();
@@ -21,7 +24,7 @@ public final class ProgressReporter {
     private final Event<RunnerStoppedArgs> runnerStopped;
 
     @Getter(value = AccessLevel.PACKAGE, onMethod_ = {@Synchronized(value = "_lock")})
-    private final Event<RunnerTicksArgs> runnerTicks;
+    private final Event<RunnerTicksUpdatedArgs> runnerTicks;
 
     @Getter(value = AccessLevel.PACKAGE, onMethod_ = {@Synchronized(value = "_lock")})
     private final Event<TramStartedArgs> tramStarted;
@@ -44,7 +47,7 @@ public final class ProgressReporter {
         return this.runnerStopped.getAccess();
     }
 
-    public Event<RunnerTicksArgs>.Accessor onRunnerTicks() {
+    public Event<RunnerTicksUpdatedArgs>.Accessor onRunnerTicks() {
         return this.runnerTicks.getAccess();
     }
 

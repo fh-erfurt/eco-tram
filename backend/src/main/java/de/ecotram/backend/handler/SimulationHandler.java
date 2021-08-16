@@ -123,7 +123,7 @@ public class SimulationHandler {
         messagingTemplate.convertAndSend("/simulation/events/stop", getStatus());
     }
 
-    private void onRunnerTicks(RunnerTicksArgs args) {
+    private void onRunnerTicks(RunnerTicksUpdatedArgs args) {
         messagingTemplate.convertAndSend("/simulation/events/status", getStatus());
     }
 

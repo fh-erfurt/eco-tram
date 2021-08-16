@@ -13,6 +13,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
+/**
+ * A class that simulates a tram network's tram movement, emitting events for progress reporting.
+ */
 public final class SimulationRunner {
     private static final int EMIT_TICKS_AFTER = 5;
 
@@ -53,7 +56,7 @@ public final class SimulationRunner {
         this.progressReporter = new ProgressReporter(this);
     }
 
-    // must tbe synchronized on this
+    // must be synchronized on this
     public synchronized long getTicks() {
         return this.ticks;
     }
@@ -83,36 +86,34 @@ public final class SimulationRunner {
             return;
         }
 
-        var relevantTasks = this.taskQueue.stream().filter(task -> task.dispatchTick <= this.ticks).collect(Collectors.toList());
+        List<OrderedTask> relevantTasks = this.taskQueue.stream()
+                .filter(task -> task.dispatchTick <= this.ticks)
+                .collect(Collectors.toList());
+
         this.taskQueue.removeAll(relevantTasks);
 
         relevantTasks.forEach(task -> task.getNextDispatch(progressReporter).ifPresent(this.taskQueue::add));
 
         if (this.ticks >= this.nextEmit) {
-            eventExecutor.execute(() -> progressReporter.getRunnerTicks().invoke(RunnerTicksArgs.builder().currentTicks(this.ticks).build()));
-            this.nextEmit = this.ticks + this.EMIT_TICKS_AFTER;
+            eventExecutor.execute(() -> progressReporter.getRunnerTicks().invoke(RunnerTicksUpdatedArgs.builder().currentTicks(this.ticks).build()));
+            this.nextEmit = this.ticks + EMIT_TICKS_AFTER;
         }
 
         this.ticks++;
     }
 
+    /**
+     * A subtask that is used to emitting single tram events per iteration.
+     */
     @AllArgsConstructor
-    private static final class OrderedTask implements Comparable<OrderedTask> {
+    private static final class OrderedTask  {
         private final long dispatchTick;
         private final int tickInterval;
         private final int currentCount;
         private final LineSchedule.Entry entry;
         private final Connection connection;
 
-        @Override
-        public int compareTo(OrderedTask o) {
-            return Long.compare(this.dispatchTick, o.dispatchTick);
-        }
-
         public Optional<OrderedTask> getNextDispatch(ProgressReporter progressReporter) {
-            int speed = this.entry.tram().getSpeed();
-            int length = connection.getLength();
-
             progressReporter.getRunner().eventExecutor.execute(() -> progressReporter.getTramStopped()
                     .invoke(TramStoppedArgs.builder().tram(this.entry.tram()).connection(connection).build()));
 
@@ -132,6 +133,9 @@ public final class SimulationRunner {
         }
     }
 
+    /**
+     * A task that is run on each internal simulation iteration.
+     */
     private static final class RunnerTimerTask extends TimerTask {
         private final SimulationRunner runner;
 
@@ -156,6 +160,9 @@ public final class SimulationRunner {
         }
     }
 
+    /**
+     * A task that is run on simulation startup.
+     */
     private static final class RunnerStartUpTask extends TimerTask {
         private final SimulationRunner runner;
 
@@ -186,6 +193,9 @@ public final class SimulationRunner {
         }
     }
 
+    /**
+     * A task that is run on simulation shutdown.
+     */
     private static final class RunnerStoppingTask extends TimerTask {
         private final SimulationRunner runner;
         private final Exception exception;

@@ -9,6 +9,6 @@ import lombok.Getter;
 @Getter
 @Builder
 public final class TramStartedArgs extends EventArgs {
-    public PassengerTram passengerTram;
-    public Connection connection;
+	public PassengerTram passengerTram;
+	public Connection connection;
 }

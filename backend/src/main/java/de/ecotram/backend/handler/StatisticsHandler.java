@@ -7,54 +7,55 @@ import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
 
+/**
+ * Handler for counting entities for controller
+ */
 @Component("statisticsHandler")
 public final class StatisticsHandler {
-    @Autowired
-    private EntityManager entityManager;
 
-    private long countEntries(String className) {
-        return (long) entityManager
-                .createQuery("select count(*) from " + className + " t")
-                .getSingleResult();
-    }
+	private final EntityManager entityManager;
 
-    public StatisticsCountResult getConnectionCount() {
-        return new StatisticsCountResult("connection", this.countEntries("Connection"));
-    }
+	@Autowired
+	public StatisticsHandler(EntityManager entityManager) {
+		this.entityManager = entityManager;
+	}
 
-    public StatisticsCountResult getLineCount() {
-        return new StatisticsCountResult("line", this.countEntries("Line"));
-    }
+	private long countEntries(String className) {
+		return (long) entityManager
+				.createQuery("select count(*) from " + className + " t")
+				.getSingleResult();
+	}
 
-    public StatisticsCountResult getPassengerTramCount() {
-        return new StatisticsCountResult("passengerTram", this.countEntries("PassengerTram"));
-    }
+	public StatisticsCountResult getConnectionCount() {
+		return new StatisticsCountResult("connection", this.countEntries("Connection"));
+	}
 
-    public StatisticsCountResult getStationCount() {
-        return new StatisticsCountResult("station", this.countEntries("Station"));
-    }
+	public StatisticsCountResult getLineCount() {
+		return new StatisticsCountResult("line", this.countEntries("Line"));
+	}
 
-    @AllArgsConstructor
-    public static class StatisticsCountResult {
-        @Getter
-        private final String type;
+	public StatisticsCountResult getStationCount() {
+		return new StatisticsCountResult("station", this.countEntries("Station"));
+	}
 
-        @Getter
-        private final long results;
-    }
+	@AllArgsConstructor
+	public static class StatisticsCountResult {
+		@Getter
+		private final String type;
 
-    @AllArgsConstructor
-    public static class StatisticsOverallCountResult {
-        @Getter
-        private final StatisticsCountResult connections;
+		@Getter
+		private final long results;
+	}
 
-        @Getter
-        private final StatisticsCountResult lines;
+	@AllArgsConstructor
+	public static class StatisticsOverallCountResult {
+		@Getter
+		private final StatisticsCountResult connections;
 
-        @Getter
-        private final StatisticsCountResult passengerTrams;
+		@Getter
+		private final StatisticsCountResult lines;
 
-        @Getter
-        private final StatisticsCountResult stations;
-    }
+		@Getter
+		private final StatisticsCountResult stations;
+	}
 }

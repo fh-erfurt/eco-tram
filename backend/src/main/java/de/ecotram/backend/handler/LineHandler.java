@@ -23,196 +23,201 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
+/**
+ * Handler for creating, updating and deleting lines received from controller
+ */
 @Component("lineHandler")
 public final class LineHandler {
-    @Autowired
-    private LineRepository lineRepository;
 
-    @Autowired
-    private StationRepository stationRepository;
+	private final LineRepository lineRepository;
+	private final StationRepository stationRepository;
+	private final ConnectionRepository connectionRepository;
+	private final LineEntryRepository lineEntryRepository;
 
-    @Autowired
-    private ConnectionRepository connectionRepository;
+	@Autowired
+	public LineHandler(LineRepository lineRepository, StationRepository stationRepository, ConnectionRepository connectionRepository, LineEntryRepository lineEntryRepository) {
+		this.lineRepository = lineRepository;
+		this.stationRepository = stationRepository;
+		this.connectionRepository = connectionRepository;
+		this.lineEntryRepository = lineEntryRepository;
+	}
 
-    @Autowired
-    private LineEntryRepository lineEntryRepository;
+	public ValidationResult validateStationIds(ArrayList<Long> ids) {
+		List<Station> stations = stationRepository.findAllById(ids);
 
-    public ValidationResult validateStationIds(ArrayList<Long> ids) {
-        List<Station> stations = stationRepository.findAllById(ids);
+		ArrayList<Station> addedStations = new ArrayList<>();
+		ArrayList<Connection> addedConnections = new ArrayList<>();
 
-        ArrayList<Station> addedStations = new ArrayList<>();
-        ArrayList<Connection> addedConnections = new ArrayList<>();
+		AtomicReference<Station> priorStation = new AtomicReference<>();
 
-        AtomicReference<Station> priorStation = new AtomicReference<>();
+		ids.forEach(id -> {
+			var optionalStation = stations.stream()
+					.filter(station -> station.getId() == id)
+					.findFirst();
 
-        ids.forEach(id -> {
-            var optionalStation = stations.stream()
-                    .filter(station -> station.getId() == id)
-                    .findFirst();
+			if(optionalStation.isPresent()) {
+				addedStations.add(optionalStation.get());
+				if(priorStation.get() != null)
+					addedConnections.add(priorStation.get().connectTo(optionalStation.get()));
+				priorStation.set(optionalStation.get());
+			}
+		});
 
-            if (optionalStation.isPresent()) {
-                addedStations.add(optionalStation.get());
-                if (priorStation.get() != null)
-                    addedConnections.add(priorStation.get().connectTo(optionalStation.get()));
-                priorStation.set(optionalStation.get());
-            }
-        });
+		return new ValidationResult(addedStations, addedConnections);
+	}
 
-        return new ValidationResult(addedStations, addedConnections);
-    }
+	public ArrayList<Long> validateLineBody(LineBody lineBody) throws ErrorResponseException {
+		if(!ValidationUtilities.isStringValid(lineBody.name, 1, 100))
+			throw new ErrorResponseException("invalid-name", "name is invalid");
 
-    public ArrayList<Long> validateLineBody(LineBody lineBody) throws ErrorResponseException {
-        if (!ValidationUtilities.isStringValid(lineBody.name, 1, 100))
-            throw new ErrorResponseException("invalid-name", "name is invalid");
+		ArrayList<Long> ids = new ArrayList<>();
 
-        ArrayList<Long> ids = new ArrayList<>();
+		Arrays.asList(lineBody.stationIds.split(",")).forEach(id -> ids.add(Long.parseLong(id)));
 
-        Arrays.asList(lineBody.stationIds.split(",")).forEach(id -> ids.add(Long.parseLong(id)));
+		if(ids.size() == 0)
+			throw new ErrorResponseException("invalid-ids", "at least one id is required");
 
-        if (ids.size() == 0)
-            throw new ErrorResponseException("invalid-ids", "at least one id is required");
+		return ids;
+	}
 
-        return ids;
-    }
+	public Line createLineFromRequest(LineBody lineBody) throws ErrorResponseException {
+		ArrayList<Long> ids = validateLineBody(lineBody);
 
-    public Line createLineFromRequest(LineBody lineBody) throws ErrorResponseException {
-        ArrayList<Long> ids = validateLineBody(lineBody);
+		Line line = lineBody.applyToLine();
+		ValidationResult validationResult = validateStationIds(ids);
 
-        Line line = lineBody.applyToLine();
-        ValidationResult validationResult = validateStationIds(ids);
+		List<LineEntry> lineEntries = new ArrayList<>();
+		AtomicInteger index = new AtomicInteger();
 
-        List<LineEntry> lineEntries = new ArrayList<>();
-        AtomicInteger index = new AtomicInteger();
+		validationResult.stations.forEach(station -> {
+			LineEntry lineEntry = new LineEntry();
+			lineEntry.setLine(line);
+			lineEntry.setStation(station);
+			lineEntry.setOrderValue(index.intValue());
 
-        validationResult.stations.forEach(station -> {
-            LineEntry lineEntry = new LineEntry();
-            lineEntry.setLine(line);
-            lineEntry.setStation(station);
-            lineEntry.setOrderValue(index.intValue());
+			lineEntries.add(lineEntry);
 
-            lineEntries.add(lineEntry);
+			index.getAndIncrement();
+		});
 
-            index.getAndIncrement();
-        });
+		line.getRoute().clear();
+		line.getRoute().addAll(lineEntries);
 
-        line.getRoute().clear();
-        line.getRoute().addAll(lineEntries);
+		lineRepository.save(line);
+		lineEntryRepository.saveAll(lineEntries);
+		connectionRepository.saveAll(validationResult.connections);
 
-        lineRepository.save(line);
-        lineEntryRepository.saveAll(lineEntries);
-        connectionRepository.saveAll(validationResult.connections);
+		return line;
+	}
 
-        return line;
-    }
+	public Line updateLineFromRequest(Line line, LineBody lineBody) throws ErrorResponseException {
+		ArrayList<Long> ids = validateLineBody(lineBody);
+		Line updatedLine = lineBody.applyToLine(line);
+		ValidationResult validationResult = validateStationIds(ids);
 
-    public Line updateLineFromRequest(Line line, LineBody lineBody) throws ErrorResponseException {
-        ArrayList<Long> ids = validateLineBody(lineBody);
-        Line updatedLine = lineBody.applyToLine(line);
-        ValidationResult validationResult = validateStationIds(ids);
+		var sortedRoute = line.getRoute().stream()
+				.sorted(Comparator.comparing(LineEntry::getOrderValue))
+				.collect(Collectors.toList());
 
-        var sortedRoute = line.getRoute().stream()
-                .sorted(Comparator.comparing(LineEntry::getOrderValue))
-                .collect(Collectors.toList());
+		AtomicBoolean changesFound = new AtomicBoolean(sortedRoute.size() != validationResult.stations.size());
 
-        AtomicBoolean changesFound = new AtomicBoolean(sortedRoute.size() != validationResult.stations.size());
+		List<LineEntry> lineEntries = new ArrayList<>();
 
-        List<LineEntry> lineEntries = new ArrayList<>();
+		if(!changesFound.get()) {
+			AtomicInteger index = new AtomicInteger();
 
-        if (!changesFound.get()) {
-            AtomicInteger index = new AtomicInteger();
+			validationResult.stations.forEach(station -> {
+				if(changesFound.get()) return;
 
-            validationResult.stations.forEach(station -> {
-                if (changesFound.get()) return;
+				if(station != sortedRoute.get(index.get()).getStation())
+					changesFound.set(true);
 
-                if (station != sortedRoute.get(index.get()).getStation())
-                    changesFound.set(true);
+				index.getAndIncrement();
+			});
+		}
 
-                index.getAndIncrement();
-            });
-        }
+		if(changesFound.get()) {
+			lineEntryRepository.deleteAll(sortedRoute);
 
-        if (changesFound.get()) {
-            lineEntryRepository.deleteAll(sortedRoute);
+			connectionRepository.deleteAll(sortedRoute.stream()
+					.map(LineEntry::getStation).map(Station::getDestinationConnections)
+					.flatMap(Set::stream).collect(Collectors.toList()));
 
-            connectionRepository.deleteAll(sortedRoute.stream()
-                    .map(LineEntry::getStation).map(Station::getDestinationConnections)
-                    .flatMap(Set::stream).collect(Collectors.toList()));
+			connectionRepository.deleteAll(sortedRoute.stream()
+					.map(LineEntry::getStation).map(Station::getSourceConnections)
+					.flatMap(Set::stream).collect(Collectors.toList()));
 
-            connectionRepository.deleteAll(sortedRoute.stream()
-                    .map(LineEntry::getStation).map(Station::getSourceConnections)
-                    .flatMap(Set::stream).collect(Collectors.toList()));
+			AtomicInteger index = new AtomicInteger();
 
-            AtomicInteger index = new AtomicInteger();
+			validationResult.stations.forEach(station -> {
+				LineEntry lineEntry = new LineEntry();
+				lineEntry.setLine(line);
+				lineEntry.setStation(station);
+				lineEntry.setOrderValue(index.intValue());
 
-            validationResult.stations.forEach(station -> {
-                LineEntry lineEntry = new LineEntry();
-                lineEntry.setLine(line);
-                lineEntry.setStation(station);
-                lineEntry.setOrderValue(index.intValue());
+				lineEntries.add(lineEntry);
 
-                lineEntries.add(lineEntry);
+				index.getAndIncrement();
+			});
+		}
 
-                index.getAndIncrement();
-            });
-        }
+		if(changesFound.get()) {
+			line.getRoute().clear();
+			line.getRoute().addAll(lineEntries);
+		}
 
-        if (changesFound.get()) {
-            line.getRoute().clear();
-            line.getRoute().addAll(lineEntries);
-        }
+		lineRepository.save(updatedLine);
 
-        lineRepository.save(updatedLine);
+		if(changesFound.get()) {
+			lineEntryRepository.saveAll(lineEntries);
+			connectionRepository.saveAll(validationResult.connections);
+		}
 
-        if (changesFound.get()) {
-            lineEntryRepository.saveAll(lineEntries);
-            connectionRepository.saveAll(validationResult.connections);
-        }
+		return updatedLine;
+	}
 
-        return updatedLine;
-    }
+	public void deleteLine(Line line) {
+		var route = line.getRoute();
 
-    public void deleteLine(Line line) {
-        var route = line.getRoute();
+		lineEntryRepository.deleteAll(route);
 
-        lineEntryRepository.deleteAll(route);
+		connectionRepository.deleteAll(route.stream()
+				.map(LineEntry::getStation)
+				.map(Station::getDestinationConnections)
+				.flatMap(Set::stream).collect(Collectors.toList()));
 
-        connectionRepository.deleteAll(route.stream()
-                .map(LineEntry::getStation)
-                .map(Station::getDestinationConnections)
-                .flatMap(Set::stream).collect(Collectors.toList()));
+		connectionRepository.deleteAll(route.stream()
+				.map(LineEntry::getStation)
+				.map(Station::getSourceConnections)
+				.flatMap(Set::stream).collect(Collectors.toList()));
 
-        connectionRepository.deleteAll(route.stream()
-                .map(LineEntry::getStation)
-                .map(Station::getSourceConnections)
-                .flatMap(Set::stream).collect(Collectors.toList()));
+		lineRepository.delete(line);
+	}
 
-        lineRepository.delete(line);
-    }
+	@AllArgsConstructor
+	@NoArgsConstructor
+	public static class LineBody {
+		@Getter
+		private String name;
 
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class LineBody {
-        @Getter
-        private String name;
+		@Getter
+		private String stationIds;
 
-        @Getter
-        private String stationIds;
+		public Line applyToLine(Line line) {
+			line.setName(name);
 
-        public Line applyToLine(Line line) {
-            line.setName(name);
+			return line;
+		}
 
-            return line;
-        }
+		public Line applyToLine() {
+			return applyToLine(new Line());
+		}
+	}
 
-        public Line applyToLine() {
-            return applyToLine(new Line());
-        }
-    }
-
-    @Data
-    @AllArgsConstructor
-    public final class ValidationResult {
-        private ArrayList<Station> stations;
-        private ArrayList<Connection> connections;
-    }
+	@Data
+	@AllArgsConstructor
+	public final class ValidationResult {
+		private ArrayList<Station> stations;
+		private ArrayList<Connection> connections;
+	}
 }

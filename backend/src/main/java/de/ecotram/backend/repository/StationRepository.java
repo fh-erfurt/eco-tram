@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface StationRepository extends JpaRepository<Station, Long>, PaginationRequestHelper<Station> {
-    @Query("select s from Station s where s.name = ?1")
-    Station findByName(String name);
+	@Query("select s from Station s where s.name = ?1")
+	Station findByName(String name);
 }

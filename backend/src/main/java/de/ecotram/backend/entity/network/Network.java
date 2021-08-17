@@ -25,139 +25,136 @@ import java.util.stream.Stream;
 @Entity
 @NoArgsConstructor
 public final class Network extends EntityBase {
-    @OneToMany(mappedBy = "network")
-    @JsonManagedReference
-    private Set<Station> stations;
+	@Transient
+	private final Map<Station, Set<Station>> adjacencyMap = new HashMap<>();
+	@Transient
+	private final Map<Station, NetworkUtilities.MinimalDistanceTree> minimalDistanceTree = new HashMap<>();
+	@OneToMany(mappedBy = "network")
+	@JsonManagedReference
+	private Set<Station> stations;
+	@Transient
+	private boolean isInitialized;
 
-    @Transient
-    private boolean isInitialized;
+	private Network(Set<Station> stations) {
+		this.stations = stations;
+	}
 
-    @Transient
-    private final Map<Station, Set<Station>> adjacencyMap = new HashMap<>();
+	/**
+	 * Returns a new initialized network, that is, a network with a minimal distance tree for each station.
+	 *
+	 * @return A new network ready to be used for path finding.
+	 */
+	public static Network fromStations(Set<Station> stations) {
+		Network network = new Network(stations);
+		stations.forEach(s -> s.setNetwork(network)); // wired up for correct jpa insertion
 
-    @Transient
-    private final Map<Station, NetworkUtilities.MinimalDistanceTree> minimalDistanceTree = new HashMap<>();
+		network.initialize();
 
-    private Network(Set<Station> stations) {
-        this.stations = stations;
-    }
+		return network;
+	}
 
-    /**
-     * Returns a new initialized network, that is, a network with a minimal distance tree for each station.
-     *
-     * @return A new network ready to be used for path finding.
-     */
-    public static Network fromStations(Set<Station> stations) {
-        Network network = new Network(stations);
-        stations.forEach(s -> s.setNetwork(network)); // wired up for correct jpa insertion
+	/**
+	 * Initializes this network for use, that is, creating a minimal distance tree for each station of this network.
+	 * The algorithm used for finding the shortest paths is an implementation of Dijkstra's Algorithm.
+	 */
+	private void initialize() {
+		if(this.isInitialized)
+			return;
 
-        network.initialize();
+		// map all adjacent stations
+		for(Station station : this.stations) {
+			this.adjacencyMap.put(station, station.getDestinationConnections()
+					.stream()
+					.map(Connection::getDestinationStation)
+					.collect(Collectors.toSet())
+			);
+		}
 
-        return network;
-    }
+		// create the minimal spanning trees for each station
+		for(Station station : this.stations) {
+			this.minimalDistanceTree.put(station, NetworkUtilities.dijkstra(station, this.adjacencyMap));
+		}
 
-    /**
-     * Initializes this network for use, that is, creating a minimal distance tree for each station of this network.
-     * The algorithm used for finding the shortest paths is an implementation of Dijkstra's Algorithm.
-     */
-    private void initialize() {
-        if (this.isInitialized)
-            return;
+		this.isInitialized = true;
+	}
 
-        // map all adjacent stations
-        for (Station station : this.stations) {
-            this.adjacencyMap.put(station, station.getDestinationConnections()
-                    .stream()
-                    .map(Connection::getDestinationStation)
-                    .collect(Collectors.toSet())
-            );
-        }
+	public Stream<Line> getLines() {
+		return this.stations.stream()
+				.map(Station::getLineEntries)
+				.flatMap(Set::stream)
+				.map(LineEntry::getLine)
+				.distinct();
+	}
 
-        // create the minimal spanning trees for each station
-        for (Station station : this.stations) {
-            this.minimalDistanceTree.put(station, NetworkUtilities.dijkstra(station, this.adjacencyMap));
-        }
+	/**
+	 * Returns an ordered list of stations with the shortest path (measured by distance, not hops) from the start to the
+	 * destination station.
+	 *
+	 * @return The shortest path between 2 stations.
+	 */
+	public List<Station> getPathTo(Station start, Station destination) {
+		if(!this.adjacencyMap.containsKey(start))
+			throw new IllegalArgumentException("The destination was not part of this network.");
 
-        this.isInitialized = true;
-    }
+		if(!this.adjacencyMap.containsKey(destination))
+			throw new IllegalArgumentException("The destination was not part of this network.");
 
-    public Stream<Line> getLines() {
-        return this.stations.stream()
-                .map(Station::getLineEntries)
-                .flatMap(Set::stream)
-                .map(LineEntry::getLine)
-                .distinct();
-    }
+		if(!this.isInitialized)
+			throw new IllegalStateException("This network was not initialized.");
 
-    /**
-     * Returns an ordered list of stations with the shortest path (measured by distance, not hops) from the start to the
-     * destination station.
-     *
-     * @return The shortest path between 2 stations.
-     */
-    public List<Station> getPathTo(Station start, Station destination) {
-        if (!this.adjacencyMap.containsKey(start))
-            throw new IllegalArgumentException("The destination was not part of this network.");
+		return this.minimalDistanceTree.get(start).getPathTo(destination);
+	}
 
-        if (!this.adjacencyMap.containsKey(destination))
-            throw new IllegalArgumentException("The destination was not part of this network.");
+	/**
+	 * Gets the total distance in meters from the start station to the destination station.
+	 *
+	 * @return The distance in meters.
+	 */
+	public int getDistance(Station start, Station destination) {
+		if(!this.adjacencyMap.containsKey(start))
+			throw new IllegalArgumentException("The destination was not part of this network.");
 
-        if (!this.isInitialized)
-            throw new IllegalStateException("This network was not initialized.");
+		if(!this.adjacencyMap.containsKey(destination))
+			throw new IllegalArgumentException("The destination was not part of this network.");
 
-        return this.minimalDistanceTree.get(start).getPathTo(destination);
-    }
+		if(!isInitialized)
+			throw new IllegalStateException("This network was not initialized.");
 
-    /**
-     * Gets the total distance in meters from the start station to the destination station.
-     *
-     * @return The distance in meters.
-     */
-    public int getDistance(Station start, Station destination) {
-        if (!this.adjacencyMap.containsKey(start))
-            throw new IllegalArgumentException("The destination was not part of this network.");
+		return this.minimalDistanceTree.get(start).getDistanceTo(destination);
+	}
 
-        if (!this.adjacencyMap.containsKey(destination))
-            throw new IllegalArgumentException("The destination was not part of this network.");
+	/**
+	 * Returns the amount of connections between the start station and the destination station.
+	 *
+	 * @return The number of connections.
+	 */
+	public int getHops(Station start, Station destination) {
+		if(!this.adjacencyMap.containsKey(start))
+			throw new IllegalArgumentException("The destination was not part of this network.");
 
-        if (!isInitialized)
-            throw new IllegalStateException("This network was not initialized.");
+		if(!this.adjacencyMap.containsKey(destination))
+			throw new IllegalArgumentException("The destination was not part of this network.");
 
-        return this.minimalDistanceTree.get(start).getDistanceTo(destination);
-    }
+		if(!this.isInitialized)
+			throw new IllegalStateException("This network was not initialized.");
 
-    /**
-     * Returns the amount of connections between the start station and the destination station.
-     *
-     * @return The number of connections.
-     */
-    public int getHops(Station start, Station destination) {
-        if (!this.adjacencyMap.containsKey(start))
-            throw new IllegalArgumentException("The destination was not part of this network.");
-
-        if (!this.adjacencyMap.containsKey(destination))
-            throw new IllegalArgumentException("The destination was not part of this network.");
-
-        if (!this.isInitialized)
-            throw new IllegalStateException("This network was not initialized.");
-
-        return this.minimalDistanceTree.get(start).getHopsTo(destination);
-    }
+		return this.minimalDistanceTree.get(start).getHopsTo(destination);
+	}
 
 
-    /**
-     * Returns the previous station in the minimal path form the start station to the destination station, that is, the
-     * station that comes before the destination station.
-     *
-     * @return The second to last station in the minimal path.
-     */
-    public Station getPrevious(Station start, Station destination) {
-        if (!this.adjacencyMap.containsKey(start))
-            throw new IllegalArgumentException("The destination was not part of this network.");
+	/**
+	 * Returns the previous station in the minimal path form the start station to the destination station, that is, the
+	 * station that comes before the destination station.
+	 *
+	 * @return The second to last station in the minimal path.
+	 */
+	public Station getPrevious(Station start, Station destination) {
+		if(!this.adjacencyMap.containsKey(start))
+			throw new IllegalArgumentException("The destination was not part of this network.");
 
-        if (!this.adjacencyMap.containsKey(destination))
-            throw new IllegalArgumentException("The destination was not part of this network.");
+		if(!this.adjacencyMap.containsKey(destination))
+			throw new IllegalArgumentException("The destination was not part of this network.");
 
-        return this.minimalDistanceTree.get(start).getPreviousOf(destination);
-    }
+		return this.minimalDistanceTree.get(start).getPreviousOf(destination);
+	}
 }

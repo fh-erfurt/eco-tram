@@ -4,9 +4,9 @@ import lombok.Getter;
 
 @Getter
 public final class ErrorResponseException extends Exception {
-    private final ErrorResponse errorResponse;
+	private final ErrorResponse errorResponse;
 
-    public ErrorResponseException(String identifier, String message) {
-        this.errorResponse = new ErrorResponse(identifier, message);
-    }
+	public ErrorResponseException(String identifier, String message) {
+		this.errorResponse = new ErrorResponse(identifier, message);
+	}
 }

@@ -12,42 +12,50 @@ import org.springframework.stereotype.Controller;
 
 import java.util.List;
 
+/**
+ * Controller for handlin socket connections for simulations
+ */
 @Controller
 public class SocketController {
-    @Autowired
-    private SimulationHandler simulationHandler;
 
-    @MessageMapping("/simulation/start")
-    public void simulationStart() {
-        simulationHandler.startSimulation();
-    }
+	private final SimulationHandler simulationHandler;
 
-    @MessageMapping("/simulation/stop")
-    public void simulationStop() {
-        simulationHandler.stopSimulation();
-    }
+	@Autowired
+	public SocketController(SimulationHandler simulationHandler) {
+		this.simulationHandler = simulationHandler;
+	}
 
-    @MessageMapping("/simulation/status")
-    @SendToUser("/simulation/status")
-    public SocketStatus simulationStatus() {
-        return this.simulationHandler.getStatus();
-    }
+	@MessageMapping("/simulation/start")
+	public void simulationStart() {
+		simulationHandler.startSimulation();
+	}
 
-    @MessageMapping("/simulation/stations")
-    @SendToUser("/simulation/stations")
-    public List<SocketStation> simulationStations() {
-        return this.simulationHandler.getStationsFromSimulation();
-    }
+	@MessageMapping("/simulation/stop")
+	public void simulationStop() {
+		simulationHandler.stopSimulation();
+	}
 
-    @MessageMapping("/simulation/lines")
-    @SendToUser("/simulation/lines")
-    public List<SocketLine> simulationLines() {
-        return this.simulationHandler.getLinesFromSimulation();
-    }
+	@MessageMapping("/simulation/status")
+	@SendToUser("/simulation/status")
+	public SocketStatus simulationStatus() {
+		return this.simulationHandler.getStatus();
+	}
 
-    @MessageMapping("/simulation/line-schedules")
-    @SendToUser("/simulation/line-schedules")
-    public List<SocketLineSchedule> simulationLineSchedules() {
-        return this.simulationHandler.getLinesSchedulesFromSimulation();
-    }
+	@MessageMapping("/simulation/stations")
+	@SendToUser("/simulation/stations")
+	public List<SocketStation> simulationStations() {
+		return this.simulationHandler.getStationsFromSimulation();
+	}
+
+	@MessageMapping("/simulation/lines")
+	@SendToUser("/simulation/lines")
+	public List<SocketLine> simulationLines() {
+		return this.simulationHandler.getLinesFromSimulation();
+	}
+
+	@MessageMapping("/simulation/line-schedules")
+	@SendToUser("/simulation/line-schedules")
+	public List<SocketLineSchedule> simulationLineSchedules() {
+		return this.simulationHandler.getLinesSchedulesFromSimulation();
+	}
 }

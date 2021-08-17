@@ -1,7 +1,6 @@
 package de.ecotram.backend.controller;
 
 import de.ecotram.backend.entity.Line;
-import de.ecotram.backend.entity.PassengerTram;
 import de.ecotram.backend.entity.network.Connection;
 import de.ecotram.backend.entity.network.Station;
 import de.ecotram.backend.repository.ConnectionRepository;
@@ -23,144 +22,110 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @SpringBootTest(properties = "spring.profiles.active = test", webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class StatisticsControllerTests {
-    private final Connection connection1 = new Connection();
-    private final Connection connection2 = new Connection();
-    private final Line line1 = new Line();
-    private final Line line2 = new Line();
-    private final Line line3 = new Line();
-    private final PassengerTram passengerTram1 = new PassengerTram();
-    private final PassengerTram passengerTram2 = new PassengerTram();
-    private final PassengerTram passengerTram3 = new PassengerTram();
-    private final PassengerTram passengerTram4 = new PassengerTram();
-    private final Station station1 = new Station();
-    private final Station station2 = new Station();
-    private final Station station3 = new Station();
-    private final Station station4 = new Station();
-    private final Station station5 = new Station();
+	private final Connection connection1 = new Connection();
+	private final Connection connection2 = new Connection();
+	private final Line line1 = new Line();
+	private final Line line2 = new Line();
+	private final Line line3 = new Line();
+	private final Station station1 = new Station();
+	private final Station station2 = new Station();
+	private final Station station3 = new Station();
+	private final Station station4 = new Station();
 
-    @LocalServerPort
-    private int port;
+	@LocalServerPort
+	private int port;
 
-    @Autowired
-    private TestRestTemplate restTemplate;
+	@Autowired
+	private TestRestTemplate restTemplate;
 
-    @Autowired
-    private ConnectionRepository connectionRepository;
+	@Autowired
+	private ConnectionRepository connectionRepository;
 
-    @Autowired
-    private LineRepository lineRepository;
+	@Autowired
+	private LineRepository lineRepository;
 
-    @Autowired
-    private PassengerTramRepository passengerTramRepository;
+	@Autowired
+	private PassengerTramRepository passengerTramRepository;
 
-    @Autowired
-    private StationRepository stationRepository;
+	@Autowired
+	private StationRepository stationRepository;
 
-    private String getHostnameWithPort() {
-        return "http://localhost:" + port;
-    }
+	private String getHostnameWithPort() {
+		return "http://localhost:" + port;
+	}
 
-    @Test
-    public void testStatisticsConnections() throws JSONException {
-        connectionRepository.save(connection1);
-        connectionRepository.save(connection2);
+	@Test
+	public void statistics_connections() throws JSONException {
+		connectionRepository.save(connection1);
+		connectionRepository.save(connection2);
 
-        String response = restTemplate.getForObject(getHostnameWithPort() + "/statistics/connections", String.class);
-        JSONObject jsonObject = new JSONObject(response);
+		String response = restTemplate.getForObject(getHostnameWithPort() + "/statistics/connections", String.class);
+		JSONObject jsonObject = new JSONObject(response);
 
-        assertTrue(jsonObject.has("type"));
-        assertTrue(jsonObject.has("results"));
+		assertTrue(jsonObject.has("type"), "response should have the entry type");
+		assertTrue(jsonObject.has("results"), "response should have the entry results");
 
-        assertEquals("connection", jsonObject.getString("type"));
-        assertEquals(2, jsonObject.getLong("results"));
-    }
+		assertEquals("connection", jsonObject.getString("type"), "response's entry type should have the value connection");
+		assertEquals(2, jsonObject.getLong("results"), "response's entry results should have 2 items");
+	}
 
-    @Test
-    public void testStatisticsLines() throws JSONException {
-        lineRepository.save(line1);
-        lineRepository.save(line2);
-        lineRepository.save(line3);
+	@Test
+	public void statistics_lines() throws JSONException {
+		lineRepository.save(line1);
+		lineRepository.save(line2);
+		lineRepository.save(line3);
 
-        String response = restTemplate.getForObject(getHostnameWithPort() + "/statistics/line", String.class);
-        JSONObject jsonObject = new JSONObject(response);
+		String response = restTemplate.getForObject(getHostnameWithPort() + "/statistics/line", String.class);
+		JSONObject jsonObject = new JSONObject(response);
 
-        assertTrue(jsonObject.has("type"));
-        assertTrue(jsonObject.has("results"));
+		assertTrue(jsonObject.has("type"), "response should have the entry type");
+		assertTrue(jsonObject.has("results"), "response should have the entry results");
 
-        assertEquals("line", jsonObject.getString("type"));
-        assertEquals(3, jsonObject.getLong("results"));
-    }
+		assertEquals("line", jsonObject.getString("type"), "response's entry type should have the value line");
+		assertEquals(3, jsonObject.getLong("results"), "response's entry results should have 3 items");
+	}
 
-    @Test
-    public void testStatisticsPassengerTrams() throws JSONException {
-        passengerTramRepository.save(passengerTram1);
-        passengerTramRepository.save(passengerTram2);
-        passengerTramRepository.save(passengerTram3);
-        passengerTramRepository.save(passengerTram4);
+	@Test
+	public void statistics_stations() throws JSONException {
+		stationRepository.save(station1);
+		stationRepository.save(station2);
+		stationRepository.save(station3);
+		stationRepository.save(station4);
 
-        String response = restTemplate.getForObject(
-                getHostnameWithPort() + "/statistics/passenger-tram",
-                String.class);
+		String response = restTemplate.getForObject(getHostnameWithPort() + "/statistics/station", String.class);
+		JSONObject jsonObject = new JSONObject(response);
 
-        JSONObject jsonObject = new JSONObject(response);
+		assertTrue(jsonObject.has("type"), "response should have the entry type");
+		assertTrue(jsonObject.has("results"), "response should have the entry results");
 
-        assertTrue(jsonObject.has("type"));
-        assertTrue(jsonObject.has("results"));
+		assertEquals("station", jsonObject.getString("type"), "response's entry type should have the value station");
+		assertEquals(4, jsonObject.getLong("results"), "response's entry results should have 4 items");
+	}
 
-        assertEquals("passengerTram", jsonObject.getString("type"));
-        assertEquals(4, jsonObject.getLong("results"));
-    }
+	@Test
+	public void statistics() throws JSONException {
+		connectionRepository.save(connection1);
+		connectionRepository.save(connection2);
 
-    @Test
-    public void testStatisticsStations() throws JSONException {
-        stationRepository.save(station1);
-        stationRepository.save(station2);
-        stationRepository.save(station3);
-        stationRepository.save(station4);
-        stationRepository.save(station5);
+		lineRepository.save(line1);
+		lineRepository.save(line2);
+		lineRepository.save(line3);
 
-        String response = restTemplate.getForObject(getHostnameWithPort() + "/statistics/station", String.class);
-        JSONObject jsonObject = new JSONObject(response);
+		stationRepository.save(station1);
+		stationRepository.save(station2);
+		stationRepository.save(station3);
+		stationRepository.save(station4);
 
-        assertTrue(jsonObject.has("type"));
-        assertTrue(jsonObject.has("results"));
+		String response = restTemplate.getForObject(getHostnameWithPort() + "/statistics", String.class);
+		JSONObject jsonObject = new JSONObject(response);
 
-        assertEquals("station", jsonObject.getString("type"));
-        assertEquals(5, jsonObject.getLong("results"));
-    }
+		assertTrue(jsonObject.has("connections"), "response should have entry connections");
+		assertTrue(jsonObject.has("lines"), "response should have entry lines");
+		assertTrue(jsonObject.has("stations"), "response should have entry stations");
 
-    @Test
-    public void testStatistics() throws JSONException {
-        connectionRepository.save(connection1);
-        connectionRepository.save(connection2);
-
-        lineRepository.save(line1);
-        lineRepository.save(line2);
-        lineRepository.save(line3);
-
-        passengerTramRepository.save(passengerTram1);
-        passengerTramRepository.save(passengerTram2);
-        passengerTramRepository.save(passengerTram3);
-        passengerTramRepository.save(passengerTram4);
-
-        stationRepository.save(station1);
-        stationRepository.save(station2);
-        stationRepository.save(station3);
-        stationRepository.save(station4);
-        stationRepository.save(station5);
-
-        String response = restTemplate.getForObject(getHostnameWithPort() + "/statistics", String.class);
-        JSONObject jsonObject = new JSONObject(response);
-
-        assertTrue(jsonObject.has("connections"));
-        assertTrue(jsonObject.has("lines"));
-        assertTrue(jsonObject.has("passengerTrams"));
-        assertTrue(jsonObject.has("stations"));
-
-        assertEquals(2, jsonObject.getJSONObject("connections").getLong("results"));
-        assertEquals(3, jsonObject.getJSONObject("lines").getLong("results"));
-        assertEquals(4, jsonObject.getJSONObject("passengerTrams").getLong("results"));
-        assertEquals(5, jsonObject.getJSONObject("stations").getLong("results"));
-    }
+		assertEquals(2, jsonObject.getJSONObject("connections").getLong("results"), "response's entry connections > results should have 2 items");
+		assertEquals(3, jsonObject.getJSONObject("lines").getLong("results"), "response's entry lines > results should have 3 items");
+		assertEquals(4, jsonObject.getJSONObject("stations").getLong("results"), "response's entry stations > results should have 4 items");
+	}
 
 }

@@ -21,24 +21,24 @@ import java.util.concurrent.atomic.AtomicReference;
 @Entity
 @NoArgsConstructor
 public final class Line extends EntityBase {
-    @Setter
-    private String name;
+	@Setter
+	private String name;
 
-    @OneToMany(mappedBy = "line")
-    @JsonManagedReference
-    private Set<LineEntry> route = new HashSet<>();
+	@OneToMany(mappedBy = "line")
+	@JsonManagedReference
+	private final Set<LineEntry> route = new HashSet<>();
 
-    @JsonIgnore
-    public int getTotalLength() {
-        AtomicInteger total = new AtomicInteger();
-        AtomicReference<Station> priorStation = new AtomicReference<>();
+	@JsonIgnore
+	public int getTotalLength() {
+		AtomicInteger total = new AtomicInteger();
+		AtomicReference<Station> priorStation = new AtomicReference<>();
 
-        this.route.forEach(le -> {
-            if (priorStation.get() != null)
-                le.getStation().getConnectionTo(priorStation.get()).ifPresent(c -> total.addAndGet(c.getLength()));
-            priorStation.set(le.getStation());
-        });
+		this.route.forEach(le -> {
+			if(priorStation.get() != null)
+				le.getStation().getConnectionTo(priorStation.get()).ifPresent(c -> total.addAndGet(c.getLength()));
+			priorStation.set(le.getStation());
+		});
 
-        return total.get();
-    }
+		return total.get();
+	}
 }

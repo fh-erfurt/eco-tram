@@ -1,7 +1,5 @@
-package de.ecotram.backend.entity;
+package de.ecotram.backend.entity.network;
 
-import de.ecotram.backend.entity.network.Connection;
-import de.ecotram.backend.entity.network.Station;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -11,7 +9,7 @@ public final class StationTests {
 
     @Test
     public void connects_uniDirectional() {
-        Connection connection = stationA.connectTo(stationB, c -> c);
+        Connection connection = stationA.connectTo(stationB);
 
         Assertions.assertTrue(stationA.getConnectionTo(stationB).isPresent(), "A connection from A to B should be present.");
         Assertions.assertTrue(stationB.getConnectionTo(stationA).isEmpty(), "A connection from B to A should not be present.");
@@ -21,7 +19,7 @@ public final class StationTests {
 
     @Test
     public void connects_multiDirectional() {
-        Connection.Pair connectionPair = stationA.connectToAndFrom(stationB, c -> c);
+        Connection.Pair connectionPair = stationA.connectToAndFrom(stationB);
 
         Assertions.assertTrue(stationA.getConnectionTo(stationB).isPresent(), "A connection from A to B should be present.");
         Assertions.assertTrue(stationB.getConnectionTo(stationA).isPresent(), "A connection from B to A should not be present.");

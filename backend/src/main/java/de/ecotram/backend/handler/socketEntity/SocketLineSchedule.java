@@ -1,7 +1,7 @@
 package de.ecotram.backend.handler.socketEntity;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import de.ecotram.backend.entity.PassengerTram;
+import de.ecotram.backend.entity.Tram;
 import de.ecotram.backend.simulation.LineSchedule;
 
 import java.util.HashSet;
@@ -23,7 +23,7 @@ public record SocketLineSchedule(SocketLine socketLine, Set<SocketLineScheduleEn
     @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
     public record SocketLineScheduleEntry(String hash, int startingTime, int startOrdering, int maxCount) {
 
-        public static SocketLineScheduleEntry fromEntryAndTram(PassengerTram tram, LineSchedule.Entry entry) {
+        public static SocketLineScheduleEntry fromEntryAndTram(Tram tram, LineSchedule.Entry entry) {
             return new SocketLineScheduleEntry(
                     Integer.toHexString(tram.hashCode()),
                     entry.startingTime(),

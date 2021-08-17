@@ -10,11 +10,11 @@ public final class EventTests {
         var emitter1 = new EventEmitter(1);
         var emitter2 = new EventEmitter(2);
 
-        emitter1.getEvent().add(args ->
+        emitter1.onEvent().add(args ->
                 Assert.isEqual(1, args.id, "Id should be equal to 1.")
         );
 
-        emitter2.getEvent().add(args ->
+        emitter2.onEvent().add(args ->
                 Assert.isEqual(2, args.id, "Id should be equal to 2.")
         );
 
@@ -22,11 +22,11 @@ public final class EventTests {
         emitter2.invoke();
     }
 
-    private final class EventEmitter {
+    private static final class EventEmitter {
         private final Event<TestEventArgs> event = new Event<>();
         private final int id;
 
-        public Event<TestEventArgs>.Accessor getEvent() {
+        public Event<TestEventArgs>.Accessor onEvent() {
             return event.getAccess();
         }
 

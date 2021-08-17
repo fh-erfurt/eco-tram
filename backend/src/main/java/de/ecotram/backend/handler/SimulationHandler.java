@@ -2,7 +2,7 @@ package de.ecotram.backend.handler;
 
 import de.ecotram.backend.entity.Line;
 import de.ecotram.backend.entity.LineEntry;
-import de.ecotram.backend.entity.PassengerTram;
+import de.ecotram.backend.entity.Tram;
 import de.ecotram.backend.entity.network.Connection;
 import de.ecotram.backend.entity.network.Network;
 import de.ecotram.backend.handler.socketEntity.*;
@@ -127,7 +127,7 @@ public class SimulationHandler {
         messagingTemplate.convertAndSend("/simulation/events/status", getStatus());
     }
 
-    private SocketPassengerTram getSocketPassengerTram(PassengerTram tram, Connection connection) {
+    private SocketPassengerTram getSocketPassengerTram(Tram tram, Connection connection) {
         var sourceStation = connection.getSourceStation();
         var destinationStation = connection.getDestinationStation();
 

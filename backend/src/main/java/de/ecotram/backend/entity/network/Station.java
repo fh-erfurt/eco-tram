@@ -65,6 +65,15 @@ public final class Station extends EntityBase {
     }
 
     /**
+     * Creates a default connection from this station to the given destination and sets up all internal references.
+     *
+     * @return The connection that was created.
+     */
+    public Connection connectTo(Station destination) {
+        return this.connectTo(destination, c -> c);
+    }
+
+    /**
      * Creates a connection from this station to the given destination and sets up all internal references.
      *
      * @param modifyBuilder a function to set properties of the connection that is created.
@@ -82,7 +91,18 @@ public final class Station extends EntityBase {
     }
 
     /**
-     * Creates a connection from this station to the given destination and back and sets up all internal references.
+     * Creates a default connection from this station to the given destination and back and sets up all internal
+     * references.
+     *
+     * @return The connection that was created.
+     */
+    public Connection.Pair connectToAndFrom(Station destination) {
+        return this.connectToAndFrom(destination, c -> c, c -> c);
+    }
+
+    /**
+     * Creates a pair of connections from this station to the given destination and back and sets up all internal
+     * references.
      *
      * @param modifyBuilder a function to set properties of the connections that is created.
      * @return The pair of connections that was created.

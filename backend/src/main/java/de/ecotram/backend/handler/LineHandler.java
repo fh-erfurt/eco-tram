@@ -53,7 +53,7 @@ public final class LineHandler {
             if (optionalStation.isPresent()) {
                 addedStations.add(optionalStation.get());
                 if (priorStation.get() != null)
-                    addedConnections.add(priorStation.get().connectTo(optionalStation.get(), c -> c));
+                    addedConnections.add(priorStation.get().connectTo(optionalStation.get()));
                 priorStation.set(optionalStation.get());
             }
         });

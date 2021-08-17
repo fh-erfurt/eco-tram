@@ -14,7 +14,7 @@ import java.util.List;
  */
 @Getter
 @Entity
-public final class PassengerTram extends EntityBase {
+public final class Tram extends EntityBase {
     public static final int DEFAULT_WEIGHT = 5000; // in kilogram
     public static final int DEFAULT_MAX_SPEED = 50; // in kilometers per hour
     public static final int DEFAULT_SPEED = 50; // in kilometers per hour
@@ -51,18 +51,18 @@ public final class PassengerTram extends EntityBase {
     @Transient
     private final List<LineEntry> route;
 
-    public PassengerTram() {
+    public Tram() {
         this.route = null;
     }
 
-    public PassengerTram(List<LineEntry> route) {
+    public Tram(List<LineEntry> route) {
         this.route = route;
     }
 
     /**
      * Advances the tram along it's route in the simulation.
      *
-     * @return The connection the tram moved to.
+     * @return The connection the tram moved across.
      */
     public Connection nextStation() {
         if (route == null)

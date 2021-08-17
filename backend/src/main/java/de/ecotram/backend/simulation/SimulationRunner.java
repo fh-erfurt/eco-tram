@@ -1,7 +1,7 @@
 package de.ecotram.backend.simulation;
 
 import de.ecotram.backend.entity.Line;
-import de.ecotram.backend.entity.PassengerTram;
+import de.ecotram.backend.entity.Tram;
 import de.ecotram.backend.entity.network.Connection;
 import de.ecotram.backend.entity.network.Network;
 import de.ecotram.backend.simulation.event.*;
@@ -175,7 +175,7 @@ public final class SimulationRunner {
         public void run() {
             synchronized (this.runner) {
                 for (Map.Entry<Line, LineSchedule> lineSchedule : this.runner.schedule.getLineSchedules().entrySet()) {
-                    for (Map.Entry<PassengerTram, LineSchedule.Entry> entry : lineSchedule.getValue().getTrams().entrySet()) {
+                    for (Map.Entry<Tram, LineSchedule.Entry> entry : lineSchedule.getValue().getTrams().entrySet()) {
                         this.runner.taskQueue.add(new OrderedTask(
                                 entry.getValue().startingTime(),
                                 this.runner.timerInterval,

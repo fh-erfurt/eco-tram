@@ -1,6 +1,6 @@
 package de.ecotram.backend.handler;
 
-import de.ecotram.backend.entity.Tram;
+import de.ecotram.backend.entity.PassengerTram;
 import de.ecotram.backend.repository.PassengerTramRepository;
 import de.ecotram.backend.utilities.ErrorResponseException;
 import de.ecotram.backend.utilities.ValidationUtilities;
@@ -28,20 +28,20 @@ public final class PassengerTramHandler {
             throw new ErrorResponseException("invalid-current-passengers", "currentPassengers is invalid");
     }
 
-    public Tram createPassengerTramFromRequest(PassengerTramBody passengerTramBody) throws ErrorResponseException {
+    public PassengerTram createPassengerTramFromRequest(PassengerTramBody passengerTramBody) throws ErrorResponseException {
         validatePassengerTramBody(passengerTramBody);
-        Tram tram = passengerTramBody.applyToPassengerTram();
-        passengerTramRepository.save(tram);
+        PassengerTram passengerTram = passengerTramBody.applyToPassengerTram();
+        passengerTramRepository.save(passengerTram);
 
-        return tram;
+        return passengerTram;
     }
 
-    public Tram updatePassengerTramFromRequest(Tram tram, PassengerTramBody passengerTramBody) throws ErrorResponseException {
+    public PassengerTram updatePassengerTramFromRequest(PassengerTram passengerTram, PassengerTramBody passengerTramBody) throws ErrorResponseException {
         validatePassengerTramBody(passengerTramBody);
-        Tram updatedTram = passengerTramBody.applyToPassengerTram(tram);
-        passengerTramRepository.save(updatedTram);
+        PassengerTram updatedPassengerTram = passengerTramBody.applyToPassengerTram(passengerTram);
+        passengerTramRepository.save(updatedPassengerTram);
 
-        return updatedTram;
+        return updatedPassengerTram;
     }
 
     public static class PassengerTramBody {
@@ -59,17 +59,17 @@ public final class PassengerTramHandler {
         @Getter
         private int currentPassengers;
 
-        public Tram applyToPassengerTram(Tram tram) {
-            tram.setSpeed(speed);
-            tram.setWeight(weight);
-            tram.setMaxPassengers(maxPassengers);
-            tram.setCurrentPassengers(currentPassengers);
+        public PassengerTram applyToPassengerTram(PassengerTram passengerTram) {
+            passengerTram.setSpeed(speed);
+            passengerTram.setWeight(weight);
+            passengerTram.setMaxPassengers(maxPassengers);
+            passengerTram.setCurrentPassengers(currentPassengers);
 
-            return tram;
+            return passengerTram;
         }
 
-        public Tram applyToPassengerTram() {
-            return applyToPassengerTram(new Tram());
+        public PassengerTram applyToPassengerTram() {
+            return applyToPassengerTram(new PassengerTram());
         }
     }
 }

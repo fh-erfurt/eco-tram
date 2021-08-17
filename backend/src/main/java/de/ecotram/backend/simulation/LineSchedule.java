@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.ecotram.backend.entity.Line;
 import de.ecotram.backend.entity.LineEntry;
-import de.ecotram.backend.entity.Tram;
+import de.ecotram.backend.entity.PassengerTram;
 import lombok.Getter;
 
 import java.util.*;
@@ -17,14 +17,14 @@ public final class LineSchedule {
     private final Line line;
 
     @Getter
-    private final Map<Tram, Entry> trams = new HashMap<>();
+    private final Map<PassengerTram, Entry> trams = new HashMap<>();
 
     private LineSchedule(Line line) {
         this.line = line;
     }
 
-    public Optional<Entry> getEntry(Tram tram) {
-        return Optional.ofNullable(this.trams.get(tram));
+    public Optional<Entry> getEntry(PassengerTram passengerTram) {
+        return Optional.ofNullable(this.trams.get(passengerTram));
     }
 
     public static LineSchedule fromWaitingTime(Line line, int waitingTime) {
@@ -34,7 +34,7 @@ public final class LineSchedule {
         // ----------------------------- == minNumberOfTrams
         // speed * (maxWaitingTime / 60) // s => h
         // simplified to reduce to one division
-        int minimumNumberOfTrams = (int) (((float) line.getTotalLength() * 60) / (Tram.DEFAULT_MAX_SPEED * waitingTime * 1000));
+        int minimumNumberOfTrams = (int) (((float) line.getTotalLength() * 60) / (PassengerTram.DEFAULT_MAX_SPEED * waitingTime * 1000));
 
         minimumNumberOfTrams = 10;
 
@@ -45,8 +45,8 @@ public final class LineSchedule {
         LineSchedule schedule = new LineSchedule(line);
 
         for (int i = 1; i < minimumNumberOfTrams + 1; i++) {
-            Tram tram = new Tram(route);
-            schedule.trams.put(tram, new Entry(i * waitingTime, 0, -1, tram, line));
+            PassengerTram passengerTram = new PassengerTram(route);
+            schedule.trams.put(passengerTram, new Entry(i * waitingTime, 0, -1, passengerTram, line));
         }
 
         return schedule;
@@ -57,7 +57,7 @@ public final class LineSchedule {
             int startingTime,
             int startOrdering,
             int maxCount,
-            @JsonIgnore Tram tram,
+            @JsonIgnore PassengerTram passengerTram,
             @JsonIgnore Line line) {
     }
 }

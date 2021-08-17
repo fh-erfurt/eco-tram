@@ -4,8 +4,8 @@
 
 ### Program Description
 
-* data model and base business logic for a tram management system
-* uses event-based communication between single entities of the tram network, eg: Tram, Station, TrafficManager, etc.
+* data model and base business logic for a passengerTram management system
+* uses event-based communication between single entities of the passengerTram network, eg: Tram, Station, TrafficManager, etc.
 * integrated simulation for existing lines with passenger trams passing by each station 
 * Open API with CRUD-Functionality (Create, Read, Update, Delete)
 * Frontend Dashboard for managing all models and simulation
@@ -36,7 +36,7 @@
 * install mysql 8.0
 * run mysql
 * create test user
-* clone repo (`git clone https://github.com/fh-erfurt/eco-tram.git`)
+* clone repo (`git clone https://github.com/fh-erfurt/eco-passengerTram.git`)
 * import test db (`TODO`)
 * build and run with Maven
 

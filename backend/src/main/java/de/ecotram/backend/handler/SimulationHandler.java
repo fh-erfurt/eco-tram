@@ -2,7 +2,7 @@ package de.ecotram.backend.handler;
 
 import de.ecotram.backend.entity.Line;
 import de.ecotram.backend.entity.LineEntry;
-import de.ecotram.backend.entity.Tram;
+import de.ecotram.backend.entity.PassengerTram;
 import de.ecotram.backend.entity.network.Connection;
 import de.ecotram.backend.entity.network.Network;
 import de.ecotram.backend.handler.socketEntity.*;
@@ -108,11 +108,11 @@ public class SimulationHandler {
     }
 
     private void onTramStarted(TramStartedArgs consumer) {
-        messagingTemplate.convertAndSend("/simulation/events/tram-start", getSocketPassengerTram(consumer.tram, consumer.connection));
+        messagingTemplate.convertAndSend("/simulation/events/tram-start", getSocketPassengerTram(consumer.passengerTram, consumer.connection));
     }
 
     private void onTramStopped(TramStoppedArgs consumer) {
-        messagingTemplate.convertAndSend("/simulation/events/tram-stop", getSocketPassengerTram(consumer.tram, consumer.connection));
+        messagingTemplate.convertAndSend("/simulation/events/tram-stop", getSocketPassengerTram(consumer.passengerTram, consumer.connection));
     }
 
     private void onRunnerStarted(RunnerStartedArgs args) {
@@ -127,13 +127,13 @@ public class SimulationHandler {
         messagingTemplate.convertAndSend("/simulation/events/status", getStatus());
     }
 
-    private SocketPassengerTram getSocketPassengerTram(Tram tram, Connection connection) {
+    private SocketPassengerTram getSocketPassengerTram(PassengerTram passengerTram, Connection connection) {
         var sourceStation = connection.getSourceStation();
         var destinationStation = connection.getDestinationStation();
 
         return new SocketPassengerTram(
-                Integer.toHexString(tram.hashCode()),
-                tram.getCurrentIndex(),
+                Integer.toHexString(passengerTram.hashCode()),
+                passengerTram.getCurrentIndex(),
                 new SocketStation(Integer.toHexString(sourceStation.hashCode()), sourceStation.getName()),
                 new SocketStation(Integer.toHexString(destinationStation.hashCode()), destinationStation.getName())
         );

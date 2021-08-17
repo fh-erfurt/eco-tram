@@ -1,7 +1,7 @@
 package de.ecotram.backend.simulation;
 
 import de.ecotram.backend.entity.Line;
-import de.ecotram.backend.entity.Tram;
+import de.ecotram.backend.entity.PassengerTram;
 import de.ecotram.backend.entity.network.Connection;
 import de.ecotram.backend.entity.network.Network;
 import de.ecotram.backend.simulation.event.*;
@@ -116,7 +116,7 @@ public final class SimulationRunner {
 
         public Optional<OrderedTask> getNextDispatch(ProgressReporter progressReporter) {
             progressReporter.getRunner().eventExecutor.execute(() -> progressReporter.getTramStopped()
-                    .invoke(TramStoppedArgs.builder().tram(this.entry.tram()).connection(connection).build()));
+                    .invoke(TramStoppedArgs.builder().passengerTram(this.entry.passengerTram()).connection(connection).build()));
 
             Optional<OrderedTask> output = this.currentCount >= this.entry.maxCount()
                     ? Optional.of(new OrderedTask(
@@ -124,11 +124,11 @@ public final class SimulationRunner {
                     this.tickInterval,
                     this.currentCount + 1,
                     this.entry,
-                    this.entry.tram().nextStation()))
+                    this.entry.passengerTram().nextStation()))
                     : Optional.empty();
 
             output.ifPresent(orderedTask -> progressReporter.getRunner().eventExecutor.execute(() -> progressReporter.getTramStarted()
-                    .invoke(TramStartedArgs.builder().tram(this.entry.tram()).connection(orderedTask.connection).build())));
+                    .invoke(TramStartedArgs.builder().passengerTram(this.entry.passengerTram()).connection(orderedTask.connection).build())));
 
             return output;
         }
@@ -175,13 +175,13 @@ public final class SimulationRunner {
         public void run() {
             synchronized (this.runner) {
                 for (Map.Entry<Line, LineSchedule> lineSchedule : this.runner.schedule.getLineSchedules().entrySet()) {
-                    for (Map.Entry<Tram, LineSchedule.Entry> entry : lineSchedule.getValue().getTrams().entrySet()) {
+                    for (Map.Entry<PassengerTram, LineSchedule.Entry> entry : lineSchedule.getValue().getTrams().entrySet()) {
                         this.runner.taskQueue.add(new OrderedTask(
                                 entry.getValue().startingTime(),
                                 this.runner.timerInterval,
                                 entry.getValue().maxCount(),
                                 entry.getValue(),
-                                entry.getValue().tram().nextStation())
+                                entry.getValue().passengerTram().nextStation())
                         );
                     }
                 }

@@ -1,7 +1,7 @@
 package de.ecotram.backend.controller;
 
 import de.ecotram.backend.entity.Line;
-import de.ecotram.backend.entity.Tram;
+import de.ecotram.backend.entity.PassengerTram;
 import de.ecotram.backend.entity.network.Connection;
 import de.ecotram.backend.entity.network.Station;
 import de.ecotram.backend.repository.ConnectionRepository;
@@ -28,10 +28,10 @@ public class StatisticsControllerTests {
     private final Line line1 = new Line();
     private final Line line2 = new Line();
     private final Line line3 = new Line();
-    private final Tram tram1 = new Tram();
-    private final Tram tram2 = new Tram();
-    private final Tram tram3 = new Tram();
-    private final Tram tram4 = new Tram();
+    private final PassengerTram passengerTram1 = new PassengerTram();
+    private final PassengerTram passengerTram2 = new PassengerTram();
+    private final PassengerTram passengerTram3 = new PassengerTram();
+    private final PassengerTram passengerTram4 = new PassengerTram();
     private final Station station1 = new Station();
     private final Station station2 = new Station();
     private final Station station3 = new Station();
@@ -93,10 +93,10 @@ public class StatisticsControllerTests {
 
     @Test
     public void testStatisticsPassengerTrams() throws JSONException {
-        passengerTramRepository.save(tram1);
-        passengerTramRepository.save(tram2);
-        passengerTramRepository.save(tram3);
-        passengerTramRepository.save(tram4);
+        passengerTramRepository.save(passengerTram1);
+        passengerTramRepository.save(passengerTram2);
+        passengerTramRepository.save(passengerTram3);
+        passengerTramRepository.save(passengerTram4);
 
         String response = restTemplate.getForObject(
                 getHostnameWithPort() + "/statistics/passenger-tram",
@@ -138,10 +138,10 @@ public class StatisticsControllerTests {
         lineRepository.save(line2);
         lineRepository.save(line3);
 
-        passengerTramRepository.save(tram1);
-        passengerTramRepository.save(tram2);
-        passengerTramRepository.save(tram3);
-        passengerTramRepository.save(tram4);
+        passengerTramRepository.save(passengerTram1);
+        passengerTramRepository.save(passengerTram2);
+        passengerTramRepository.save(passengerTram3);
+        passengerTramRepository.save(passengerTram4);
 
         stationRepository.save(station1);
         stationRepository.save(station2);

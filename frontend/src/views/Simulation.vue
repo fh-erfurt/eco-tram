@@ -25,12 +25,12 @@
           <div class="name">
             <b>Straßenbahn {{ entry.hash }}</b>
             <span>
-              Position: {{ entry.tram ? entry.tram.sourceStation.name : '-' }}
-              <br>Ziel: {{ entry.tram ? entry.tram.destinationStation.name : '-' }}
+              Position: {{ entry.passengerTram ? entry.passengerTram.sourceStation.name : '-' }}
+              <br>Ziel: {{ entry.passengerTram ? entry.passengerTram.destinationStation.name : '-' }}
             </span>
           </div>
           <div class="badges">
-            <span class="badge warning" v-if="!entry.tram">Wartet bis {{ entry.startingTime }} Ticks</span>
+            <span class="badge warning" v-if="!entry.passengerTram">Wartet bis {{ entry.startingTime }} Ticks</span>
           </div>
         </div>
       </div>
@@ -65,7 +65,7 @@ interface SocketLineScheduleEntry {
   startingTime: number
   startingOrder: number
   maxCount: number
-  tram?: SocketPassengerTram
+  passengerTram?: SocketPassengerTram
 }
 
 interface SocketLineSchedule {
@@ -96,7 +96,7 @@ export default class Simulation extends Vue {
       // });
       //
       //
-      // this.stompClient.subscribe("/simulation/events/tram-stop", (data: any) => {
+      // this.stompClient.subscribe("/simulation/events/passengerTram-stop", (data: any) => {
       //   console.log(data.body);
       // });
       //
@@ -106,7 +106,7 @@ export default class Simulation extends Vue {
       // })
       //
 
-      this.stompClient.subscribe("/simulation/events/tram-start", (data: any) => {
+      this.stompClient.subscribe("/simulation/events/passengerTram-start", (data: any) => {
         const body = JSON.parse(data.body);
         this.updateTram(body);
         // console.log(data.body);
@@ -153,15 +153,15 @@ export default class Simulation extends Vue {
     this.stompClient.send("/app/simulation/line-schedules", {});
   }
 
-  updateTram(tram: SocketPassengerTram) {
+  updateTram(passengerTram: SocketPassengerTram) {
     if(!this.lineSchedules) return;
 
     const lineSchedules = this.lineSchedules!;
 
     for(const lineSchedule of lineSchedules)
       for(const entry of lineSchedule.entries) {
-        if(entry.hash === tram.hash)
-          entry.tram = tram;
+        if(entry.hash === passengerTram.hash)
+          entry.passengerTram = passengerTram;
       }
 
     this.lineSchedules = [...lineSchedules];

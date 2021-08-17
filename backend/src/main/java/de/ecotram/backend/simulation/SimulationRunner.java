@@ -61,6 +61,7 @@ public final class SimulationRunner {
         return this.ticks;
     }
 
+    // TODO(erik): doc this
     public synchronized ProgressReporter start() {
         if (this.isRunning)
             throw new IllegalStateException("Cannot start runner that is currently running.");

@@ -7,6 +7,7 @@ import lombok.Data;
 
 import java.security.InvalidParameterException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 public final class NetworkUtilities {
@@ -22,7 +23,7 @@ public final class NetworkUtilities {
             throw new InvalidParameterException("The start station does not exist in this network.");
 
         // initialize
-        Station currentMinimum = start;
+        final AtomicReference<Station> currentMinimum = new AtomicReference<>(start);
         Set<Station> traversed = new HashSet<>(adjacencyMap.size());
         Set<Station> nodeQueue = new HashSet<>(adjacencyMap.size()) {{
             add(start);
@@ -35,50 +36,45 @@ public final class NetworkUtilities {
                 )
         );
 
-        distanceMap.get(currentMinimum).distance = 0;
+        distanceMap.get(currentMinimum.get()).distance = 0;
 
-        // avoid constant re-allocation of unchanging collection
-        Set<Map.Entry<Station, NetworkUtilities.DijkstraTuple>> distanceEntrySet = distanceMap.entrySet();
-
+        // loop until none is left in queue
         while (!nodeQueue.isEmpty()) {
-            // TODO(erik): get connected stations from current minimum directly to avoid loop
-            // compute distances and previous
-            for (Map.Entry<Station, NetworkUtilities.DijkstraTuple> entry : distanceEntrySet) {
-                Station key = entry.getKey();
-                NetworkUtilities.DijkstraTuple value = entry.getValue();
+            currentMinimum.get().getSourceConnections().stream()
+                    .map(Connection::getDestinationStation)
+                    .forEach(adjacentStation -> {
+                        DijkstraTuple value = distanceMap.get(adjacentStation);
+                        Connection minimumToCurrent = currentMinimum.get()
+                                .getConnectionTo(adjacentStation)
+                                .orElseThrow();
 
-                // get distance min -> entry
-                Optional<Connection> minimumToCurrent = currentMinimum.getConnectionTo(key);
-                if (minimumToCurrent.isPresent()) {
-                    // distance from start to current
-                    int distance = currentMinimum == start
-                            ? minimumToCurrent.get().getLength()
-                            : distanceMap.get(currentMinimum).distance + minimumToCurrent.get().getLength();
+                        // get minimal distance
+                        int distance = currentMinimum.get() == start
+                                ? minimumToCurrent.getLength()
+                                : distanceMap.get(currentMinimum.get()).distance + minimumToCurrent.getLength();
 
-                    // if smaller assign as new previous etc
-                    if (value.distance > distance) {
-                        value.distance = distance;
-                        value.previous = currentMinimum;
-                        value.hops = key == start ? 0
-                                : currentMinimum == start ? 1 // is this necessary?
-                                : distanceMap.get(currentMinimum).hops + 1;
+                        // if smaller assign as new previous etc
+                        if (value.distance > distance) {
+                            value.distance = distance;
+                            value.previous = currentMinimum.get();
+                            value.hops = adjacentStation == start ? 0 : distanceMap.get(currentMinimum.get()).hops + 1;
 
-                        // add to queue
-                        if (!traversed.contains(key))
-                            nodeQueue.add(key);
-                    }
-                }
-            }
+                            // add to queue
+                            if (!traversed.contains(adjacentStation))
+                                nodeQueue.add(adjacentStation);
+                        }
+                    });
 
             // find new minimum
-            currentMinimum = nodeQueue
+            currentMinimum.set(nodeQueue
                     .stream()
                     .min(Comparator.comparingInt(entry -> distanceMap.get(entry).distance))
-                    .orElseThrow();
+                    .orElseThrow()
+            );
 
-            // mark traversed
-            traversed.add(currentMinimum);
-            nodeQueue.remove(currentMinimum);
+            // mark as traversed
+            traversed.add(currentMinimum.get());
+            nodeQueue.remove(currentMinimum.get());
         }
 
         return new MinimalDistanceTree(start, distanceMap);

@@ -32,7 +32,7 @@ public final class LineSchedule {
 
 		for(int i = 0; i < tramCount; i++) {
 			PassengerTram passengerTram = new PassengerTram(route);
-			schedule.trams.put(passengerTram, new Entry(i * waitingTime, 0, -1, passengerTram, line));
+			schedule.trams.put(passengerTram, new Entry(i * waitingTime, i, -1, passengerTram, line));
 		}
 
 		return schedule;

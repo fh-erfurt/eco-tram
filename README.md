@@ -41,7 +41,7 @@
 * run mysql
 * create test user
 * clone repo (`git clone https://github.com/fh-erfurt/eco-passengerTram.git`)
-* import test db (`TODO`)
+* import test db (`database.sql`)
 * build and run with Maven
 
 #### Installation Frontend
@@ -57,11 +57,18 @@
 Backend-Server and API: `Port 8080`  
 Frontend-Server and Dashboard: `Port 8081`
 
+---
 ### Troubleshooting
 
-Question: I cannot see any statistics and other data in the frontend
+*Question*: I cannot see any statistics and other data in the frontend
 
-Answer: Maybe you have set the wrong port in the configuration. You can edit everything in the given frontend/src/config.ts file
+*Answer*: Maybe you have set the wrong port in the configuration. You can edit everything in the given frontend/src/config.ts file
+
+---
+
+*Question*: In simulation the window seems to freeze
+
+*Answer*: Your browser might not be optimized for such big datapacks which are transferred every tick. Maybe increase the tick interval or reduce other values
 
 ---
 ### General Design Decisions

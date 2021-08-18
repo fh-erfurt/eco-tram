@@ -9,10 +9,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
-public record SocketLine(String name, List<SocketStation> route) {
+public record SocketLine(Long id, String name, List<SocketStation> route) {
 	public static SocketLine fromLine(Line line) {
 
 		return new SocketLine(
+				line.getId(),
 				line.getName(),
 				line.getRoute().stream()
 						.sorted(Comparator.comparing(LineEntry::getOrderValue))

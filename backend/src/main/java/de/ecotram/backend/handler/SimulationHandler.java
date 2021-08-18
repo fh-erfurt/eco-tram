@@ -139,11 +139,16 @@ public class SimulationHandler {
 	}
 
 	private void onRunnerStarted(RunnerStartedArgs args) {
+		this.log.info("Runner started");
 		messagingTemplate.convertAndSend("/simulation/events/start", getStatus());
 	}
 
 	private void onRunnerStopped(RunnerStoppedArgs args) {
+		this.log.info("Runner stopped " + args.getReason() + " - " + args.getCause().name());
+		if(args.getException().isPresent()) args.getException().get().printStackTrace();
 		messagingTemplate.convertAndSend("/simulation/events/stop", getStatus());
+
+		simulationRunner = null;
 	}
 
 	private void onRunnerTicks(RunnerTicksUpdatedArgs args) {

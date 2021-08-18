@@ -35,6 +35,10 @@
               <label for="threadCount">Anzahl Threads</label>
               <input type="number" v-model="threadCount" id="threadCount">
             </div>
+            <div class="input-item checkbox">
+              <input type="checkbox" v-model="numberedPassengerTrams" id="numberedPassengerTrams">
+              <label for="numberedPassengerTrams">Straßenbahnen nummerieren</label>
+            </div>
           </div>
         </div>
         <div v-if="loading">
@@ -87,6 +91,7 @@ interface SocketStation {
 }
 
 interface SocketLine {
+  id: number
   name: string
   route: SocketStation[]
 }
@@ -94,7 +99,7 @@ interface SocketLine {
 interface SocketLineScheduleEntry {
   hash: string
   startingTime: number
-  startingOrder: number
+  startOrdering: number
   maxCount: number
   passengerTram?: SocketPassengerTram
 }
@@ -128,9 +133,10 @@ export default class Simulation extends Vue {
   private lines: PaginationResultType<Line> | null = null
   private lineSettings: LineSettings[] = []
 
-  private tickInterval: number = 15
-  private dispatchInterval: number = 15
+  private tickInterval: number = 50
+  private dispatchInterval: number = 20
   private threadCount: number = 1
+  public numberedPassengerTrams: boolean = false
 
   async mounted() {
     console.log("mount")
@@ -188,7 +194,7 @@ export default class Simulation extends Vue {
     const lineSettings: LineSettings[] = []
 
     for(const line of data.results) {
-      lineSettings.push({ tramCount: 10, waitingTime: 20 })
+      lineSettings.push({ tramCount: 5, waitingTime: 30 })
     }
 
     this.lineSettings = lineSettings
@@ -203,6 +209,12 @@ export default class Simulation extends Vue {
     const lineSchedulesSubscription = this.stompClient.subscribe("/user/simulation/line-schedules", (data: any) => {
       this.lineSchedules = JSON.parse(data.body);
       this.stompClient.unsubscribe(lineSchedulesSubscription);
+
+      this.lineSchedules!.sort((a, b) => {
+        if(a.socketLine.id < b.socketLine.id) return -1;
+        else if(a.socketLine.id > b.socketLine.id) return 1;
+        return 0;
+      })
 
       try {
         for(let i = 0; i < this.lineSchedules!.length; i++) {
@@ -265,6 +277,7 @@ export default class Simulation extends Vue {
 
   drawCanvas(index: number, lineSchedule: SocketLineSchedule) {
     const refs: any = this.$refs['canvas'];
+    const numberedPassengerTrams = this.numberedPassengerTrams
 
     if(!refs || !refs[index]) return
 
@@ -385,6 +398,7 @@ export default class Simulation extends Vue {
 
       for(let i = 0; i < lineSchedule.entries.length; i++) {
         const entry = lineSchedule.entries[i]
+        const name = numberedPassengerTrams ? `Tram ${entry.startOrdering + 1}` : entry.hash;
 
         if(!entry.passengerTram) {
           ctx.fillStyle = passengerTramColor
@@ -394,19 +408,20 @@ export default class Simulation extends Vue {
 
           ctx.fillStyle = passengerTramAwaitingColor
 
-          drawText(entry.hash, 'Roboto, sans-serif', 400, relativePassengerTramFontSize, passengerTramAwaitingColor, relativeHorizontalPadding + awaitingPosition + (relativePassengerTramRadius * 2), height - relativeVerticalPadding + (relativePassengerTramFontSize / 2), FontAlignment.LEFT)
 
-          const width = getTextWidth(entry.hash, 'Roboto, sans-serif', 400, relativePassengerTramFontSize)
+          drawText(name, 'Roboto, sans-serif', 400, relativePassengerTramFontSize, passengerTramAwaitingColor, relativeHorizontalPadding + awaitingPosition + (relativePassengerTramRadius * 2), height - relativeVerticalPadding + (relativePassengerTramFontSize / 2), FontAlignment.LEFT)
+
+          const width = getTextWidth(name, 'Roboto, sans-serif', 400, relativePassengerTramFontSize)
 
           awaitingPosition += (relativePassengerTramRadius * 4) + relativePassengerTramMargin + width
         } else {
-
           ctx.fillStyle = passengerTramColor
           ctx.beginPath()
           ctx.arc(relativeHorizontalPadding + (distance * entry.passengerTram.currentIndex), barPosition, relativePassengerTramRadius, 0, 2 * Math.PI)
           ctx.fill()
 
-          drawText(entry.passengerTram.hash, 'Roboto, sans-serif', 400, relativePassengerTramFontSize, passengerTramColor, relativeHorizontalPadding + (distance * entry.passengerTram.currentIndex), barPosition - 20, FontAlignment.CENTER)
+          drawText(name, 'Roboto, sans-serif', 400, relativePassengerTramFontSize, passengerTramColor, relativeHorizontalPadding + (distance * entry.passengerTram.currentIndex), barPosition - (relativePassengerTramFontSize * 2), FontAlignment.CENTER)
+          drawText(lineSchedule.socketLine.route[entry.passengerTram.currentIndex].name, 'Roboto, sans-serif', 400, relativePassengerTramFontSize * 0.75, passengerTramColor, relativeHorizontalPadding + (distance * entry.passengerTram.currentIndex), barPosition - (relativePassengerTramFontSize * 4), FontAlignment.CENTER)
         }
       }
     }

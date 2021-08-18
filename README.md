@@ -9,6 +9,7 @@
 * integrated simulation for existing lines with passenger trams passing by each station 
 * Open API with CRUD-Functionality (Create, Read, Update, Delete)
 * Frontend Dashboard for managing all models and simulation
+* Powerful simulation with custom parameters
 * written with extensibility in mind
 
 ---
@@ -25,6 +26,9 @@
 * [H2 Database](https://www.h2database.com/html/main.html)
 * [Lombok](https://projectlombok.org/)
 * [SocketIO](https://github.com/mrniko/netty-socketio)
+* [JSON](https://mvnrepository.com/artifact/org.json/json)
+* [Vue.JS](https://vuejs.org/)
+* [SockJS](https://github.com/sockjs/sockjs-client)
 
 </details>
 
@@ -50,8 +54,14 @@
 ---
 ### Ports
 
-Backend-Server and API: `Port 8081`  
-Frontend-Server and Dashboard: `Port 8080`
+Backend-Server and API: `Port 8080`  
+Frontend-Server and Dashboard: `Port 8081`
+
+### Troubleshooting
+
+Question: I cannot see any statistics and other data in the frontend
+
+Answer: Maybe you have set the wrong port in the configuration. You can edit everything in the given frontend/src/config.ts file
 
 ---
 ### General Design Decisions

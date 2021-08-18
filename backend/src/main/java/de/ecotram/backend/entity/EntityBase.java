@@ -9,8 +9,8 @@ import javax.persistence.MappedSuperclass;
 
 @MappedSuperclass
 public abstract class EntityBase {
-    @Getter
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    protected long id;
+	@Getter
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	protected long id;
 }

@@ -13,75 +13,82 @@ import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
+/**
+ * Handler for creating and updating connections received from controller
+ */
 @Component("connectionHandler")
 public final class ConnectionHandler {
-    @Autowired
-    private StationRepository stationRepository;
 
-    @Autowired
-    private ConnectionRepository connectionRepository;
+	private final StationRepository stationRepository;
+	private final ConnectionRepository connectionRepository;
 
-    public ConnectionStations validateConnectionBody(ConnectionBody connectionBody) throws ErrorResponseException {
-        Optional<Station> sourceStation = stationRepository.findById(connectionBody.sourceStationId);
-        if (sourceStation.isEmpty())
-            throw new ErrorResponseException("invalid-source-station", "No station with id found");
+	@Autowired
+	public ConnectionHandler(StationRepository stationRepository, ConnectionRepository connectionRepository) {
+		this.stationRepository = stationRepository;
+		this.connectionRepository = connectionRepository;
+	}
 
-        Optional<Station> destinationStation = stationRepository.findById(connectionBody.destinationStationId);
-        if (destinationStation.isEmpty())
-            throw new ErrorResponseException("invalid-destination-station", "No station with id found");
+	public ConnectionStations validateConnectionBody(ConnectionBody connectionBody) throws ErrorResponseException {
+		Optional<Station> sourceStation = stationRepository.findById(connectionBody.sourceStationId);
+		if(sourceStation.isEmpty())
+			throw new ErrorResponseException("invalid-source-station", "No station with id found");
 
-        return new ConnectionStations(sourceStation.get(), destinationStation.get());
-    }
+		Optional<Station> destinationStation = stationRepository.findById(connectionBody.destinationStationId);
+		if(destinationStation.isEmpty())
+			throw new ErrorResponseException("invalid-destination-station", "No station with id found");
 
-    public void appendSourceAndDestinationStation(Connection connection, ConnectionStations connectionStations) {
-        Station sourceStation = connectionStations.getSourceStation();
-        Station destinationStation = connectionStations.getDestinationStation();
+		return new ConnectionStations(sourceStation.get(), destinationStation.get());
+	}
 
-        connection.setSourceStation(sourceStation);
-        connection.setDestinationStation(destinationStation);
-    }
+	public void appendSourceAndDestinationStation(Connection connection, ConnectionStations connectionStations) {
+		Station sourceStation = connectionStations.getSourceStation();
+		Station destinationStation = connectionStations.getDestinationStation();
 
-    public Connection createConnectionFromRequest(ConnectionBody connectionBody) throws ErrorResponseException {
-        ConnectionStations connectionStations = validateConnectionBody(connectionBody);
+		connection.setSourceStation(sourceStation);
+		connection.setDestinationStation(destinationStation);
+	}
 
-        Connection connection = new Connection();
-        appendSourceAndDestinationStation(connection, connectionStations);
+	public Connection createConnectionFromRequest(ConnectionBody connectionBody) throws ErrorResponseException {
+		ConnectionStations connectionStations = validateConnectionBody(connectionBody);
 
-        connectionRepository.save(connection);
-        stationRepository.save(connection.getSourceStation());
-        stationRepository.save(connection.getDestinationStation());
+		Connection connection = new Connection();
+		appendSourceAndDestinationStation(connection, connectionStations);
 
-        return connection;
-    }
+		connectionRepository.save(connection);
+		stationRepository.save(connection.getSourceStation());
+		stationRepository.save(connection.getDestinationStation());
 
-    public Connection updateConnectionFromRequest(Connection connection, ConnectionBody connectionBody) throws ErrorResponseException {
-        ConnectionStations connectionStations = validateConnectionBody(connectionBody);
+		return connection;
+	}
 
-        appendSourceAndDestinationStation(connection, connectionStations);
+	public Connection updateConnectionFromRequest(Connection connection, ConnectionBody connectionBody) throws ErrorResponseException {
+		ConnectionStations connectionStations = validateConnectionBody(connectionBody);
 
-        connectionRepository.save(connection);
-        stationRepository.save(connection.getSourceStation());
-        stationRepository.save(connection.getDestinationStation());
+		appendSourceAndDestinationStation(connection, connectionStations);
 
-        return connection;
-    }
+		connectionRepository.save(connection);
+		stationRepository.save(connection.getSourceStation());
+		stationRepository.save(connection.getDestinationStation());
 
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class ConnectionBody {
-        @Getter
-        private long sourceStationId;
+		return connection;
+	}
 
-        @Getter
-        private long destinationStationId;
-    }
+	@AllArgsConstructor
+	@NoArgsConstructor
+	public static class ConnectionBody {
+		@Getter
+		private long sourceStationId;
 
-    @AllArgsConstructor
-    public static class ConnectionStations {
-        @Getter
-        private final Station sourceStation;
+		@Getter
+		private long destinationStationId;
+	}
 
-        @Getter
-        private final Station destinationStation;
-    }
+	@AllArgsConstructor
+	public static class ConnectionStations {
+		@Getter
+		private final Station sourceStation;
+
+		@Getter
+		private final Station destinationStation;
+	}
 }

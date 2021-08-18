@@ -19,19 +19,19 @@ import javax.persistence.ManyToOne;
 @NoArgsConstructor
 @AllArgsConstructor
 public class LineEntry extends EntityBase {
-    @Getter
-    @Setter
-    int orderValue = 0;
+	@Getter
+	@Setter
+	int orderValue = 0;
 
-    @Getter
-    @Setter
-    @ManyToOne
-    @JsonBackReference
-    Line line;
+	@Getter
+	@Setter
+	@ManyToOne
+	@JsonBackReference
+	Line line;
 
-    @Getter
-    @Setter
-    @ManyToOne
-    @JsonManagedReference
-    Station station;
+	@Getter
+	@Setter
+	@ManyToOne
+	@JsonManagedReference
+	Station station;
 }

@@ -7,7 +7,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public final class ErrorResponse {
-    @JsonProperty("error")
-    private final String identifier;
-    private final String message;
+	@JsonProperty("error")
+	private final String identifier;
+	private final String message;
 }

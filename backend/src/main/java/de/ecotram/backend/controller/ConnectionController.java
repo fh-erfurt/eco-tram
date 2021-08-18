@@ -14,68 +14,74 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
+/**
+ * Controller for handling connections between stations
+ */
 @RestController
 public final class ConnectionController {
-    @Autowired
-    private ConnectionRepository connectionRepository;
+	private final ConnectionRepository connectionRepository;
+	private final ConnectionHandler connectionHandler;
 
-    @Autowired
-    private ConnectionHandler connectionHandler;
+	@Autowired
+	public ConnectionController(ConnectionRepository connectionRepository, ConnectionHandler connectionHandler) {
+		this.connectionRepository = connectionRepository;
+		this.connectionHandler = connectionHandler;
+	}
 
-    @CrossOrigin
-    @GetMapping("/connections/list")
-    public ResponseEntity<PaginationRequest<Connection>> list(
-            @RequestParam(defaultValue = "20") int limit,
-            @RequestParam(defaultValue = "0") int page) {
-        return ResponseEntity.ok().body(connectionRepository.getAsPaginationRequest(Connection.class, limit, page));
-    }
+	@CrossOrigin
+	@GetMapping("/connections/list")
+	public ResponseEntity<PaginationRequest<Connection>> list(
+			@RequestParam(defaultValue = "20") int limit,
+			@RequestParam(defaultValue = "0") int page) {
+		return ResponseEntity.ok().body(connectionRepository.getAsPaginationRequest(Connection.class, limit, page));
+	}
 
-    @CrossOrigin
-    @GetMapping(value = "/connections/get/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> list(@PathVariable("id") Long id) {
-        Optional<Connection> connection = connectionRepository.findById(id);
-        return connection.<ResponseEntity<Object>>map(value -> ResponseEntity.ok().body(value))
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("invalid-connection", "No connection with id found")));
-    }
+	@CrossOrigin
+	@GetMapping(value = "/connections/get/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> list(@PathVariable("id") Long id) {
+		Optional<Connection> connection = connectionRepository.findById(id);
+		return connection.<ResponseEntity<Object>>map(value -> ResponseEntity.ok().body(value))
+				.orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("invalid-connection", "No connection with id found")));
+	}
 
-    @CrossOrigin
-    @PostMapping(value = "/connections/new", consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> newConnection(@RequestBody ConnectionHandler.ConnectionBody connectionBody) {
-        try {
-            Connection connection = connectionHandler.createConnectionFromRequest(connectionBody);
-            return ResponseEntity.ok().body(connection);
-        } catch (ErrorResponseException errorResponseException) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponseException.getErrorResponse());
-        }
-    }
+	@CrossOrigin
+	@PostMapping(value = "/connections/new", consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> newConnection(@RequestBody ConnectionHandler.ConnectionBody connectionBody) {
+		try {
+			Connection connection = connectionHandler.createConnectionFromRequest(connectionBody);
+			return ResponseEntity.ok().body(connection);
+		} catch (ErrorResponseException errorResponseException) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponseException.getErrorResponse());
+		}
+	}
 
-    @CrossOrigin
-    @PostMapping(value = "/connections/update/{id}", consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> updateConnection(
-            @RequestBody ConnectionHandler.ConnectionBody connectionBody,
-            @PathVariable("id") Long id) {
-        Optional<Connection> connectionEntry = connectionRepository.findById(id);
+	@CrossOrigin
+	@PostMapping(value = "/connections/update/{id}", consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> updateConnection(
+			@RequestBody ConnectionHandler.ConnectionBody connectionBody,
+			@PathVariable("id") Long id) {
+		Optional<Connection> connectionEntry = connectionRepository.findById(id);
 
-        if (connectionEntry.isPresent())
-            try {
-                Connection connection = connectionHandler.updateConnectionFromRequest(connectionEntry.get(), connectionBody);
-                return ResponseEntity.ok().body(connection);
-            } catch (ErrorResponseException errorResponseException) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponseException.getErrorResponse());
-            }
-        else
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("invalid-connection", "No connection with id found"));
-    }
+		if(connectionEntry.isPresent())
+			try {
+				Connection connection = connectionHandler.updateConnectionFromRequest(connectionEntry.get(), connectionBody);
+				return ResponseEntity.ok().body(connection);
+			} catch (ErrorResponseException errorResponseException) {
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponseException.getErrorResponse());
+			}
+		else
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("invalid-connection", "No connection with id found"));
+	}
 
-    @CrossOrigin
-    @PostMapping(value = "/connections/delete/{id}")
-    public ResponseEntity<Object> deleteConnection(@PathVariable("id") Long id) {
-        Optional<Connection> connectionEntry = connectionRepository.findById(id);
+	@CrossOrigin
+	@PostMapping(value = "/connections/delete/{id}")
+	public ResponseEntity<Object> deleteConnection(@PathVariable("id") Long id) {
+		Optional<Connection> connectionEntry = connectionRepository.findById(id);
 
-        if (connectionEntry.isPresent()) {
-            connectionRepository.delete(connectionEntry.get());
-            return ResponseEntity.ok().body("OK");
-        } else
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("invalid-connection", "No connection with id found"));
-    }
+		if(connectionEntry.isPresent()) {
+			connectionRepository.delete(connectionEntry.get());
+			return ResponseEntity.ok().body("OK");
+		} else
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("invalid-connection", "No connection with id found"));
+	}
 }

@@ -9,6 +9,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ConnectionRepository extends JpaRepository<Connection, Long>, PaginationRequestHelper<Connection> {
-    @Query("select c from Connection c where c.sourceStation = ?1 and c.destinationStation = ?2")
-    Connection findByLineAndTraversable(Station sourceStation, Station destinationStation);
+	@Query("select c from Connection c where c.sourceStation = ?1 and c.destinationStation = ?2")
+	Connection findByLineAndTraversable(Station sourceStation, Station destinationStation);
 }

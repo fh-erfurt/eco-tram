@@ -56,7 +56,12 @@ public final class SimulationRunner {
 		return this.ticks;
 	}
 
-	// TODO(erik): doc this
+
+	/**
+	 * Starts the simulation and returns the reporter tied to this simulation.
+	 *
+	 * @return The reporter that tracks this simulations process
+	 */
 	public synchronized ProgressReporter start() {
 		if(this.isRunning)
 			throw new IllegalStateException("Cannot start runner that is currently running.");
@@ -69,6 +74,9 @@ public final class SimulationRunner {
 		return this.progressReporter;
 	}
 
+	/**
+	 * Stops the currently running simulation.
+	 */
 	public synchronized void stop() {
 		if(!this.isRunning)
 			throw new IllegalStateException("Cannot stop runner that is not currently running.");
@@ -76,6 +84,9 @@ public final class SimulationRunner {
 		this.timer.schedule(new RunnerStoppingTask(this, null, true), 0);
 	}
 
+	/**
+	 * Runs one internal iteration, sending trams which are past their dispatch tick.
+	 */
 	private void runInternalIteration() {
 		if(this.taskQueue.isEmpty()) {
 			this.internalStopped = true;

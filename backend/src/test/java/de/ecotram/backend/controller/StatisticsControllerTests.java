@@ -5,7 +5,6 @@ import de.ecotram.backend.entity.network.Connection;
 import de.ecotram.backend.entity.network.Station;
 import de.ecotram.backend.repository.ConnectionRepository;
 import de.ecotram.backend.repository.LineRepository;
-import de.ecotram.backend.repository.PassengerTramRepository;
 import de.ecotram.backend.repository.StationRepository;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -43,9 +42,6 @@ public class StatisticsControllerTests {
 
 	@Autowired
 	private LineRepository lineRepository;
-
-	@Autowired
-	private PassengerTramRepository passengerTramRepository;
 
 	@Autowired
 	private StationRepository stationRepository;

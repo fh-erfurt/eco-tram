@@ -21,12 +21,11 @@ import java.util.concurrent.atomic.AtomicReference;
 @Entity
 @NoArgsConstructor
 public final class Line extends EntityBase {
-	@Setter
-	private String name;
-
 	@OneToMany(mappedBy = "line")
 	@JsonManagedReference
 	private final Set<LineEntry> route = new HashSet<>();
+	@Setter
+	private String name;
 
 	@JsonIgnore
 	public int getTotalLength() {

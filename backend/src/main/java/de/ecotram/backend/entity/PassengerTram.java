@@ -5,20 +5,17 @@ import de.ecotram.backend.entity.network.Station;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Entity;
-import javax.persistence.Transient;
 import java.util.List;
 
 /**
  * A tram for passenger transport, used for simulation.
  */
 @Getter
-@Entity
-public final class PassengerTram extends EntityBase {
+public final class PassengerTram {
 	public static final int DEFAULT_WEIGHT = 5000; // in kilogram
 	public static final int DEFAULT_MAX_SPEED = 50; // in kilometers per hour
 	public static final int DEFAULT_SPEED = 50; // in kilometers per hour
-	@Transient
+
 	private final List<LineEntry> route;
 	/**
 	 * The weight of this tram in kilogram.
@@ -36,12 +33,9 @@ public final class PassengerTram extends EntityBase {
 	 * The current speed of this tram in kilometers per hour.
 	 */
 	@Setter
-	@Transient
 	private int speed = DEFAULT_SPEED;
 	@Setter
-	@Transient
 	private int currentPassengers;
-	@Transient
 	private int currentIndex;
 
 	public PassengerTram() {

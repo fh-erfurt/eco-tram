@@ -12,14 +12,19 @@ import de.ecotram.backend.simulation.LineSchedule;
 import de.ecotram.backend.simulation.Schedule;
 import de.ecotram.backend.simulation.SimulationRunner;
 import de.ecotram.backend.simulation.event.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.extern.java.Log;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 /**
@@ -43,7 +48,7 @@ public class SimulationHandler {
 		this.messagingTemplate = messagingTemplate;
 	}
 
-	public void startSimulation() {
+	public void startSimulation(SimulationSettings simulationSettings) {
 		if(simulationRunner != null) return;
 
 		this.log.info("Starting simulation");
@@ -60,9 +65,21 @@ public class SimulationHandler {
 
 		var builder = Schedule.forNetwork(network);
 
-		lines.forEach(l -> builder.withLineSchedule(LineSchedule.fromWaitingTime(l, 50)));
+		lines.forEach(l -> {
+			AtomicInteger waitingTime = new AtomicInteger(50);
+			AtomicInteger tramCount = new AtomicInteger(10);
 
-		simulationRunner = new SimulationRunner(builder.build(), 50, 1);
+			simulationSettings.lineSettings.forEach(lineSettings -> {
+				if(lineSettings.id == l.getId()) {
+					waitingTime.set(lineSettings.getWaitingTime());
+					tramCount.set(lineSettings.getTramCount());
+				}
+			});
+
+			builder.withLineSchedule(LineSchedule.fromWaitingTime(l, waitingTime.get(), tramCount.get()));
+		});
+
+		simulationRunner = new SimulationRunner(builder.build(), simulationSettings.getTickInterval(), simulationSettings.getDispatchInterval(), simulationSettings.getThreadCount());
 
 		var progressReporter = simulationRunner.start();
 
@@ -143,5 +160,35 @@ public class SimulationHandler {
 				new SocketStation(Integer.toHexString(sourceStation.hashCode()), sourceStation.getName()),
 				new SocketStation(Integer.toHexString(destinationStation.hashCode()), destinationStation.getName())
 		);
+	}
+
+	@Getter
+	@AllArgsConstructor
+	public static class LineSettings {
+		private final long id;
+		private final int tramCount;
+		private final int waitingTime;
+
+		public static LineSettings fromJson(long id, JSONObject jsonObject) {
+			return new LineSettings(id, jsonObject.getInt("tramCount"), jsonObject.getInt("waitingTime"));
+		}
+	}
+
+	@Getter
+	@AllArgsConstructor
+	public static class SimulationSettings {
+		private final int tickInterval;
+		private final int threadCount;
+		private final int dispatchInterval;
+		private final Set<LineSettings> lineSettings;
+
+		public static SimulationSettings fromJson(JSONObject jsonObject) {
+			Set<LineSettings> lineSettings = new HashSet<>();
+
+			JSONObject jsonLineSettings = jsonObject.getJSONObject("settings");
+			jsonLineSettings.keySet().forEach(k -> lineSettings.add(LineSettings.fromJson(Long.parseLong(k), jsonLineSettings.getJSONObject(k))));
+
+			return new SimulationSettings(jsonObject.getInt("tickInterval"), jsonObject.getInt("threadCount"), jsonObject.getInt("dispatchInterval"), lineSettings);
+		}
 	}
 }

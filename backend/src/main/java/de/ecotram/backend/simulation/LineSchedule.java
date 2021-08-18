@@ -23,24 +23,14 @@ public final class LineSchedule {
 		this.line = line;
 	}
 
-	public static LineSchedule fromWaitingTime(Line line, int waitingTime) {
-		// TODO(erik): fix this, currently evaluates to 0, probably incorrect denominator
-
-		//        (distance / 1000)      // m => km
-		// ----------------------------- == minNumberOfTrams
-		// speed * (maxWaitingTime / 60) // s => h
-		// simplified to reduce to one division
-		int minimumNumberOfTrams = (int) (((float) line.getTotalLength() * 60) / (PassengerTram.DEFAULT_MAX_SPEED * waitingTime * 1000));
-
-		minimumNumberOfTrams = 10;
-
+	public static LineSchedule fromWaitingTime(Line line, int waitingTime, int tramCount) {
 		List<LineEntry> route = line.getRoute().stream()
 				.sorted(Comparator.comparingInt(LineEntry::getOrderValue))
 				.toList();
 
 		LineSchedule schedule = new LineSchedule(line);
 
-		for(int i = 1; i < minimumNumberOfTrams + 1; i++) {
+		for(int i = 0; i < tramCount; i++) {
 			PassengerTram passengerTram = new PassengerTram(route);
 			schedule.trams.put(passengerTram, new Entry(i * waitingTime, 0, -1, passengerTram, line));
 		}

@@ -19,7 +19,6 @@ import java.util.Optional;
  */
 @RestController
 public final class ConnectionController {
-
 	private final ConnectionRepository connectionRepository;
 	private final ConnectionHandler connectionHandler;
 

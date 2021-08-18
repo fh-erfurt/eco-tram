@@ -5,6 +5,7 @@ import de.ecotram.backend.handler.socketEntity.SocketLine;
 import de.ecotram.backend.handler.socketEntity.SocketLineSchedule;
 import de.ecotram.backend.handler.socketEntity.SocketStation;
 import de.ecotram.backend.handler.socketEntity.SocketStatus;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.annotation.SendToUser;
@@ -26,8 +27,9 @@ public class SocketController {
 	}
 
 	@MessageMapping("/simulation/start")
-	public void simulationStart() {
-		simulationHandler.startSimulation();
+	public void simulationStart(String payload) {
+		SimulationHandler.SimulationSettings simulationSettings = SimulationHandler.SimulationSettings.fromJson(new JSONObject(payload));
+		simulationHandler.startSimulation(simulationSettings);
 	}
 
 	@MessageMapping("/simulation/stop")

@@ -25,6 +25,8 @@ public final class SimulationRunner {
 	@Getter
 	private final int timerInterval;
 	@Getter
+	private final int dispatchInterval;
+	@Getter
 	private final Network network;
 	@Getter
 	private final Schedule schedule;
@@ -37,12 +39,13 @@ public final class SimulationRunner {
 	private boolean isRunning;
 
 	public SimulationRunner(Schedule schedule) {
-		this(schedule, 100, 1);
+		this(schedule, 100, 100, 1);
 	}
 
-	public SimulationRunner(Schedule schedule, int timerInterval, int eventThreadPoolCount) {
+	public SimulationRunner(Schedule schedule, int timerInterval, int dispatchInterval, int eventThreadPoolCount) {
 		this.eventExecutor = Executors.newFixedThreadPool(eventThreadPoolCount);
 		this.timerInterval = timerInterval;
+		this.dispatchInterval = dispatchInterval;
 		this.network = schedule.getNetwork();
 		this.schedule = schedule;
 		this.progressReporter = new ProgressReporter(this);
@@ -170,7 +173,7 @@ public final class SimulationRunner {
 					for(Map.Entry<PassengerTram, LineSchedule.Entry> entry : lineSchedule.getValue().getTrams().entrySet()) {
 						this.runner.taskQueue.add(new OrderedTask(
 								entry.getValue().startingTime(),
-								this.runner.timerInterval,
+								this.runner.dispatchInterval,
 								entry.getValue().maxCount(),
 								entry.getValue(),
 								entry.getValue().passengerTram().nextStation())

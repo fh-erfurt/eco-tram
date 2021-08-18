@@ -26,35 +26,29 @@ import java.util.function.Function;
 public final class Station extends EntityBase {
 	public static final String DEFAULT_NAME = "Unnamed Station";
 	public static final int DEFAULT_MAX_PASSENGERS = 50;
-
-	@Setter
-	private String name = DEFAULT_NAME;
-
-	@Setter
-	private int maxPassengers = DEFAULT_MAX_PASSENGERS;
-
 	@OneToMany(mappedBy = "station")
 	@JsonBackReference
 	private final Set<LineEntry> lineEntries = new HashSet<>();
-
-	@Setter
-	@ManyToOne(cascade = {CascadeType.ALL})
-	@JsonBackReference
-	private Network network;
-
 	/**
 	 * The connections leading of from this station.
 	 */
 	@OneToMany(mappedBy = "sourceStation")
 	@JsonBackReference
 	private final Set<Connection> sourceConnections = new HashSet<>();
-
 	/**
 	 * The connections leading to this station.
 	 */
 	@OneToMany(mappedBy = "destinationStation")
 	@JsonBackReference
 	private final Set<Connection> destinationConnections = new HashSet<>();
+	@Setter
+	private String name = DEFAULT_NAME;
+	@Setter
+	private int maxPassengers = DEFAULT_MAX_PASSENGERS;
+	@Setter
+	@ManyToOne(cascade = {CascadeType.ALL})
+	@JsonBackReference
+	private Network network;
 
 	@JsonIgnore
 	public Optional<Connection> getConnectionTo(Station destination) {
